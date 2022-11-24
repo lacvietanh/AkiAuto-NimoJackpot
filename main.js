@@ -37,8 +37,9 @@ app.whenReady().then(() => {
 
   MainWindow = new BrowserWindow({
     width: 540, minWidth: 540,
-    height: 545, minHeight: 250,
+    height: 600, minHeight: 300,
     show: false,
+    frame: false,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
       nodeIntegration: true,

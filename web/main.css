@@ -1,3 +1,4 @@
+/* GLOBAL  */
 .counter.parent {
   counter-reset: countVar;
 }
@@ -11,23 +12,55 @@ thead {
   cursor: pointer;
 }
 
-#AccountList tbody tr.selected {
-  color: dodgerblue;
-  font-weight: bold;
+/* CUSTOM APP TITLE BAR  */
+#titleBar {
+  -webkit-app-region: drag;
+  -webkit-user-select: none;
+  display: flex;
+  height: 40px;
 }
-
-button.accSelect {
-  border-radius: 50%;
-  border: none;
-  background-color: #bbb;
-  width: 25px;
-  height: 25px;
+.trafficLight {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+}
+.trafficLight button {
+  border-radius: 100%;
+  padding: 0;
+  height: 12px;
+  width: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-right: 3.5px;
+  background-color: #ddd;
+  position: relative;
+  outline: none;
+}
+.trafficLight .close {
+  background-color: #ff6159;
+}
+.trafficLight .min {
+  background-color: #ffbd2e;
+}
+.trafficLight .max {
+  background-color: #28c941;
+}
+/* ELEMENTS */
+.panel-info{
+  height: 150px;
+  overflow-y: auto;
+}
+#AccountList .table-container{
+  max-height: 50vh;
+  overflow-y: auto;
+}
+td.accSelector {
   cursor: pointer;
 }
-button.accSelect:hover {
-  background-color: #be986e;
+td.accSelector:hover {
+  background-color: #f1e4d4;
 }
-
-button.accSelect.selected {
-  background-color: #ec8618;
+td.accSelector.selected {
+  color: white;
+  background-color: #ff4f0b;
 }
