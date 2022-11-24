@@ -1,0 +1,76 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AkiAuto - NimoJackpot</title>
+  <link rel="stylesheet" href="web/bulma.min.css">
+  <link rel="stylesheet" href="web/main.css">
+  <script src="web/sorttable.js"></script>
+</head>
+
+<body>
+
+  <section class="hero is-dark is-small">
+    <div class="hero-body">
+      <p class="title">
+        Bảng điều khiển
+      </p>
+    </div>
+  </section>
+
+  <section id="AccountList" class="p-2">
+    <div class="table-container">
+      <table id="AccountTable" class="
+      table counter parent sortable is-bordered is-striped is-hoverable is-fullwidth
+      ">
+        <thead class="has-background-warning">
+          <tr class="">
+            <th>STT</th>
+            <th>UserName</th>
+            <th>Đậu</th>
+            <th>Trạng thái</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</body>
+<script>
+  let data = [
+    { UserName: "vua cỏ", Bean: "37000", status: "Running" },
+    { UserName: "ongvua", Bean: "270k", status: "Running" },
+    { UserName: "tranhung", Bean: "523k", status: "Waiting" },
+    { UserName: "NguyenHang", Bean: "10000", status: "Running" },
+    { UserName: "QuocViet", Bean: "0", status: "Idle" },
+    { UserName: "BaoPhuong", Bean: "1.3M", status: "Running" },
+    { UserName: "LacAnh", Bean: "50k", status: "Running" },
+  ]
+  function addRow(x) {
+    document.querySelector('#AccountTable tbody').innerHTML += /*html*/`
+      <tr>
+      <td class="counter child"></td>
+      <td>
+        <button class="accSelect" onclick="selectAcc(this)">&nbsp</button>
+        ${x.UserName}
+      </td>
+      <td>${x.Bean}</td>
+      <td>${x.status}</td>
+      </tr>
+    `;
+  }
+  data.forEach((row) => { addRow(row) });
+
+  function selectAcc(btn) {
+    // Quét qua tất cả các button phía trước Username "mà có class là selected":
+    let x = document.querySelector('#AccountTable button.accSelect.selected');
+    x ? x.classList.remove('selected') : null;
+    btn.classList.add('selected');
+  }
+</script>
+
+</html>

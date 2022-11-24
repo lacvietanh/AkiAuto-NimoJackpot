@@ -1,0 +1,33 @@
+.counter.parent {
+  counter-reset: countVar;
+}
+
+.counter.child::after {
+  counter-increment: countVar;
+  content: counter(countVar);
+}
+
+thead {
+  cursor: pointer;
+}
+
+#AccountList tbody tr.selected {
+  color: dodgerblue;
+  font-weight: bold;
+}
+
+button.accSelect {
+  border-radius: 50%;
+  border: none;
+  background-color: #bbb;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
+}
+button.accSelect:hover {
+  background-color: #be986e;
+}
+
+button.accSelect.selected {
+  background-color: #ec8618;
+}

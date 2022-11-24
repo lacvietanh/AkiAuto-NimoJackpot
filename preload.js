@@ -1,15 +1,7 @@
-const appBrand = "AkiAuto"
-const { contextBridge, app } = require('electron')
-
 function setHTML(id, text) {
   document.getElementById(id).innerHTML = text
 }
 function LoadingSplashScreen() {
-  console.log(app.getGPUInfo())
-  setHTML('appBrand', appBrand)
-  setHTML('appName', app.getName())
-  setHTML('appVersion', app.getVersion())
-
   const info = document.querySelectorAll('#info div');
   ['chrome', 'node', 'electron'].forEach((c, i) => {
     info[i].innerHTML = `
@@ -20,5 +12,8 @@ function LoadingSplashScreen() {
 
 window.addEventListener('DOMContentLoaded', () => {
   LoadingSplashScreen();
+  setHTML('appBrand', 'AkiAuto')
+  setHTML('appName', "NimoJackpot") // need fix to app.getName()
+  setHTML('appVersion', "2022.11.23") //need fix to app.getVersion()
 
 })

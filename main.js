@@ -1,5 +1,6 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
+const { app, BrowserWindow } = require('electron');
+const Main = require('electron/main');
 const path = require('path')
 
 function splashWindow() {
@@ -9,16 +10,15 @@ function splashWindow() {
     frame: false,
     alwaysOnTop: true,
     webPreferences: {
-      nodeIntegration: true,
+      // nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
     }
   });
 }
-function newWindow(ssid = 1) {
-  return new BrowserWindow({
+function newGameWindow(ssid) {
+  let wd = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 545, minHeight: 250,
-    // titleBarStyle: 'hiddenInset',
     show: false,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
@@ -27,18 +27,29 @@ function newWindow(ssid = 1) {
       preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
     }
   })
+  wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+
 }
 
-// Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
-  splashScreen = splashWindow()
-  splashScreen.loadFile('splash.html')
-  MainWindow = newWindow('main')
-  MainWindow.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+  splashWd = splashWindow()
+  splashWd.loadFile('splash.html')
 
+  MainWindow = new BrowserWindow({
+    width: 540, minWidth: 540,
+    height: 545, minHeight: 250,
+    show: false,
+    icon: path.join(__dirname, 'icon.ico'),
+    webPreferences: {
+      nodeIntegration: true,
+      partition: 'main'
+      // preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
+    }
+  })
+  MainWindow.loadFile('main.html')
   MainWindow.once('ready-to-show', () => {
     setTimeout(() => {
-      splashScreen.destroy();
+      splashWd.destroy();
       MainWindow.show();
     }, 1500);
   });
