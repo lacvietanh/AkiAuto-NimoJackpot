@@ -2,11 +2,9 @@
 // Script đang còn thử nghiệm, vui lòng không sao chép..
 ////
 var AkiSriptAuthor = 'Lạc Việt Anh'
-  , AkiSriptVersion = '2022.11.23-1101'
   , target_percent = 70
   ;
 var AkiAutoRunBtn
-  , pageAlreadyLoaded
   , AutoInterval
   , AkiAccUname
   , AkiAccAvt
@@ -16,6 +14,7 @@ var AkiAutoRunBtn
   ;
 
 var akiPanelCss = /*css*/`
+  body{margin-top:45px!important}
   .inline-flex {
     display: inline-flex;
     align-items: center;
@@ -27,22 +26,32 @@ var akiPanelCss = /*css*/`
   .akinav {
     z-index: 999;
     display: flex;
-    background-color: #000000;
     position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
+    top: 0;left: 0;right: 0;
     overflow: hidden;
     color: #eee;
     align-items: center;
     justify-content: space-between;
+    -webkit-app-region: drag;
+    -webkit-user-select: none;
   }
   .akinav>.brand {
-    padding: 8px;
+    height: 45px;
+    padding-left:15px;
+    display:flex;
+    align-items:center;
+    flex: 1 0 auto;
     font-weight: bold;
     font-family: Tahoma, sans-serif;
+    background:#333;
+    background: linear-gradient(90deg,
+      #333 20%,
+      #fff0 50%,
+      #333 80%
+      );
   }
   .akinav>.menu {
+    background-color: #333;
     display: inline-flex;
     align-items: center;
     height: 45px;
@@ -51,7 +60,6 @@ var akiPanelCss = /*css*/`
     margin: 0 2px;
     padding: 5px;
     text-align: center;
-    background-color: #333;
   }
   #panel-acc-uname {
     color: #3daadc;
@@ -76,31 +84,6 @@ var akiPanelCss = /*css*/`
     display: block !important;
     right: 0 !important;
   }
-  #listAllAcc {
-    transition: 0.2s;
-    position: fixed;
-    min-width: 220px;
-    height: 37vh;
-    background-color: #7ac;
-    top: 43px;
-    right: -245px;
-    overflow-y: auto;
-    padding: 1rem 0.5rem;
-    border-radius: 14px;
-    margin: 3px;
-    text-align: center;
-    counter-reset: AccIndex;
-  }
-  #listAllAcc>div {
-    border-bottom: 1px solid #555;
-    text-align: left;
-    padding: 5px 0;
-    white-space: nowrap;
-  }
-  #listAllAcc>div::before {
-    counter-increment: AccIndex;
-    content: counter(AccIndex) ". ";
-  }
   .akiinfo {
     z-index: 999;
     display: flex;
@@ -124,7 +107,10 @@ var akiPanel =/*html*/`
     <div class="brand">AkiAuto</div>
     <div class="menu">
       <div class="item">
-        <button id="AkiReload" class="btn" onclick="aki.reload()"><i class="fa-solid fa-rotate"></i></button>
+        <button id="AkiReload" class="btn" onclick="menu.NimoHomepage()">
+          Nimo  
+        <i class="fa-solid fa-up-right-from-square"></i>
+        </button>
       </div>
       <div class="item">
         <button id="AkiAutoRunBtn" class="btn" onclick="menu.RUN()" style="background-color: red">RUN</button>
@@ -136,12 +122,8 @@ var akiPanel =/*html*/`
         <span id=panel-acc-balance>...</span>
       </div>
       <div class="item inline-flex">
-        <span id=panel-acc-uname>...</span>
+        <span id=panel-acc-uname>Not Login</span>
         <img id=panel-acc-avt width="35" height="35" style="margin: 0 4px;">
-      </div>
-      <div class="item viewAll" hidden>
-        <button id="ToggleViewAllUser" class="btn" onclick="menu.ToggleViewAllUser()">...</button>
-        <div id="listAllAcc"> </div>
       </div>
     </div>
   </nav>
@@ -215,7 +197,7 @@ menu = class {
   static getBet() { return getNimoNum(2) }
   static getUserName() {
     if (document.cookie.includes('userName')) {
-      AkiAccUname.innerHTML = parseCookie()['userName'] || "Guest";
+      AkiAccUname.innerHTML = parseCookie()['userName'] || "Not Login";
       AkiAccAvt.src = parseCookie()['avatarUrl'] || null;
     }
   }
@@ -235,11 +217,13 @@ menu = class {
     localStorage['cSpin'] = parseInt(localStorage['cSpin']) + 1;
     menu.updateSpinCount();
   }
-  static newWindow() {
-    window.open(window.localtion.href, '_blank', "location=0,menubar=0,status=0,titlebar=0");
+  static NimoHomepage() {
+    let options = "menubar=no,scrollbars=yes,location=no,toolbar=no";
+    return window.open('/', '_blank', 'width=1260,height=640' + options);
   }
   static setTargetPercent() {
-    document.getElementById('targetPrizeStop').value = Math.floor(menu.getPrize() * target_percent / 100);
+    document.getElementById('targetPrizeStop').value
+      = Math.floor(menu.getPrize() * target_percent / 100);
   }
   static RUN() {
     function ClickSpin() {
@@ -265,7 +249,7 @@ menu = class {
     //////////////////////// END AUTO RUN CONDITION  ////////////////////////
     if (!AutoInterval) {
       check();
-      AutoInterval = setInterval(check, 2700);
+      AutoInterval = setInterval(check, 3000);
       AkiAutoRunBtn.innerHTML = 'STOP';
     } else {
       clearInterval(AutoInterval);
@@ -302,6 +286,8 @@ aki = class {
     e = document.querySelector('link[name=fontawesome]');
     e ? e.remove() : console.log('Init FontAwesome...');
     document.head.appendChild(Fontawesome);
+  }
+  static init() {
     // init variable:
     AkiAutoRunBtn = document.getElementById('AkiAutoRunBtn');
     AkiAccUname = document.getElementById('panel-acc-uname');
@@ -309,9 +295,6 @@ aki = class {
     NimoBtnSpin = document.querySelector('.control-area__bet-btn');
     NimoNumWin = document.querySelector('.control-area__win-num');
     NimoRollCol5 = document.querySelector('.screen-area__animation-container.line-5');
-  }
-  static init() {
-    aki.add();
     (localStorage['cSpin']) ? menu.updateSpinCount() : localStorage['cSpin'] = 0;
     (localStorage['cAuto']) ? menu.updateAutoSpinCount() : localStorage['cAuto'] = 0;
     // (localStorage['maxP']) ? menu.updateMaxP() : localStorage['maxP'] = 0;
@@ -323,25 +306,7 @@ aki = class {
     setInterval(() => {
       menu.UpdatePrize();
       menu.UpdateBean();
-    }, 5000);
-  }
-  static reload() {
-    var $aki = document.createElement('script');
-    $aki.src = 'https://' + 'cloud.akivn' + '.net/js/Auto-Nimo-Bet.js?r=' + Date.now();
-    $aki.setAttribute('name', "AkiScript");
-    let e = document.querySelector('script[name=AkiScript]');
-    e ? e.remove() : console.log('Reload AkiScript...');
-    document.head.appendChild($aki);
-  }
-  static test() {
-    aki.add();
-    // generate list acc:
-    for (let i = 1; i <= 35; i++) {
-      let name = randomStr(20);
-      document.getElementById('listAllAcc').innerHTML += `
-        <div>${name}</div>
-      `;
-    }
+    }, 3000);
   }
   static hack() {
     //jackpot: x111; free: x101
@@ -365,26 +330,13 @@ aki = class {
   }
 }
 /////////////////// RUN ///////////////////
-var Aki_Run = () => {
-  console.log('AkiAuto-Nimo-Bet ---- version: ' + AkiSriptVersion);
-  console.log('AkiAuto-Nimo-Bet ---- Author: ' + AkiSriptAuthor);
-  if (window.location.host.includes('nimo.tv')) {
-    console.log('AkiAuto - Running mode: LIVE');
-    aki.init();
-    NimoBtnSpin.addEventListener('click', menu.increSpinCount, false);
-  } else {
-    console.log('AkiAuto - Running mode: TEST');
-    aki.test();
-  }
-}
 
-if (!pageAlreadyLoaded) { //first run:
-  Aki_Run();
-} else { //script Reload:
-  console.clear();
-  Aki_Run();
-  console.log('AkiScript restarted!');
-}
+addEventListener('DOMContentLoaded', () => {
+  aki.add();
+})
 
-pageAlreadyLoaded = true;
-
+addEventListener('load', () => {
+  aki.init();
+  NimoBtnSpin.addEventListener('click', menu.increSpinCount, false);
+  console.log('AkiAuto-Nimo-Jackpot ---- Author: ' + AkiSriptAuthor);
+})
