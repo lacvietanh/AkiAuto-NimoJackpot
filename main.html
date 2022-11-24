@@ -10,10 +10,10 @@
   <script src="web/sorttable.js"></script>
 </head>
 
-<body class="has-background-grey-lighter">
+<body class="">
 
   <!-- APP TITLE BAR  -->
-  <section id=titleBar class="hero is-dark is-small">
+  <section id=APP_TITLEBAR class="">
     <div class="left">
       <div class="trafficLight">
         <button class="close">&nbsp;</button>
@@ -21,75 +21,77 @@
         <button class="max">&nbsp;</button>
       </div>
     </div>
-    <div class="has-text-centered p-2">
+    <div class="has-text-centered p-1">
       <p class="is-size-6">
         AkiAuto-NimoJackpot
       </p>
     </div>
-    <div class="right"></div>
-  </section>
-
-  <!-- PANNEL  -->
-  <section class="p-2">
-    <div id="MainPanel" class="box container pt-1">
-      <div class="has-text-centered has-text-weight-bold">
-        <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
-      </div>
-      <!-- TABS  -->
-      <div class="tabs mt-2 is-centered is-boxed">
-        <ul>
-          <li class="is-active"> <a> <span>Setting</span> </a> </li>
-          <li> <a> <span>Logs</span> </a> </li>
-        </ul>
-      </div>
-      <div class="panel-info">
-        <div>
-          Số đậu: <span id="panel-bean">...</span>
-        </div>
-        <div>
-          Số kim cương: <span id="panel-status">...</span>
-        </div>
-        <div>
-          UserID: <span id="panel-UserID">...</span>
-        </div>
-        <div>
-          Trạng thái: <span id="panel-status">...</span>
-        </div>
-        <div class="field has-addons mt-2">
-          <p class="control">
-            <input id=panel-minimum-prize class="input" type="number" placeholder="Prize tối thiểu">
-          </p>
-          <div class="control">
-            <button class="button is-success">CHẠY</button>
-          </div>
-          <div class="control">
-            <button class="button is-danger">DỪNG</button>
-          </div>
-        </div>
-      </div>
+    <div class="right">
+      <button id=panel-btn-newSs class="button is-success is-small">NEW SESSION</button>
     </div>
   </section>
+  <section id="APP_BODY" class="has-background-dark">
+    <!-- PANNEL  -->
+    <section class="p-2">
+      <div id="MainPanel" class="box container pt-1">
+        <div class="has-text-centered has-text-weight-bold">
+          <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
+        </div>
+        <!-- TABS  -->
+        <div class="tabs mt-2 is-centered is-boxed">
+          <ul>
+            <li class="is-active"> <a> <span>Setting</span> </a> </li>
+            <li> <a> <span>Logs</span> </a> </li>
+          </ul>
+        </div>
+        <div class="panel-info">
+          <div>
+            Số đậu: <span id="panel-bean">...</span>
+          </div>
+          <div>
+            Số kim cương: <span id="panel-status">...</span>
+          </div>
+          <div>
+            UserID: <span id="panel-UserID">...</span>
+          </div>
+          <div>
+            Trạng thái: <span id="panel-status">...</span>
+          </div>
+          <div class="field has-addons mt-2">
+            <p class="control">
+              <input id=panel-minimum-prize class="input" type="number" placeholder="Prize tối thiểu" value="300000">
+            </p>
+            <div class="control">
+              <button class="button is-success">CHẠY</button>
+            </div>
+            <div class="control">
+              <button class="button is-danger">DỪNG</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
 
-  <!-- ACCOUNT LIST  -->
-  <section id="AccountList" class="p-2">
-    <div class="table-container box">
-      <table id="AccountTable" class="
+    <!-- ACCOUNT LIST  -->
+    <section id="AccountList" class="p-2">
+      <div class="table-container box">
+        <table id="AccountTable" class="
       table counter parent sortable is-bordered is-striped is-hoverable is-fullwidth is-narrow
       ">
-        <thead class="has-background-warning">
-          <tr class="">
-            <th></th>
-            <th>UserName</th>
-            <th>Đậu</th>
-            <th>Trạng thái</th>
-          </tr>
-        </thead>
-        <tbody>
-        </tbody>
-      </table>
-    </div>
+          <thead class="has-background-warning">
+            <tr class="">
+              <th></th>
+              <th>UserName</th>
+              <th>Đậu</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </section>
-
 
 </body>
 <script src="web/dashboard.js"></script>

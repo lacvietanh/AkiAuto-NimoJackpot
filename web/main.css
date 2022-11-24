@@ -13,15 +13,55 @@ thead {
 }
 
 /* CUSTOM APP TITLE BAR  */
-#titleBar {
+html {
+  overflow-y: hidden;
+}
+#APP_TITLEBAR {
   -webkit-app-region: drag;
   -webkit-user-select: none;
   display: flex;
-  height: 40px;
+  justify-content: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 30px;
+  z-index: 9999;
+  /* border-radius: 7px 7px 0 0; */
+  color: #eee;
+  background-color: #363636;
+}
+#APP_BODY {
+  margin-top: 30px;
+  padding-bottom: 30px;
+  height: 100vh;
+  overflow-y: scroll;
+  background-color: #363636;
+}
+#APP_TITLEBAR .right {
+  padding: 3px 7px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: #4448;
+  min-width: 170px;
+  height: 30px;
+  overflow: hidden;
+  display: flex;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#APP_TITLEBAR .right button {
+  margin: 0 2px;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 2px 5px;
+  height: 22px;
 }
 .trafficLight {
   position: absolute;
-  top: 8px;
+  top: 5px;
   left: 8px;
 }
 .trafficLight button {
@@ -46,12 +86,12 @@ thead {
   background-color: #28c941;
 }
 /* ELEMENTS */
-.panel-info{
+.panel-info {
   height: 150px;
   overflow-y: auto;
 }
-#AccountList .table-container{
-  max-height: 50vh;
+#AccountList .table-container {
+  max-height: 500px;
   overflow-y: auto;
 }
 td.accSelector {
