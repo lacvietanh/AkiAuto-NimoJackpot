@@ -2,7 +2,7 @@
 const { app, BrowserWindow } = require('electron');
 const Main = require('electron/main');
 const path = require('path')
-const ssList = [] // sessions list 
+const ssList = {} // sessions list {id:{name;color}}
 
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
@@ -23,7 +23,17 @@ function splashWindow() {
   return sw
 }
 
-function newGameWindow(ssid = 1, bgcolor = "#888") {
+function newGameWindow(ssid = 1) {
+  let bgcolor
+  let id = `ss${ssid}`
+  if (ssList[id]) {
+    bgcolor = ssList[id]['color']
+  } else {
+    bgcolor = randomHexColor();
+    ssList[id] = id
+    ssList[id]['name'] = id //For DISPLAY in dashboard, will change to UserName
+    ssList[id]['color'] = bgcolor
+  }
   let wd = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
@@ -39,13 +49,14 @@ function newGameWindow(ssid = 1, bgcolor = "#888") {
       partition: 'ss' + ssid,
       preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
     }
-  });
-  let c = ssList.length // count GameWindow
+  })
   wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+  let c = BrowserWindow.getAllWindows().length - 3 // count GameWindow
+  console.log(c);
   wd.once('ready-to-show', () => {
-    wd.webContents.openDevTools({ mode: 'bottom' })
-    wd.setPosition(c * 25, c * 25, true)
     wd.show()
+    wd.setPosition(c * 25, c * 15, true)
+    wd.webContents.openDevTools({ mode: 'bottom' })
   })
   return wd;
 }
@@ -66,18 +77,15 @@ app.whenReady().then(() => {
     }
   })
   MainWindow.loadFile('web/dashboard.html');
-  //Create first game window (session 1)
-  let bgcolor = randomHexColor();
-  let s = newGameWindow(1, bgcolor);
-  // log session info to manage 
-  ssList.push({
-    ssid: "ss1", ssname: "ss1", sscolor: bgcolor
-  });
+
+  let ss1 = newGameWindow(1)
 
   MainWindow.once('ready-to-show', () => {
     setTimeout(() => {
       splashWd.destroy()
+      ss1.show()
       MainWindow.show()
+      MainWindow.focus()
     }, 2000);
   });
 
@@ -86,6 +94,9 @@ app.whenReady().then(() => {
 
   app.on('activate', () => {    // For macOS
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
+  })
+  app.on('session-created', (ss) => {
+    console.log(ss)
   })
 })
 app.on('window-all-closed', () => {
