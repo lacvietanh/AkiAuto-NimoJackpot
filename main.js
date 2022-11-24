@@ -22,7 +22,23 @@ function splashWindow() {
   sw.loadFile('web/splash.html')
   return sw
 }
-
+function createMainWindow() {
+  let mw = new BrowserWindow({
+    width: 540, minWidth: 500,
+    height: 600, minHeight: 309,
+    show: false,
+    transparent: true,
+    frame: false,
+    icon: path.join(__dirname, 'icon.ico'),
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false,
+      partition: 'main'
+    }
+  })
+  mw.loadFile('web/dashboard.html');
+  return mw
+}
 function newGameWindow(ssid = 1) {
   let bgcolor
   let id = `ss${ssid}`
@@ -63,21 +79,7 @@ function newGameWindow(ssid = 1) {
 
 app.whenReady().then(() => {
   splashWd = splashWindow()
-  MainWindow = new BrowserWindow({
-    width: 540, minWidth: 500,
-    height: 600, minHeight: 309,
-    show: false,
-    transparent: true,
-    frame: false,
-    icon: path.join(__dirname, 'icon.ico'),
-    webPreferences: {
-      nodeIntegration: true,
-      contextIsolation: false,
-      partition: 'main'
-    }
-  })
-  MainWindow.loadFile('web/dashboard.html');
-
+  MainWindow = createMainWindow()
   let ss1 = newGameWindow(1)
 
   MainWindow.once('ready-to-show', () => {
@@ -90,10 +92,8 @@ app.whenReady().then(() => {
   });
 
 
-
-
   app.on('activate', () => {    // For macOS
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
   })
   app.on('session-created', (ss) => {
     console.log(ss)
