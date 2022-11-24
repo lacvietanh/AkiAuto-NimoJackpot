@@ -40,6 +40,7 @@ function createMainWindow() {
   return mw
 }
 function newGameWindow(ssid = 1) {
+  let c = BrowserWindow.getAllWindows().length - 2 // count GameWindow
   let bgcolor
   let id = `ss${ssid}`
   if (ssList[id]) {
@@ -67,8 +68,6 @@ function newGameWindow(ssid = 1) {
     }
   })
   wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-  let c = BrowserWindow.getAllWindows().length - 3 // count GameWindow
-  console.log(c);
   wd.once('ready-to-show', () => {
     wd.show()
     wd.setPosition(c * 25, c * 15, true)
@@ -93,7 +92,8 @@ app.whenReady().then(() => {
 
 
   app.on('activate', () => {    // For macOS
-    if (BrowserWindow.getAllWindows().length === 0) createMainWindow()
+    let c = BrowserWindow.getAllWindows().length
+    if (c === 0) createMainWindow().show()
   })
   app.on('session-created', (ss) => {
     console.log(ss)
@@ -108,6 +108,3 @@ app.on('window-all-closed', () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
-
-
-// win = this.webview.openDevTools({ mode: 'detach' });
