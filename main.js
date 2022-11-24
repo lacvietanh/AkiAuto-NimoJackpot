@@ -7,18 +7,21 @@ const ssList = [] // sessions list
 function randomHexColor() {
   return Math.floor(Math.random() * 16777215).toString(16)
 }
+
 function splashWindow() {
-  return new BrowserWindow({
+  let sw = new BrowserWindow({
     width: 500, height: 309,
     transparent: true,
     frame: false,
     alwaysOnTop: true,
     webPreferences: {
-      // nodeIntegration: true,
-      preload: path.join(__dirname, 'splas-preload.js')
+      preload: path.join(__dirname, 'web/splash-preload.js')
     }
-  });
+  })
+  sw.loadFile('web/splash.html')
+  return sw
 }
+
 function newGameWindow(ssid = 1, bgcolor = "#888") {
   let wd = new BrowserWindow({
     width: 540, minWidth: 540,
@@ -42,8 +45,6 @@ function newGameWindow(ssid = 1, bgcolor = "#888") {
 
 app.whenReady().then(() => {
   splashWd = splashWindow()
-  splashWd.loadFile('splash.html')
-
   MainWindow = new BrowserWindow({
     width: 540, minWidth: 500,
     height: 600, minHeight: 309,
@@ -56,7 +57,7 @@ app.whenReady().then(() => {
       partition: 'main'
     }
   })
-  MainWindow.loadFile('main.html');
+  MainWindow.loadFile('web/dashboard.html');
   MainWindow.setBackgroundColor('#FF000088'); //test
 
   MainWindow.once('ready-to-show', () => {
