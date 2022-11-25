@@ -1,6 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron')
-// const { ipcRenderer } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain } = require('electron')
 const path = require('path')
 const fs = require('fs')
 var ssList = {} // sessions list, example: {'ss1': {name:'ss1', color: '#fff'}}
@@ -21,7 +20,7 @@ function createSplashWindow() {
     width: 809, height: 500,
     transparent: true,
     frame: false,
-    // resizable: false,
+    resizable: false,
     alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'web/splash-preload.js')
@@ -41,7 +40,8 @@ function createHomeWindow() {
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'web/dashboard-preload.js'),
       partition: 'home'
     }
   })
@@ -53,7 +53,7 @@ function createHomeWindow() {
   return Hwin
 }
 function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
-  let c = BrowserWindow.getAllWindows().length - 1 // count GameWindow
+  let c = BrowserWindow.getAllWindows().length - 2 // count GameWindow
   let Gwin = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
@@ -63,7 +63,7 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
     icon: path.join(__dirname, 'icon.ico'),
     backgroundColor: bgcolor,
     webPreferences: {
-      nodeIntegration: false,
+      nodeIntegration: true,
       contextIsolation: false,
       partition: ssid,
       preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
@@ -71,14 +71,17 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
   })
   Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
   Gwin.setPosition(c * 50, c * 25, true)
+  Gwin.once('did-finish-load', () => {
+    Gwin.webContents.openDevTools()
+  })
   return Gwin;
 }
 function newGameSs(ssid) {
   let bgcolor, z
   let id = `ss${ssid}`
   console.log('creating newGameSs:', id)
-  if (ObjEmpty(ssList)) {
-    console.log("ssList empty! Creating... ");
+  if (!ssList[`${id}`]) {
+    console.log(`ssList['${id}'] empty! Creating... `);
     bgcolor = randomHexColor();
     ssList[`${id}`] = {} // example: {ss1: {name: "ss1", color: "#fff"}}
     ssList[`${id}`].name = id //For DISPLAY in dashboard, will change to UserName
@@ -87,6 +90,7 @@ function newGameSs(ssid) {
     console.log(`After ss created, saving....| ssList=(${Object.keys(ssList).length}): `, ssList);
     localData.save('gameSessions', JSON.stringify(ssList))
   } else {
+    console.log("ssList exist! Re-creating... ");
     bgcolor = ssList[`${id}`]['color']
     console.log("Creating newGameWindow with EXIST ssid: ", id, ", bgColor: ", bgcolor);
   }
@@ -129,13 +133,12 @@ app.whenReady().then(() => {
       splashWd.destroy()
       HomeWd.show()
       HomeWd.webContents.openDevTools({ mode: 'detach' })
-      gw.webContents.openDevTools({ mode: 'bottom' })
     })
   })
 
-  // ipcRenderer.on('newSs', () => {
-  //   newGameSs(Object.keys(ssList).length + 1)
-  // })
+  ipcMain.on('newSs', () => {
+    newGameSs(Object.keys(ssList).length + 1)
+  })
 
 
   app.on('activate', () => {    // For macOS
