@@ -1,3 +1,7 @@
+html,
+body {
+  -webkit-user-select: none;
+}
 @keyframes fadein {
   from {
     opacity: 0;
