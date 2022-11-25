@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
+const fs = require('fs')
 var ssList = {} // sessions list, example: {'ss1': {name:'ss1', color: '#fff'}}
 var HomeWd = splashWd = {} // for localData call "save"
 
@@ -39,7 +40,7 @@ function createHomeWindow() {
   mw.loadFile('web/dashboard.html');
   mw.once('ready-to-show', () => {
     mw.focus()
-    mw.webContents.openDevTools({ mode: 'bottom' })
+    mw.webContents.openDevTools({ mode: 'detach' })
   })
   return mw
 }
@@ -60,7 +61,6 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
       preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
     }
   })
-  // wd.blur()
   wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
   wd.once('ready-to-show', () => {
     wd.setPosition(c * 25, c * 15, true)
@@ -72,8 +72,7 @@ function newGameSs(ssid) {
   let id = `ss${ssid}`
   let bgcolor
   // try load session list from local data to variable:
-  // ssList example: {'ss1': {name:'ss1', color: '#fff'}}
-  ssList = localData.load('gameSessions') || {}
+  localData.load('gameSessions', ssList)
   if (ssList[id]) {
     bgcolor = ssList[id]['color']
     console.log(`Create newGameWindow with EXIST ssid: ${id}, bgColor: ${bgcolor}`);
@@ -84,23 +83,25 @@ function newGameSs(ssid) {
     ssList[`${id}`].name = id //For DISPLAY in dashboard, will change to UserName
     ssList[`${id}`].color = bgcolor
     console.log(`Create newGameWindow with NEW ssid: ${id}, bgColor: ${bgcolor}`);
-    // console.log(`ssList.${id}: ` + JSON.stringify(ssList[`${id}`])); //debug
     console.log(`ssList: ` + JSON.stringify(ssList));
-    localData.save('gameSessions', `'${ssList.id}'`)
+    console.log(`exec => localData.save('gameSessions', ssList[\`${id}\`])`)
+    localData.save('gameSessions', ssList[`${id}`])
   }
   return newGameWindow(id, bgcolor)
 }
 class localData {
   // must run after HomeWd created. // HomeWd = createHomeWindow()
-  static load(dtKey) {
+  static load(dtKey, variableToAssign) {
+    let v = variableToAssign;
     HomeWd.webContents
-      .executeJavaScript(`localStorage.${dtKey}`, true)
+      .executeJavaScript(`localStorage.getItem('${dtKey}')`, true)
       .then(result => {
         if (result) {
           console.log(`localData Loaded! Key: ${dtKey}, Value: ${result}`)
-          return result
+          v = resultl; return v;
         } else {
           console.log(`localData not Found! Key: ${dtKey}, Value: ${result}`)
+          v = false; return v;
         }
       });
   }
@@ -117,12 +118,12 @@ app.whenReady().then(() => {
   //////////////////// START APP HERE ////////////////////////
   splashWd = createSplashWindow()
   HomeWd = createHomeWindow()
+  // HomeWd.webContents.executeJavaScript(`localStorage.gameSessions`, true)
   let ss1 = newGameSs(1)
 
   ss1.once('ready-to-show', () => {
     splashWd.destroy()
     HomeWd.show()
-    // MainWin.focus()
     // console.log(`mainWindow session: ${MainWin.webContents.session}`)
 
   });

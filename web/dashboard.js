@@ -1,4 +1,4 @@
-function $(id) {
+function $id(id) {
   return document.getElementById(id);
 }
 function $qs(s) {
@@ -45,6 +45,6 @@ function selectAcc(td) {
 }
 panel = class {
   static update(td) {
-    $('panel-UserName').innerHTML = td.innerHTML;
+    $id('panel-UserName').innerHTML = td.innerHTML;
   }
 }
