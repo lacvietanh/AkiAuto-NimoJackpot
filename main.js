@@ -1,8 +1,7 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow } = require('electron');
-const Main = require('electron/main');
+const { app, BrowserWindow } = require('electron')
 const path = require('path')
-const ssList = {} // sessions list {id:{name;color}}
+var ssList = {} // sessions list, example: {'ss1': {name:'ss1', color: '#fff'}}
 var HomeWd = splashWd = {} // for localData call "save"
 
 function randomHexColor() {
@@ -73,42 +72,43 @@ function newGameSs(ssid) {
   let id = `ss${ssid}`
   let bgcolor
   // try load session list from local data to variable:
-  let x = localData('load', 'gameSessions')
-  if (x) {
-    console.log('found session List in HomeWindow data', x)
-    ssList = x
-  }
+  // ssList example: {'ss1': {name:'ss1', color: '#fff'}}
+  ssList = localData.load('gameSessions') || {}
   if (ssList[id]) {
     bgcolor = ssList[id]['color']
     console.log(`Create newGameWindow with EXIST ssid: ${id}, bgColor: ${bgcolor}`);
   } else {
+    console.log("ssList empty! Creating... ");
     bgcolor = randomHexColor();
-    ssList[id] = id
-    ssList[id]['name'] = id //For DISPLAY in dashboard, will change to UserName
-    ssList[id]['color'] = bgcolor
+    ssList[`${id}`] = {} // final example: {ss1: {name: "ss1", color: "#fff"}}
+    ssList[`${id}`].name = id //For DISPLAY in dashboard, will change to UserName
+    ssList[`${id}`].color = bgcolor
     console.log(`Create newGameWindow with NEW ssid: ${id}, bgColor: ${bgcolor}`);
-    localData('save', 'gameSessions', ssList[id])
+    // console.log(`ssList.${id}: ` + JSON.stringify(ssList[`${id}`])); //debug
+    console.log(`ssList: ` + JSON.stringify(ssList));
+    localData.save('gameSessions', `'${ssList.id}'`)
   }
   return newGameWindow(id, bgcolor)
 }
-function localData(type, dtKey, value) {
+class localData {
   // must run after HomeWd created. // HomeWd = createHomeWindow()
-  if (type == "load") {
+  static load(dtKey) {
     HomeWd.webContents
       .executeJavaScript(`localStorage.${dtKey}`, true)
       .then(result => {
         if (result) {
-          console.log(`Load data value ${result} of key ${dtKey}`)
+          console.log(`localData Loaded! Key: ${dtKey}, Value: ${result}`)
           return result
         } else {
-          console.log(`localData not Found! (key: ${dtKey}, value: ${result}`)
+          console.log(`localData not Found! Key: ${dtKey}, Value: ${result}`)
         }
       });
-  } else if (type == "save") {
+  }
+  static save(dtKey, value) {
     HomeWd.webContents
-      .executeJavaScript(`localStorage.${dtKey}='${value}';`, true)
+      .executeJavaScript(`localStorage.${dtKey}='${value}'`, true)
       .then(result => {
-        console.log(`saved data value ${value} for key ${dtKey}`)
+        console.log(`localData saved! Key: ${dtKey}, Value: ${value}`)
       });
   }
 }
