@@ -1,3 +1,6 @@
+const ipcRenderer = require('electron');
+
+
 function $id(id) {
   return document.getElementById(id);
 }
@@ -46,5 +49,8 @@ function selectAcc(td) {
 panel = class {
   static update(td) {
     $id('panel-UserName').innerHTML = td.innerHTML;
+  }
+  static newSs() {
+    ipcRenderer.send('newSs')
   }
 }

@@ -17,13 +17,11 @@
 
 /* START LOADING FX  */
 .loader {
-  position: absolute;
-  top: calc(50% + 38px);
-  left: calc(50% - 25px);
+  position: relative;
+  top: 30px;
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  perspective: 800px;
 }
 .inner {
   position: absolute;
@@ -111,6 +109,15 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+.splashScr .message {
+  position: absolute;
+  bottom: 120px;
+  left: 0;
+  right: 0;
+  width: fit-content;
+  margin: auto;
+  font-size: 1rem;
 }
 .splashScr .footer {
   position: absolute;
