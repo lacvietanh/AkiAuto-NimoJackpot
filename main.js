@@ -4,6 +4,7 @@ const path = require('path')
 const fs = require('fs')
 var ssList = {} // sessions list, example: {'ss1': {name:'ss1', color: '#fff'}}
 var HomeWd = splashWd = {} // for localData call "save"
+var gameWindows = []
 
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
@@ -87,7 +88,7 @@ function newGameSs(ssid) {
     ssList[`${id}`].name = id //For DISPLAY in dashboard, will change to UserName
     ssList[`${id}`].color = bgcolor
     console.log(`Create session with data:`, ssList[`${id}`]);
-    console.log(`After ss created, saving....| ssList=(${Object.keys(ssList).length}): `, ssList);
+    // console.log(`After ss created, saving....| ssList=(${Object.keys(ssList).length}): `, ssList);
     localData.save('gameSessions', JSON.stringify(ssList))
   } else {
     console.log("ssList exist! Re-creating... ");
@@ -100,7 +101,7 @@ function newGameSs(ssid) {
 class localData {
   // must run after HomeWd created. // HomeWd = createHomeWindow()
   static load(dtKey, fromLine = 'debugLine') {
-    console.log(106, 'localData: Loading ', dtKey)
+    // console.log(103, 'localData: Loading ', dtKey)
     HomeWd.webContents
       .executeJavaScript(`localStorage.getItem('${dtKey}')`, true)
       .then(rs => {
@@ -114,11 +115,11 @@ class localData {
       })
   }
   static save(dtKey, value) {
-    console.log(120, 'localData: Saving data.. ', dtKey, '=', value)
+    // console.log(117, 'localData: Saving data.. ', dtKey, '=', value)
     HomeWd.webContents
       .executeJavaScript(`localStorage.${dtKey}='${value}'`, true)
       .then(rs => {
-        console.log(124, 'localData saved! Key: ', dtKey, " Value: ", value)
+        console.log(121, 'localData saved! Key: ', dtKey, " Value: ", value)
       });
   }
 }

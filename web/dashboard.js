@@ -13,8 +13,9 @@ function addRow(x) {
   document.querySelector('#AccountTable tbody').innerHTML += /*html*/`
       <tr>
       <td class="counter child"></td>
-      <td class="accSelector" onclick="selectAcc(this)">${x.UserName}</td>
-      <td>${x.Bean}</td>
+      <td class="accSelector" onclick="selectAcc(this)">${x.username}</td>
+      <td>${x.ssid}</td>
+      <td>${x.bean}</td>
       <td>${x.status}</td>
       </tr>
     `;
@@ -41,17 +42,14 @@ menu = class {
 
 window.addEventListener('DOMContentLoaded', () => {
   let data = [
-    { UserName: "vua cỏ", Bean: "37000", status: "Running" },
-    { UserName: "ongvua", Bean: "270k", status: "Running" },
-    { UserName: "nguyen", Bean: "523k", status: "Waiting" },
-    { UserName: "hoa", Bean: "523k", status: "Waiting" },
-    { UserName: "binh", Bean: "523k", status: "Waiting" },
-    { UserName: "nimo2020145", Bean: "523k", status: "Waiting" },
-    { UserName: "tranhung", Bean: "523k", status: "Waiting" },
-    { UserName: "NguyenHang", Bean: "10000", status: "Running" },
-    { UserName: "QuocViet", Bean: "0", status: "Idle" },
-    { UserName: "BaoPhuong", Bean: "1.3M", status: "Running" },
-    { UserName: "LacAnh", Bean: "50k", status: "Running" },
+    { ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+    { ssid: "ss02", username: "nguyen", bean: "523k", status: "Waiting" },
+    { ssid: "ss02", username: "binh", bean: "523k", status: "Waiting" },
+    { ssid: "ss04", username: "nimo2020145", bean: "523k", status: "Waiting" },
+    { ssid: "ss05", username: "NguyenHang", bean: "10000", status: "Running" },
+    { ssid: "ss06", username: "QuocViet", bean: "0", status: "Idle" },
+    { ssid: "ss07", username: "BaoPhuong", bean: "1.3M", status: "Running" },
+    { ssid: "ss08", username: "LacAnh", bean: "50k", status: "Running" },
   ]
   data.forEach((row) => { addRow(row) });
 })

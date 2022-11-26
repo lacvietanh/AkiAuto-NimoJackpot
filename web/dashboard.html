@@ -28,7 +28,7 @@
       </p>
     </div>
     <div class="right">
-      <button id=panel-btn-newSs class="button is-success is-small" onclick="menu.newSess()">
+      <button id=panel-btn-newSs class="button is-info is-small" onclick="menu.newSess()">
         NEW SESSION
       </button>
     </div>
@@ -37,12 +37,12 @@
   <section id="APP_BODY" class="">
     <!-- PANNEL  -->
     <section class="p-2">
-      <div id="MainPanel" class="box container pt-1">
+      <div id="MainPanel" class="box container pt-1 has-background-info-light">
         <div class="has-text-centered has-text-weight-bold">
           <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
         </div>
         <!-- TABS  -->
-        <div class="tabs mt-2 is-centered is-boxed">
+        <div class="tabs mt-2 mb-1  is-small">
           <ul>
             <li class="is-active"> <a> <span>Setting</span> </a> </li>
             <li> <a> <span>Logs</span> </a> </li>
@@ -50,10 +50,10 @@
         </div>
         <div class="panel-info">
           <div>
-            Số đậu: <span id="panel-bean">...</span>
+            Đậu: <span id="panel-bean">...</span>
           </div>
           <div>
-            Số kim cương: <span id="panel-status">...</span>
+            Kim cương: <span id="panel-status">...</span>
           </div>
           <div>
             UserID: <span id="panel-UserID">...</span>
@@ -63,13 +63,13 @@
           </div>
           <div class="field has-addons mt-2">
             <p class="control">
-              <input id=panel-minimum-prize class="input" type="number" placeholder="Prize tối thiểu" value="300000">
+              <input id=panel-minimum-prize class="input is-small" type="number" placeholder="Prize tối thiểu" value="300000">
             </p>
             <div class="control">
-              <button class="button is-success">CHẠY</button>
+              <button class="button is-success is-small">CHẠY</button>
             </div>
             <div class="control">
-              <button class="button is-danger">DỪNG</button>
+              <button class="button is-danger is-small">DỪNG</button>
             </div>
           </div>
         </div>
@@ -86,6 +86,7 @@
             <tr class="">
               <th></th>
               <th>UserName</th>
+              <th>Session</th>
               <th>Đậu</th>
               <th>Trạng thái</th>
             </tr>
