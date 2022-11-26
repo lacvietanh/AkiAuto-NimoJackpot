@@ -46,7 +46,7 @@ function createHomeWindow() {
       nodeIntegration: false,
       contextIsolation: false,
       preload: path.join(__dirname, 'web/dashboard-preload.js'),
-      partition: 'home'
+      partition: 'persist:home'
     }
   })
   Hwin.loadFile('web/dashboard.html');
@@ -67,7 +67,7 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: false,
-      partition: ssid,
+      partition: "persist:" + ssid,
       preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
     }
   })
@@ -78,7 +78,7 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
   Gwin.once('ready-to-show', () => {
     Gwin.show()
     Gwin.setPosition(c * 50, c * 45, true)
-    Gwin.webContents.openDevTools()
+    Gwin.webContents.openDevTools({ mode: 'bottom' })
   })
   return Gwin;
 }
@@ -136,7 +136,7 @@ app.whenReady().then(() => {
   HomeWd = createHomeWindow()
   HomeWd.webContents.once('did-finish-load', () => {
     splashWd.webContents.send('mess', 'Đang tải cửa sổ game...')
-    let firstGameWindow = newGameSs(0)
+    let firstGameWindow = newGameSs(1)
     firstGameWindow.webContents.once('did-finish-load', () => {
       splashWd.webContents.send('mess', 'Hoàn tất! Chúc bạn một ngày vui vẻ😉')
       setTimeout(() => {
@@ -153,11 +153,11 @@ app.whenReady().then(() => {
 ipcMain.on('new', (event, mess) => {
   switch (mess) {
     case 'session':
-      let c = gameWindows.length
+      let c = gameWindows.length, s = c + 1
       mainLog(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
-      let w = newGameSs("ss" + c)
-      w.webContents.once('did-finish-load', () => {
-        mainLog(`Tải xong cửa sổ game mới. session id: <b>ss${c}</b>, tổng ${c + 1}`)
+      let wd = newGameSs(s)
+      wd.webContents.once('did-finish-load', () => {
+        mainLog(`Tải xong cửa sổ game mới. session id: <b>ss${s}</b>, tổng ${s}`)
         HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
         HomeWd.focus();
       })
