@@ -26,12 +26,12 @@ function createSplashWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: false, // Muốn page chạy script của preload thì false
-      // devTools: false,
+      devTools: false,
       preload: path.join(__dirname, 'web/splash-preload.js')
     }
   })
   sw.loadFile('web/splash.html')
-  sw.webContents.openDevTools({ mode: 'detach' })
+  // sw.webContents.openDevTools({ mode: 'detach' })
   return sw
 }
 function createHomeWindow() {
@@ -132,56 +132,56 @@ function mainLog(mess) {
 app.whenReady().then(() => {
   //////////////////// START APP HERE ////////////////////////
   splashWd = createSplashWindow()
+  splashWd.webContents.send('mess', 'Đang tải bảng điều khiển...')
   HomeWd = createHomeWindow()
-  HomeWd.once('ready-to-show', () => {
+  HomeWd.webContents.once('did-finish-load', () => {
+    splashWd.webContents.send('mess', 'Đang tải cửa sổ game...')
     let firstGameWindow = newGameSs(0)
     firstGameWindow.webContents.once('did-finish-load', () => {
+      splashWd.webContents.send('mess', 'Hoàn tất! Chúc bạn một ngày vui vẻ😉')
       setTimeout(() => {
-        // splashWd.destroy()
+        splashWd.destroy()
         HomeWd.show()
       }, 1700)
-      // HomeWd.webContents.openDevTools({ mode: 'detach' })
     })
   })
 
 
-  ////////////////////////  IPC AREA 
-  ipcMain.on('new', (event, mess) => {
-    // let webContents = event.sender
-    // const senderWd = BrowserWindow.fromWebContents(webContents)
-    // senderWd.setTitle(title) // do something with sender window
-    switch (mess) {
-      case 'session':
-        mainLog('Đang mở cửa sổ game mới...')
-        let ssId = 'ss' + gameWindows.length
-        let w = newGameSs(ssId)
-        w.webContents.once('did-finish-load', () => {
-          mainLog(`Đã mở cửa sổ game mới. session id: <b>${ssId}</b>`)
-          HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
-          HomeWd.focus();
-        })
-        break;
-      default: console.log('ipc received "new" but', mess, 'not defined yet!')
-        break;
-    }
-  })
-  ipcMain.on('log', (event, mess) => {
-    console.log(mess)
-  })
-  ipcMain.on('get', (event, mess) => {
-    switch (mess) {
-      case 'appInfo':
-        let senderWd = BrowserWindow.fromWebContents(event.sender)
-        let appInfo = {
-          appBrand: 'AkiNet', appName: app.getName(), appVersion: app.getVersion()
-        }
-        senderWd.send('appInfo', appInfo) //respond to every window asker
-        break
-      default: console.log('ipc received "get" but', mess, 'not defined yet!')
-    }
-  })
 })
 
+////////////////////////  IPC AREA 
+ipcMain.on('new', (event, mess) => {
+  switch (mess) {
+    case 'session':
+      let c = gameWindows.length
+      mainLog(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
+      let w = newGameSs("ss" + c)
+      w.webContents.once('did-finish-load', () => {
+        mainLog(`Tải xong cửa sổ game mới. session id: <b>ss${c}</b>, tổng ${c + 1}`)
+        HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
+        HomeWd.focus();
+      })
+      break;
+    default: console.log('ipc received "new" but', mess, 'not defined yet!')
+      break;
+  }
+})
+ipcMain.on('log', (event, mess) => {
+  console.log(mess)
+})
+ipcMain.on('get', (event, mess) => {
+  switch (mess) {
+    case 'appInfo':
+      let senderWd = BrowserWindow.fromWebContents(event.sender)
+      let appInfo = {
+        appBrand: 'AkiNet', appName: app.getName(), appVersion: app.getVersion()
+      }
+      senderWd.send('appInfo', appInfo) //respond to every window asker
+      break
+    default: console.log('ipc received "get" but', mess, 'not defined yet!')
+  }
+})
+////////////////////////  END IPC AREA
 
 app.on('activate', () => {    // For macOS
   let c = BrowserWindow.getAllWindows().length
