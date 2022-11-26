@@ -1,5 +1,3 @@
-const { ipcMain } = require("electron");
-
 // AkiApp-base-js:
 function $id(id) { return document.getElementById(id); }
 function $qs(s) { return document.querySelector(s); }

@@ -12,9 +12,9 @@ ipcRenderer.on('removeLoading', (event, EleId) => {
 ipcRenderer.on('mainLog', (event, mess) => {
   mainLog(mess)
 })
-addEventListener('load', () => {
-  console.log('loaded ! from preload');
-  mainLog('loaded! from preload using page function')
-  ipc.send('log', 'loaded! from preload to main process!')
+addEventListener('load', () => { //test
+  // console.log('loaded ! from preload');
+  // mainLog('loaded! from preload using page function')
+  // ipc.send('log', 'loaded! from preload to main process!')
 })
 
