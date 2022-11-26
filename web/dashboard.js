@@ -1,13 +1,9 @@
-function $id(id) {
-  return document.getElementById(id);
-}
-function $qs(s) {
-  return document.querySelector(s);
-}
-function $qsa(a) {
-  return document.querySelectorAll(a);
-}
-
+// AkiApp-base-js:
+function $id(id) { return document.getElementById(id); }
+function $qs(s) { return document.querySelector(s); }
+function $qsa(a) { return document.querySelectorAll(a); }
+window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
+window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 
 function addRow(x) {
   document.querySelector('#AccountTable tbody').innerHTML += /*html*/`
@@ -35,8 +31,9 @@ menu = class {
   static updateSelect(td) {
     $id('panel-UserName').innerHTML = td.innerHTML;
   }
-  static newSess() {
-    window.ipc.send('newSs')
+  static newSession(btnCall) {
+    btnCall.classList.add('is-loading')
+    window.ipc.new('session')
   }
 }
 
@@ -53,3 +50,4 @@ window.addEventListener('DOMContentLoaded', () => {
   ]
   data.forEach((row) => { addRow(row) });
 })
+

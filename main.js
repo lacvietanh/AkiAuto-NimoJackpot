@@ -40,7 +40,7 @@ function createHomeWindow() {
     frame: false,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: true,
       preload: path.join(__dirname, 'web/dashboard-preload.js'),
       partition: 'home'
@@ -54,25 +54,28 @@ function createHomeWindow() {
   return Hwin
 }
 function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
-  let c = BrowserWindow.getAllWindows().length - 2 // count GameWindow
   let Gwin = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
-    transparent: true,
     frame: false,
+    show: false,
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
     backgroundColor: bgcolor,
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: false,
       partition: ssid,
       preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
     }
   })
+  let c = gameWindows.length
+  gameWindows.push(Gwin.id)
+  console.log('gameWindows: (', gameWindows.length, '); Ids: ', gameWindows);
   Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-  Gwin.setPosition(c * 50, c * 25, true)
-  Gwin.once('did-finish-load', () => {
+  Gwin.once('ready-to-show', () => {
+    Gwin.show()
+    Gwin.setPosition(c * 50, c * 45, true)
     Gwin.webContents.openDevTools()
   })
   return Gwin;
@@ -88,7 +91,6 @@ function newGameSs(ssid) {
     ssList[`${id}`].name = id //For DISPLAY in dashboard, will change to UserName
     ssList[`${id}`].color = bgcolor
     console.log(`Create session with data:`, ssList[`${id}`]);
-    // console.log(`After ss created, saving....| ssList=(${Object.keys(ssList).length}): `, ssList);
     localData.save('gameSessions', JSON.stringify(ssList))
   } else {
     console.log("ssList exist! Re-creating... ");
@@ -101,7 +103,6 @@ function newGameSs(ssid) {
 class localData {
   // must run after HomeWd created. // HomeWd = createHomeWindow()
   static load(dtKey, fromLine = 'debugLine') {
-    // console.log(103, 'localData: Loading ', dtKey)
     HomeWd.webContents
       .executeJavaScript(`localStorage.getItem('${dtKey}')`, true)
       .then(rs => {
@@ -109,7 +110,7 @@ class localData {
           console.log(111, "localData Loaded! Key:", dtKey, " Value:", rs)
           return rs
         } else {
-          console.log(114, "localData not Found! Key:", dtKey, " Value:", rs, "From line:", fromLine)
+          console.log("localData not Found! Key:", dtKey, " Value:", rs, "From:", fromLine)
           return false
         }
       })
@@ -129,24 +130,41 @@ app.whenReady().then(() => {
   splashWd = createSplashWindow()
   HomeWd = createHomeWindow()
   HomeWd.once('ready-to-show', () => {
-    let gw = newGameSs(0)
-    gw.webContents.once('did-finish-load', () => {
+    let firstGameWindow = newGameSs(0)
+    setTimeout(() => {
       splashWd.destroy()
       HomeWd.show()
+    }, 1000)
+    firstGameWindow.webContents.once('did-finish-load', () => {
       HomeWd.webContents.openDevTools({ mode: 'detach' })
     })
   })
 
-  ipcMain.on('newSs', () => {
-    newGameSs(Object.keys(ssList).length + 1)
+  ipcMain.on('new', (event, mess) => {
+    // let webContents = event.sender
+    // const senderWd = BrowserWindow.fromWebContents(webContents)
+    // senderWd.setTitle(title) // do something with sender window
+    switch (mess) {
+      case 'session':
+        let w = newGameSs('ss' + gameWindows.length)
+        w.webContents.once('did-finish-load', () => {
+          HomeWd.webContents.send('loading-remove', 'panel-btn-newSs')
+          HomeWd.focus();
+        })
+        break;
+      default: console.log('from ipc: new', mess, 'UnDefined!')
+        break;
+    }
   })
 
-
-  app.on('activate', () => {    // For macOS
-    let c = BrowserWindow.getAllWindows().length
-    if (c === 0) createHomeWindow().show()
-  })
 })
+
+
+app.on('activate', () => {    // For macOS
+  let c = BrowserWindow.getAllWindows().length
+  if (c === 0) createHomeWindow().show()
+})
+
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit()
 })

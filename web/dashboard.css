@@ -16,6 +16,9 @@ thead {
 html {
   overflow-y: hidden;
 }
+#APP_TITLEBAR.active {
+  background-color: #2f2f2f;
+}
 #APP_TITLEBAR {
   -webkit-app-region: drag;
   -webkit-user-select: none;
@@ -28,9 +31,8 @@ html {
   right: 0;
   height: 30px;
   z-index: 9999;
-  /* border-radius: 7px 7px 0 0; */
   color: #eee;
-  background-color: #2f2f2f;
+  background-color: #999;
 }
 #APP_BODY {
   margin-top: 30px;
@@ -51,17 +53,21 @@ html {
 #APP_TITLEBAR .right button {
   margin: 0 2px;
   font-size: 12px;
-  /* cursor: pointer; */
   padding: 2px 5px;
   height: 22px;
+  background-color: #999;
+  border: none;
 }
-#APP_TITLEBAR .right button:hover {
-  cursor: pointer;
+#APP_TITLEBAR.active .right button {
+  background-color: #ffe08a;
 }
 .trafficLight {
   position: absolute;
   top: 5px;
   left: 8px;
+}
+#APP_TITLEBAR.active .trafficLight button {
+  opacity: 1;
 }
 .trafficLight button {
   border-radius: 100%;
@@ -74,6 +80,7 @@ html {
   background-color: #ddd;
   position: relative;
   outline: none;
+  opacity: 0.5;
 }
 .trafficLight .close {
   background-color: #ff6159;
