@@ -1,13 +1,20 @@
-function $id(id) { return document.getElementById(id); }
-function $qs(s) { return document.querySelector(s); }
-function $qsa(a) { return document.querySelectorAll(a); }
+const { ipcRenderer } = require('electron')
 
-const { contextBridge, ipcRenderer } = require('electron')
-contextBridge.exposeInMainWorld('ipc', {
-  new: (mess) => ipcRenderer.send('new', mess)
-})
+ipc = class {
+  static send(mess, data) {
+    ipcRenderer.send(mess, data)
+  }
+}
 
-ipcRenderer.on('loading-remove', (event, EleId) => {
-  console.log(event, EleId);
+ipcRenderer.on('removeLoading', (event, EleId) => {
   $id(EleId).classList.remove('is-loading')
 })
+ipcRenderer.on('mainLog', (event, mess) => {
+  mainLog(mess)
+})
+addEventListener('load', () => {
+  console.log('loaded ! from preload');
+  mainLog('loaded! from preload using page function')
+  ipc.send('log', 'loaded! from preload to main process!')
+})
+

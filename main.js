@@ -40,8 +40,8 @@ function createHomeWindow() {
     frame: false,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: true,
+      nodeIntegration: true,
+      contextIsolation: false,
       preload: path.join(__dirname, 'web/dashboard-preload.js'),
       partition: 'home'
     }
@@ -50,7 +50,7 @@ function createHomeWindow() {
   HomeWd = Hwin
   v = localData.load('gameSessions', 49)
   v ? ssList = JSON.parse(v) : null
-  console.log('[After load localData] ssList=', ssList)
+  // console.log('[After load localData] ssList=', ssList)
   return Hwin
 }
 function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
@@ -124,7 +124,9 @@ class localData {
       });
   }
 }
-
+function mainLog(mess) {
+  HomeWd.webContents.send('mainLog', mess)
+}
 app.whenReady().then(() => {
   //////////////////// START APP HERE ////////////////////////
   splashWd = createSplashWindow()
@@ -146,15 +148,21 @@ app.whenReady().then(() => {
     // senderWd.setTitle(title) // do something with sender window
     switch (mess) {
       case 'session':
-        let w = newGameSs('ss' + gameWindows.length)
+        mainLog('Đang mở cửa sổ game mới...')
+        let ssId = 'ss' + gameWindows.length
+        let w = newGameSs(ssId)
         w.webContents.once('did-finish-load', () => {
-          HomeWd.webContents.send('loading-remove', 'panel-btn-newSs')
+          mainLog(`Đã mở cửa sổ game mới. session id: <b>${ssId}</b>`)
+          HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
           HomeWd.focus();
         })
         break;
       default: console.log('from ipc: new', mess, 'UnDefined!')
         break;
     }
+  })
+  ipcMain.on('log', (event, mess) => {
+    console.log(mess)
   })
 
 })

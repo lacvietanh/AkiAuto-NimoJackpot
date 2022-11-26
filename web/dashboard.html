@@ -14,7 +14,7 @@
 <body class="">
 
   <!-- APP TITLE BAR  -->
-  <section id=APP_TITLEBAR class="active">
+  <section id=APP_TITLEBAR class="">
     <div class="left">
       <div class="trafficLight">
         <button class="close" onclick="window.close()">&nbsp;</button>
@@ -23,64 +23,23 @@
       </div>
     </div>
     <div class="has-text-centered p-1">
-      <p id=app-title class="is-size-6">
+      <p id=APP_TITLE class="is-size-6">
         AkiAuto-NimoJackpot
       </p>
     </div>
     <div class="right">
-      <button id=panel-btn-newSs class="button is-small is-rounded" onclick="menu.newSession(this)">
+      <button id=panel-btn-newSs class="button is-rounded is-warning" onclick="menu.newSession(this)">
         NEW SESSION
       </button>
     </div>
   </section>
 
   <section id="APP_BODY" class="">
-    <!-- PANNEL  -->
-    <section class="p-2">
-      <div id="MainPanel" class="box container pt-1 has-background-info-light">
-        <div class="has-text-centered has-text-weight-bold">
-          <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
-        </div>
-        <!-- TABS  -->
-        <div class="tabs mt-2 mb-1  is-small">
-          <ul>
-            <li class="is-active"> <a> <span>Setting</span> </a> </li>
-            <li> <a> <span>Logs</span> </a> </li>
-          </ul>
-        </div>
-        <div class="panel-info">
-          <div>
-            Đậu: <span id="panel-bean">...</span>
-          </div>
-          <div>
-            Kim cương: <span id="panel-status">...</span>
-          </div>
-          <div>
-            UserID: <span id="panel-UserID">...</span>
-          </div>
-          <div>
-            Trạng thái: <span id="panel-status">...</span>
-          </div>
-          <div class="field has-addons mt-2">
-            <p class="control">
-              <input id=panel-minimum-prize class="input is-small" type="number" placeholder="Prize tối thiểu" value="300000">
-            </p>
-            <div class="control">
-              <button class="button is-success is-small">CHẠY</button>
-            </div>
-            <div class="control">
-              <button class="button is-danger is-small">DỪNG</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
     <!-- ACCOUNT LIST  -->
-    <section id="AccountList" class="p-2">
+    <div id="AccountList" class="p-2">
       <div class="table-container box">
         <table id="AccountTable" class="
-      table counter parent sortable is-bordered is-striped is-hoverable is-fullwidth is-narrow
+      table sortable is-bordered is-striped is-hoverable is-fullwidth is-narrow
       ">
           <thead class="has-background-warning">
             <tr class="">
@@ -91,13 +50,54 @@
               <th>Trạng thái</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody class="counter parent">
           </tbody>
         </table>
       </div>
-    </section>
-  </section>
+    </div> <!-- END ACCOUNT LIST  -->
 
+    <!-- PANNEL  -->
+    <div id="MainPanel" class="box container pt-1 m-2 has-background-info-light">
+      <div class="has-text-centered has-text-weight-bold">
+        <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
+      </div>
+      <!-- TABS  -->
+      <div class="tabs mt-0 mb-1 is-small">
+        <ul>
+          <li class="is-active"> <a> <span>Setting</span> </a> </li>
+          <li> <a> <span>Logs</span> </a> </li>
+        </ul>
+      </div>
+      <div class="panel-info">
+        <div>
+          Đậu: <span id="panel-bean">...</span>
+        </div>
+        <div>
+          Kim cương: <span id="panel-status">...</span>
+        </div>
+        <div>
+          UserID: <span id="panel-UserID">...</span>
+        </div>
+        <div>
+          Trạng thái: <span id="panel-status">...</span>
+        </div>
+        <div class="field has-addons mt-2">
+          <p class="control">
+            <input id=panel-minimum-prize class="input is-small" type="number" placeholder="Prize tối thiểu" value="300000">
+          </p>
+          <div class="control">
+            <button class="button is-success is-small">CHẠY</button>
+          </div>
+          <div class="control">
+            <button class="button is-danger is-small">DỪNG</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section id="APP_LOGS">
+    Welcome!...
+  </section>
 </body>
 
 </html>

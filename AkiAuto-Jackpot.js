@@ -181,17 +181,6 @@ function getNimoNum(x) {
   }); return t;
 }
 menu = class {
-  static ToggleViewAllUser() {
-    let e = document.getElementById('listAllAcc')
-      , b = document.getElementById('ToggleViewAllUser');
-    if (e.classList.contains('show')) {
-      e.classList.remove('show');
-      b.innerHTML = '...';
-    } else {
-      e.classList.add('show');
-      b.innerHTML = 'X';
-    }
-  }
   static getBean() { return getNimoNum(0) }
   static getPrize() { return getNimoNum(1) }
   static getBet() { return getNimoNum(2) }
