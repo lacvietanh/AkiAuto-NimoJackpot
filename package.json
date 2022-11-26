@@ -1,11 +1,11 @@
 {
-  "name": "akiauto-nimojackpot",
+  "name": "aki-nimojackpot",
   "productName": "NimoJackpot",
   "description": "AkiAuto for Nimo Jackpot web game",
   "keywords": [],
   "main": "./main.js",
-  "version": "2022.11.25",
-  "author": "AkiAuto",
+  "version": "2022.11.26",
+  "author": "AkiNet",
   "build": {
     "appId": "com.aki.auto.nimojackpot"
   },

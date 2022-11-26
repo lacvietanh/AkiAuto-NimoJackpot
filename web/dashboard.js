@@ -2,6 +2,7 @@
 function $id(id) { return document.getElementById(id); }
 function $qs(s) { return document.querySelector(s); }
 function $qsa(a) { return document.querySelectorAll(a); }
+function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 

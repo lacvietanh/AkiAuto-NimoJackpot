@@ -24,14 +24,17 @@ function createSplashWindow() {
     resizable: false,
     alwaysOnTop: true,
     webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: false, // Muốn page chạy script của preload thì false
+      // devTools: false,
       preload: path.join(__dirname, 'web/splash-preload.js')
     }
   })
   sw.loadFile('web/splash.html')
+  sw.webContents.openDevTools({ mode: 'detach' })
   return sw
 }
 function createHomeWindow() {
-  let v
   let Hwin = new BrowserWindow({
     width: 600, minWidth: 500,
     height: 800, minHeight: 309,
@@ -40,7 +43,7 @@ function createHomeWindow() {
     frame: false,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
       contextIsolation: false,
       preload: path.join(__dirname, 'web/dashboard-preload.js'),
       partition: 'home'
@@ -48,9 +51,8 @@ function createHomeWindow() {
   })
   Hwin.loadFile('web/dashboard.html');
   HomeWd = Hwin
-  v = localData.load('gameSessions', 49)
+  let v = localData.load('gameSessions', 49)
   v ? ssList = JSON.parse(v) : null
-  // console.log('[After load localData] ssList=', ssList)
   return Hwin
 }
 function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
@@ -116,7 +118,7 @@ class localData {
       })
   }
   static save(dtKey, value) {
-    // console.log(117, 'localData: Saving data.. ', dtKey, '=', value)
+    // console.log(121, 'localData: Saving data.. ', dtKey, '=', value)
     HomeWd.webContents
       .executeJavaScript(`localStorage.${dtKey}='${value}'`, true)
       .then(rs => {
@@ -133,15 +135,17 @@ app.whenReady().then(() => {
   HomeWd = createHomeWindow()
   HomeWd.once('ready-to-show', () => {
     let firstGameWindow = newGameSs(0)
-    setTimeout(() => {
-      splashWd.destroy()
-      HomeWd.show()
-    }, 1000)
     firstGameWindow.webContents.once('did-finish-load', () => {
-      HomeWd.webContents.openDevTools({ mode: 'detach' })
+      setTimeout(() => {
+        // splashWd.destroy()
+        HomeWd.show()
+      }, 1700)
+      // HomeWd.webContents.openDevTools({ mode: 'detach' })
     })
   })
 
+
+  ////////////////////////  IPC AREA 
   ipcMain.on('new', (event, mess) => {
     // let webContents = event.sender
     // const senderWd = BrowserWindow.fromWebContents(webContents)
@@ -157,14 +161,25 @@ app.whenReady().then(() => {
           HomeWd.focus();
         })
         break;
-      default: console.log('from ipc: new', mess, 'UnDefined!')
+      default: console.log('ipc received "new" but', mess, 'not defined yet!')
         break;
     }
   })
   ipcMain.on('log', (event, mess) => {
     console.log(mess)
   })
-
+  ipcMain.on('get', (event, mess) => {
+    switch (mess) {
+      case 'appInfo':
+        let senderWd = BrowserWindow.fromWebContents(event.sender)
+        let appInfo = {
+          appBrand: 'AkiNet', appName: app.getName(), appVersion: app.getVersion()
+        }
+        senderWd.send('appInfo', appInfo) //respond to every window asker
+        break
+      default: console.log('ipc received "get" but', mess, 'not defined yet!')
+    }
+  })
 })
 
 
