@@ -15,7 +15,6 @@ winMan = class {
   static init() {
     let data = [
       { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
     ]
     data.forEach((row) => { winMan.addRow(row) });
   }

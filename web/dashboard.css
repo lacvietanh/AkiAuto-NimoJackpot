@@ -167,7 +167,7 @@ html {
   overflow-y: auto;
 }
 #AccountList .table-container {
-  max-height: 285px;
+  height: 285px;
   overflow-y: auto;
 }
 tr.accSelector {
