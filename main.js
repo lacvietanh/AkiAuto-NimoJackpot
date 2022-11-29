@@ -38,8 +38,8 @@ function createHomeWindow() {
   let Hwin = new BrowserWindow({
     width: 600, minWidth: 500,
     height: 800, minHeight: 309,
-    show: false,
     transparent: true,
+    show: false,
     frame: false,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
@@ -59,8 +59,9 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
   let Gwin = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
-    frame: false,
+    transparent: true,
     show: false,
+    frame: false,
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
     backgroundColor: bgcolor,
@@ -130,11 +131,11 @@ function mainLog(mess) {
   HomeWd.webContents.send('mainLog', mess)
 }
 app.whenReady().then(() => {
-  //////////////////// START APP HERE ////////////////////////
+  ////////////////////////////////////// START APP HERE ///////////////////////////////////////////
   splashWd = createSplashWindow()
   splashWd.webContents.send('mess', 'Đang tải bảng điều khiển...')
   HomeWd = createHomeWindow()
-  HomeWd.webContents.once('did-finish-load', () => {
+  HomeWd.webContents.once('ready-to-show', () => {
     splashWd.webContents.send('mess', 'Đang tải cửa sổ game...')
     let firstGameWindow = newGameSs(1)
     firstGameWindow.webContents.once('did-finish-load', () => {
@@ -142,10 +143,11 @@ app.whenReady().then(() => {
       setTimeout(() => {
         splashWd.destroy()
         HomeWd.show()
+        HomeWd.on('closed', () => { app.quit() })
+        HomeWd.webContents.openDevTools({ mode: 'detach' })
       }, 1700)
     })
   })
-
 
 })
 
@@ -157,9 +159,11 @@ ipcMain.on('new', (event, mess) => {
       mainLog(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
       let wd = newGameSs(s)
       wd.webContents.once('did-finish-load', () => {
-        mainLog(`Tải xong cửa sổ game mới. session id: <b>ss${s}</b>, tổng ${s}`)
-        HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
-        HomeWd.focus();
+        setTimeout(() => {
+          mainLog(`Tải xong cửa sổ game mới. session id: <b>ss${s}</b>, tổng ${s}`)
+          HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
+          HomeWd.focus();
+        }, 3000)
       })
       break;
     default: console.log('ipc received "new" but', mess, 'not defined yet!')
@@ -179,6 +183,17 @@ ipcMain.on('get', (event, mess) => {
       senderWd.send('appInfo', appInfo) //respond to every window asker
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
+  }
+})
+ipcMain.on('action', (event, mess) => {
+  let senderWd = BrowserWindow.fromWebContents(event.sender)
+  switch (mess) {
+    case 'QUITAPP': app.quit()
+      break
+    case 'MINIMIZE': senderWd.minimize()
+      break
+    default: console.log('ipc received "action" but', mess, 'not defined yet!')
+      break
   }
 })
 ////////////////////////  END IPC AREA

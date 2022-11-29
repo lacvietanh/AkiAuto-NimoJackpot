@@ -12,6 +12,13 @@ ipcRenderer.on('removeLoading', (event, EleId) => {
 ipcRenderer.on('mainLog', (event, mess) => {
   mainLog(mess)
 })
+ipcRenderer.on('action', (event, mess) => {
+  switch (mess) {
+    default: console.log('ipc received "action" but', mess, 'not defined yet!')
+      break;
+  }
+})
+
 addEventListener('load', () => { //test
   // console.log('loaded ! from preload');
   // mainLog('loaded! from preload using page function')

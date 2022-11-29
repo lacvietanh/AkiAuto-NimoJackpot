@@ -6,28 +6,44 @@ function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 
-function addRow(x) {
-  $qs('#AccountTable tbody').innerHTML += /*html*/`
+winMan = class {
+  static init() {
+    let data = [
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+    ]
+    data.forEach((row) => { winMan.addRow(row) });
+  }
+  static addRow(x) {
+    $qs('#AccountTable tbody').innerHTML += /*html*/`
     <tr>
     <td class="counter child"></td>
-    <td class="accSelector" onclick="selectAcc(this)">${x.username}</td>
+    <td class="accSelector" onclick="winMan.selectAcc(this)">${x.username}</td>
     <td>${x.ssid}</td>
     <td>${x.bean}</td>
     <td>${x.status}</td>
+    <td>${x.id}</td>
     </tr>
   `;
-}
-
-function selectAcc(td) {
-  if (!td.classList.contains('selected')) {
-    let x = $qs('td.accSelector.selected');
-    x ? x.classList.remove('selected') : null;
-    td.classList.add('selected');
-    menu.updateSelect(td);
-  } else {
-    console.log(`${td.innerHTML} already selected`);
+  }
+  static selectAcc(td) {
+    if (!td.classList.contains('selected')) {
+      let x = $qs('td.accSelector.selected');
+      x ? x.classList.remove('selected') : null;
+      td.classList.add('selected');
+      menu.updateSelect(td);
+    } else {
+      console.log(`${td.innerHTML} already selected`);
+    }
   }
 }
+
 function mainLog(mess) {
   let x = $id('APP_LOGS')
   x.innerHTML += "<br>" + mess
@@ -41,31 +57,16 @@ menu = class {
     btnCall.classList.add('is-loading')
     ipc.send('new', 'session')
   }
+  static AskToQuit() {
+    let rep = window.confirm('QUIT APP?')
+    rep ? window.close() : window.focus()
+  }
+  static Minimize() {
+    ipc.send('action', 'MINIMIZE')
+  }
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-  let data = [
-    { ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-    { ssid: "ss02", username: "nguyen", bean: "523k", status: "Waiting" },
-    { ssid: "ss02", username: "binh", bean: "523k", status: "Waiting" },
-    { ssid: "ss04", username: "nimo2020145", bean: "523k", status: "Waiting" },
-    { ssid: "ss05", username: "NguyenHang", bean: "10000", status: "Running" },
-    { ssid: "ss06", username: "QuocViet", bean: "0", status: "Idle" },
-    { ssid: "ss07", username: "BaoPhuong", bean: "1.3M", status: "Running" },
-    { ssid: "ss08", username: "LacAnh", bean: "50k", status: "Running" },
-    { ssid: "ss06", username: "QuocViet", bean: "0", status: "Idle" },
-    { ssid: "ss07", username: "BaoPhuong", bean: "1.3M", status: "Running" },
-    { ssid: "ss08", username: "LacAnh", bean: "50k", status: "Running" },
-    { ssid: "ss06", username: "QuocViet", bean: "0", status: "Idle" },
-    { ssid: "ss07", username: "BaoPhuong", bean: "1.3M", status: "Running" },
-    { ssid: "ss08", username: "LacAnh", bean: "50k", status: "Running" },
-    { ssid: "ss06", username: "QuocViet", bean: "0", status: "Idle" },
-    { ssid: "ss07", username: "BaoPhuong", bean: "1.3M", status: "Running" },
-    { ssid: "ss08", username: "LacAnh", bean: "50k", status: "Running" },
-    { ssid: "ss06", username: "QuocViet", bean: "0", status: "Idle" },
-    { ssid: "ss07", username: "BaoPhuong", bean: "1.3M", status: "Running" },
-    { ssid: "ss08", username: "LacAnh", bean: "50k", status: "Running" },
-  ]
-  data.forEach((row) => { addRow(row) });
+window.addEventListener('load', () => {
+  winMan.init()
 })
 
