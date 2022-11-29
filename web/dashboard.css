@@ -63,8 +63,12 @@ html {
   left: 0;
   width: 50px;
   height: calc(100vh - 60px);
-  background-color: #222;
   border-radius: 15px 0 0 15px;
+  padding: 5px;
+  background: hsla(252, 40%, 29%, 1);
+  background: linear-gradient(90deg,
+      #4e423b 0%,
+      #222 100%);
 }
 #APP_BODY {
   margin-top: 30px;
@@ -75,6 +79,32 @@ html {
   overflow-y: auto;
   background-color: #555;
   padding: 5px;
+}
+#APP_LOGS {
+  font-family: monospace;
+  font-size: 0.8rem;
+  word-wrap: break-word;
+  color: #6a975e;
+  background-color: #333;
+  position: absolute;
+  width: 100%;
+  height: 3rem;
+  padding: 0.5em;
+  bottom: 30px;
+  border-radius: 15px 15px 0 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#APP_STATUS {
+  background-color: #333;
+  height: 30px;
+  display: flex;
+  border-radius: 0 0 15px 15px;
+  position: fixed;
+  left: 50px;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
 }
 #APP_TITLEBAR button {
   -webkit-app-region: none;
@@ -135,31 +165,24 @@ html {
 .trafficLight .max {
   background-color: #28c941;
 }
-#APP_STATUS {
-  background-color: #333;
-  height: 30px;
-  display: flex;
-  border-radius: 0 0 15px 15px;
-  position: fixed;
-  left: 50px;
-  right: 0;
-  bottom: 0;
-  justify-content: center;
+#APP_SIDEMENU .button:hover {
+  background-color: #c360267a;
 }
-#APP_LOGS {
-  font-family: monospace;
-  font-size: 0.8rem;
-  word-wrap: break-word;
-  color: #6a975e;
-  background-color: #333;
-  position: absolute;
-  width: 100%;
-  height: 3rem;
-  padding: 0.5em;
-  bottom: 30px;
-  border-radius: 15px 15px 0 0;
-  overflow-y: scroll;
-  overflow-x: hidden;
+#APP_SIDEMENU .button {
+  width: 40px;
+  height: 40px;
+  background-color: transparent;
+  border: none;
+  transition: background-color 0.5s;
+}
+#APP_SIDEMENU .button:hover :first-child {
+  filter: invert(100%);
+}
+#APP_SIDEMENU .button img {
+  width: 25px;
+  height: 25px;
+  max-width: fit-content;
+  filter: invert(80%);
 }
 /* ELEMENTS */
 .panel-info {

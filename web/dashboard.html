@@ -16,7 +16,7 @@
   <section id=APP_TITLEBAR class="active">
     <div class="left">
       <div class="trafficLight">
-        <button class="close" onclick="menu.AskToQuit()">&nbsp;</button>
+        <button class="close" onclick="menu.AskToQuit()" title="Thoát Auto">&nbsp;</button>
         <button class="min" onclick="menu.Minimize()">&nbsp;</button>
         <button class="max">&nbsp;</button>
       </div>
@@ -27,14 +27,30 @@
       </p>
     </div>
     <div class="right">
-      <button id=panel-btn-new class="button is-rounded is-warning ">
-          + NEW
+      <button id=panel-btn-new class="button is-rounded is-warning" title="Tạo mới">
+        + NEW
       </button>
     </div>
   </section>
+
   <aside id="APP_SIDEMENU">
-    
+    <a class="button" title="Bật - Tắt" tabindex="1">
+      <img src="/web/svgs/solid/toggle-on.svg">
+    </a>
+    <a class="button" title="Quản lý cửa sổ">
+      <img src="/web/svgs/solid/table.svg">
+    </a>
+    <a class="button" title="Quản lý profile">
+      <img src="/web/svgs/regular/id-card.svg">
+    </a>
+    <a class="button" title="Thiết lập Auto">
+      <img src="/web/svgs/solid/user-gear.svg">
+    </a>
+    <a class="button" title="Tùy chỉnh ứng dụng">
+      <img src="/web/svgs/solid/gear.svg">
+    </a>
   </aside>
+
   <section id="APP_BODY" class="">
     <!-- ACCOUNT LIST  -->
     <div id="AccountList" class="p-1">
