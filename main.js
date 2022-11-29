@@ -1,10 +1,15 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu, ipcMain } = require('electron')
+const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron')
 const path = require('path')
 const fs = require('fs')
+const Store = require('electron-store')
+const appData = new Store()
 var ssList = {} // sessions list, example: {'ss1': {name:'ss1', color: '#fff'}}
 var HomeWd = splashWd = {} // for localData call "save"
 var gameWindows = []
+
+appData.set('test', { name: 'man', col: 'black' })
+console.log(appData.get('test'))
 
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
@@ -51,8 +56,6 @@ function createHomeWindow() {
   })
   Hwin.loadFile('web/dashboard.html');
   HomeWd = Hwin
-  let v = localData.load('gameSessions', 49)
-  v ? ssList = JSON.parse(v) : null
   return Hwin
 }
 function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
@@ -143,9 +146,11 @@ app.whenReady().then(() => {
       setTimeout(() => {
         splashWd.destroy()
         HomeWd.show()
-        HomeWd.on('closed', () => { app.quit() })
-        HomeWd.webContents.openDevTools({ mode: 'detach' })
-      }, 1700)
+        HomeWd.on('close', (e) => {
+          HomeWd.webContents.send('action', 'ask-to-quit')
+          e.preventDefault()
+        })
+      }, 700)
     })
   })
 
@@ -170,30 +175,30 @@ ipcMain.on('new', (event, mess) => {
       break;
   }
 })
-ipcMain.on('log', (event, mess) => {
+ipcMain.on('action', (ev, mess) => {
+  let senderWd = BrowserWindow.fromWebContents(ev.sender)
+  switch (mess) {
+    case 'QUITAPP': console.log('received QUITAPP action!'); HomeWd.destroy(); app.quit();
+      break
+    case 'MINIMIZE': senderWd.minimize()
+      break
+    default: console.log('ipc received "action" but', mess, 'not defined yet!')
+      break
+  }
+})
+ipcMain.on('log', (ev, mess) => {
   console.log(mess)
 })
-ipcMain.on('get', (event, mess) => {
+ipcMain.on('get', (ev, mess) => {
   switch (mess) {
     case 'appInfo':
-      let senderWd = BrowserWindow.fromWebContents(event.sender)
+      let senderWd = BrowserWindow.fromWebContents(ev.sender)
       let appInfo = {
         appBrand: 'AkiNet', appName: app.getName(), appVersion: app.getVersion()
       }
       senderWd.send('appInfo', appInfo) //respond to every window asker
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
-  }
-})
-ipcMain.on('action', (event, mess) => {
-  let senderWd = BrowserWindow.fromWebContents(event.sender)
-  switch (mess) {
-    case 'QUITAPP': app.quit()
-      break
-    case 'MINIMIZE': senderWd.minimize()
-      break
-    default: console.log('ipc received "action" but', mess, 'not defined yet!')
-      break
   }
 })
 ////////////////////////  END IPC AREA
@@ -204,8 +209,10 @@ app.on('activate', () => {    // For macOS
 })
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit()
+  app.quit()
 })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+// On Window if "script cant be run... ", open powershell with administrator:
+// Set - ExecutionPolicy - Scope CurrentUser - ExecutionPolicy Unrestricted

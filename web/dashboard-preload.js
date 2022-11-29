@@ -14,7 +14,9 @@ ipcRenderer.on('mainLog', (event, mess) => {
 })
 ipcRenderer.on('action', (event, mess) => {
   switch (mess) {
-    default: console.log('ipc received "action" but', mess, 'not defined yet!')
+    case 'ask-to-quit': menu.AskToQuit();
+      break;
+    default: console.log('ipc received "action" but', mess, 'not defined yet!');
       break;
   }
 })

@@ -61,6 +61,7 @@ html {
 #APP_TITLEBAR button {
   /* fix window understand as dragable area */
   -webkit-app-region: none;
+  cursor: pointer;
 }
 #APP_TITLEBAR .right {
   padding: 3px 7px;

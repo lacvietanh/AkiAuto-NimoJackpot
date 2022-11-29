@@ -6,17 +6,15 @@ function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 
+appData = {
+  wins: [] //list window: {wdid,ss}
+  , sess: [] //list session: {ssid, sscol, username}
+  , accs: [] //list accounts: {username, bean, ,}
+}
 winMan = class {
   static init() {
     let data = [
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
-      { id: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" }
     ]
     data.forEach((row) => { winMan.addRow(row) });
   }
@@ -24,11 +22,11 @@ winMan = class {
     $qs('#AccountTable tbody').innerHTML += /*html*/`
     <tr>
     <td class="counter child"></td>
+    <td style="background-color:${x.col}">${x.ssid}</td>
     <td class="accSelector" onclick="winMan.selectAcc(this)">${x.username}</td>
-    <td>${x.ssid}</td>
     <td>${x.bean}</td>
     <td>${x.status}</td>
-    <td>${x.id}</td>
+    <td>${x.wdid}</td>
     </tr>
   `;
   }
@@ -59,7 +57,7 @@ menu = class {
   }
   static AskToQuit() {
     let rep = window.confirm('QUIT APP?')
-    rep ? window.close() : window.focus()
+    rep ? ipc.send('action', 'QUITAPP') : window.focus();
   }
   static Minimize() {
     ipc.send('action', 'MINIMIZE')
