@@ -34,20 +34,27 @@
   </section>
 
   <aside id="APP_SIDEMENU">
-    <a class="button" title="Bật - Tắt" tabindex="1">
-      <img src="/web/svgs/solid/toggle-on.svg">
+    <a class="button" href="#section_toggle" title="Bật - Tắt">
+      <img src="svgs/solid/toggle-on.svg">
     </a>
-    <a class="button" title="Quản lý cửa sổ">
-      <img src="/web/svgs/solid/table.svg">
+    <a class="button" href="#section_window" title="Quản lý cửa sổ">
+      <img src="svgs/solid/table.svg">
     </a>
-    <a class="button" title="Quản lý profile">
-      <img src="/web/svgs/regular/id-card.svg">
+    <a class="button" href="#section_profile" title="Quản lý profile">
+      <img src="svgs/regular/id-card.svg">
     </a>
-    <a class="button" title="Thiết lập Auto">
-      <img src="/web/svgs/solid/user-gear.svg">
+    <a class="button" href="#section_config" title="Thiết lập Auto">
+      <img src="svgs/solid/users-gear.svg">
     </a>
-    <a class="button" title="Tùy chỉnh ứng dụng">
-      <img src="/web/svgs/solid/gear.svg">
+    <hr class="m-2 has-background-grey">
+    <a class="button" href="#section_setting" title="Tùy chỉnh ứng dụng">
+      <img src="svgs/solid/gear.svg">
+    </a>
+    <a class="button" href="#section_help" title="Câu hỏi thường gặp">
+      <img src="svgs/regular/circle-question.svg">
+    </a>
+    <a class="button" href="#section_appAbout" title="Thông tin ứng dụng">
+      <img src="svgs/brands/adn.svg">
     </a>
   </aside>
 
@@ -80,26 +87,6 @@
       <div class="has-text-centered has-text-weight-bold">
         <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
       </div>
-      <!-- TABS  -->
-      <div class="tabs mt-0 mb-1 is-small">
-        <ul>
-          <li class="is-active"> <a> <span>Setting</span> </a> </li>
-          <li> <a> <span>Logs</span> </a> </li>
-        </ul>
-      </div>
-      <div class="panel-info">
-        <div>
-          Đậu: <span id="panel-bean">...</span>
-        </div>
-        <div>
-          Kim cương: <span id="panel-status">...</span>
-        </div>
-        <div>
-          UserID: <span id="panel-UserID">...</span>
-        </div>
-        <div>
-          Trạng thái: <span id="panel-status">...</span>
-        </div>
         <div class="field has-addons mt-2">
           <p class="control">
             <input id=panel-minimum-prize class="input is-small" type="number" placeholder="Prize tối thiểu" value="300000">

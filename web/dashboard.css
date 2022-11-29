@@ -79,7 +79,7 @@ html {
   overflow-y: auto;
   background-color: #555;
   padding: 5px;
-  padding-bottom: 50px;
+  padding-bottom: 55px;
 }
 #APP_LOGS {
   font-family: monospace;
@@ -173,8 +173,10 @@ html {
   background-color: transparent;
   border: none;
   transition: background-color 0.5s;
+  user-select: none;
+  -webkit-user-drag: none;
 }
-#APP_SIDEMENU .button:hover {
+#APP_SIDEMENU .button:hover, #APP_SIDEMENU .button.is-active {
   background-color: #c360267a;
 }
 #APP_SIDEMENU .button:hover :first-child {
@@ -183,6 +185,8 @@ html {
 #APP_SIDEMENU .button img {
   width: 25px;
   height: 25px;
+  user-select: none;
+  -webkit-user-drag: none;
   max-width: fit-content;
   filter: invert(80%);
 }
