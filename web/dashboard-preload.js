@@ -9,6 +9,9 @@ ipc = class {
 ipcRenderer.on('removeLoading', (event, EleId) => {
   $id(EleId).classList.remove('is-loading')
 })
+ipcRenderer.on('data', (event, data) => {
+  console.log('received data from window ', event.senderId, '. Data: ', data)
+})
 ipcRenderer.on('mainLog', (event, mess) => {
   mainLog(mess)
 })

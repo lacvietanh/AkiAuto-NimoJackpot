@@ -4,12 +4,9 @@ const path = require('path')
 const fs = require('fs')
 const Store = require('electron-store')
 const appData = new Store()
-var ssList = {} // sessions list, example: {'ss1': {name:'ss1', color: '#fff'}}
-var HomeWd = splashWd = {} // for localData call "save"
+var ssList = appData.get('ssList') || {}
+var HomeWd = splashWd = {}
 var gameWindows = []
-
-appData.set('test', { name: 'man', col: 'black' })
-console.log(appData.get('test'))
 
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
@@ -42,7 +39,7 @@ function createSplashWindow() {
 function createHomeWindow() {
   let Hwin = new BrowserWindow({
     width: 600, minWidth: 500,
-    height: 800, minHeight: 309,
+    height: 800, minHeight: 500,
     transparent: true,
     show: false,
     frame: false,
@@ -81,6 +78,7 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
   Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
   Gwin.once('ready-to-show', () => {
     Gwin.show()
+    HomeWd.webContents.send('data', ssList[ssid])
     Gwin.setPosition(c * 50, c * 45, true)
     Gwin.webContents.openDevTools({ mode: 'bottom' })
   })
@@ -89,46 +87,23 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
 function newGameSs(ssid) {
   let bgcolor, z
   let id = `ss${ssid}`
-  console.log('creating newGameSs:', id)
   if (!ssList[`${id}`]) {
     console.log(`ssList['${id}'] empty! Creating... `);
     bgcolor = randomHexColor();
     ssList[`${id}`] = {} // example: {ss1: {name: "ss1", color: "#fff"}}
     ssList[`${id}`].name = id //For DISPLAY in dashboard, will change to UserName
     ssList[`${id}`].color = bgcolor
-    console.log(`Create session with data:`, ssList[`${id}`]);
-    localData.save('gameSessions', JSON.stringify(ssList))
+    console.log(`Create new session with data:`, ssList[`${id}`]);
+    mainLog(`Create new session with data:` + JSON.stringify(ssList[`${id}`]));
+    appData.set('ssList', (ssList))
   } else {
     console.log("ssList exist! Re-creating... ");
     bgcolor = ssList[`${id}`]['color']
-    console.log("Creating newGameWindow with EXIST ssid: ", id, ", bgColor: ", bgcolor);
+    console.log("Restoring session: ", id, ", bgColor: ", bgcolor)
+    mainLog(`Restoring session: : ${id}, bgColor: ${bgcolor}`)
   }
-  console.log('create newGameWindow!', id, bgcolor)
+  console.log('create new GameWindow with session: ', id, bgcolor)
   return newGameWindow(id, bgcolor)
-}
-class localData {
-  // must run after HomeWd created. // HomeWd = createHomeWindow()
-  static load(dtKey, fromLine = 'debugLine') {
-    HomeWd.webContents
-      .executeJavaScript(`localStorage.getItem('${dtKey}')`, true)
-      .then(rs => {
-        if (rs) {
-          console.log(111, "localData Loaded! Key:", dtKey, " Value:", rs)
-          return rs
-        } else {
-          console.log("localData not Found! Key:", dtKey, " Value:", rs, "From:", fromLine)
-          return false
-        }
-      })
-  }
-  static save(dtKey, value) {
-    // console.log(121, 'localData: Saving data.. ', dtKey, '=', value)
-    HomeWd.webContents
-      .executeJavaScript(`localStorage.${dtKey}='${value}'`, true)
-      .then(rs => {
-        console.log(121, 'localData saved! Key: ', dtKey, " Value: ", value)
-      });
-  }
 }
 function mainLog(mess) {
   HomeWd.webContents.send('mainLog', mess)

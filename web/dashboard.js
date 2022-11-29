@@ -8,36 +8,37 @@ window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('acti
 
 appData = {
   wins: [] //list window: {wdid,ss}
-  , sess: [] //list session: {ssid, sscol, username}
-  , accs: [] //list accounts: {username, bean, ,}
+  , sess: [] //list session: {ssid, sscol}
+  , accs: [] //list accounts: {username, bean, }
 }
 winMan = class {
   static init() {
     let data = [
-      { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" }
+      { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
     ]
     data.forEach((row) => { winMan.addRow(row) });
   }
   static addRow(x) {
     $qs('#AccountTable tbody').innerHTML += /*html*/`
-    <tr>
+    <tr class="accSelector" onclick="winMan.selectAcc(this)">
     <td class="counter child"></td>
-    <td style="background-color:${x.col}">${x.ssid}</td>
-    <td class="accSelector" onclick="winMan.selectAcc(this)">${x.username}</td>
+    <td style="background-color:#${x.col}">${x.ssid}</td>
+    <td>${x.username}</td>
     <td>${x.bean}</td>
     <td>${x.status}</td>
     <td>${x.wdid}</td>
     </tr>
   `;
   }
-  static selectAcc(td) {
-    if (!td.classList.contains('selected')) {
-      let x = $qs('td.accSelector.selected');
+  static selectAcc(tr) {
+    if (!tr.classList.contains('selected')) {
+      let x = $qs('tr.accSelector.selected');
       x ? x.classList.remove('selected') : null;
-      td.classList.add('selected');
-      menu.updateSelect(td);
+      tr.classList.add('selected');
+      menu.updateSelect(tr);
     } else {
-      console.log(`${td.innerHTML} already selected`);
+      console.log(` already selected`);
     }
   }
 }
