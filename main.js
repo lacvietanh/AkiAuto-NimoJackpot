@@ -39,7 +39,7 @@ function createSplashWindow() {
 function createHomeWindow() {
   let Hwin = new BrowserWindow({
     width: 600, minWidth: 500,
-    height: 800, minHeight: 500,
+    height: 500, minHeight: 400,
     transparent: true,
     show: false,
     frame: false,
