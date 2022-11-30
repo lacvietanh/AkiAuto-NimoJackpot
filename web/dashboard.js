@@ -19,14 +19,14 @@ winMan = class {
     data.forEach((row) => { winMan.addRow(row) });
   }
   static addRow(x) {
-    $qs('#AccountTable tbody').innerHTML += /*html*/`
+    $qs('#AccountTable tbody').innerHTML += `
     <tr class="accSelector" onclick="winMan.selectAcc(this)">
-    <td class="counter child"></td>
-    <td style="background-color:#${x.col}">${x.ssid}</td>
-    <td>${x.username}</td>
-    <td>${x.bean}</td>
-    <td>${x.status}</td>
-    <td>${x.wdid}</td>
+      <td class="counter child"></td>
+      <td style="background-color:#${x.col}">${x.ssid}</td>
+      <td>${x.username}</td>
+      <td>${x.bean}</td>
+      <td>${x.status}</td>
+      <td>${x.wdid}</td>
     </tr>
   `;
   }

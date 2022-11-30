@@ -65,8 +65,9 @@ html {
   height: calc(100vh - 60px);
   border-radius: 15px 0 0 15px;
   padding: 5px;
-  background: hsla(252, 40%, 29%, 1);
-  background: linear-gradient(90deg,
+  background-color: #382c68;
+  background:
+    linear-gradient(90deg,
       #4e423b 0%,
       #222 100%);
 }

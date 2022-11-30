@@ -1,5 +1,4 @@
 const { ipcRenderer } = require('electron')
-
 ipc = class {
   static send(mess, data) {
     ipcRenderer.send(mess, data)

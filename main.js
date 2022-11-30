@@ -4,9 +4,9 @@ const path = require('path')
 const fs = require('fs')
 const Store = require('electron-store')
 const appData = new Store()
-var ssList = appData.get('ssList') || {}
+var profiles = appData.get('profiles') || {}
 var HomeWd = splashWd = {}
-var gameWindows = []
+
 
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
@@ -29,7 +29,7 @@ function createSplashWindow() {
       nodeIntegration: false,
       contextIsolation: false, // Muốn page chạy script của preload thì false
       devTools: false,
-      preload: path.join(__dirname, 'web/splash-preload.js')
+      preload: path.join(__dirname, 'web/splash-pre.js')
     }
   })
   sw.loadFile('web/splash.html')
@@ -47,7 +47,7 @@ function createHomeWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: false,
-      preload: path.join(__dirname, 'web/dashboard-preload.js'),
+      preload: path.join(__dirname, 'web/dashboard-pre.js'),
       partition: 'persist:home'
     }
   })
@@ -55,7 +55,7 @@ function createHomeWindow() {
   HomeWd = Hwin
   return Hwin
 }
-function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
+function newGameWindow(accName = 'acc1', bgcolor = "#888") {
   let Gwin = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
@@ -68,7 +68,7 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: false,
-      partition: "persist:" + ssid,
+      partition: "persist:" + accName,
       preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
     }
   })
@@ -78,27 +78,27 @@ function newGameWindow(ssid = 'ss1', bgcolor = "#888") {
   Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
   Gwin.once('ready-to-show', () => {
     Gwin.show()
-    HomeWd.webContents.send('data', ssList[ssid])
+    HomeWd.webContents.send('data', profiles[accName])
     Gwin.setPosition(c * 50, c * 45, true)
     Gwin.webContents.openDevTools({ mode: 'bottom' })
   })
   return Gwin;
 }
-function newGameSs(ssid) {
+function newGameSs(accName) {
   let bgcolor, z
-  let id = `ss${ssid}`
-  if (!ssList[`${id}`]) {
-    console.log(`ssList['${id}'] empty! Creating... `);
+  let id = `ss${accName}`
+  if (!profiles[id]) {
+    console.log(`profiles['${id}'] empty! Creating... `);
     bgcolor = randomHexColor();
-    ssList[`${id}`] = {} // example: {ss1: {name: "ss1", color: "#fff"}}
-    ssList[`${id}`].name = id //For DISPLAY in dashboard, will change to UserName
-    ssList[`${id}`].color = bgcolor
-    console.log(`Create new session with data:`, ssList[`${id}`]);
-    mainLog(`Create new session with data:` + JSON.stringify(ssList[`${id}`]));
-    appData.set('ssList', (ssList))
+    profiles[id] = {} // example: {ss1: {name: "ss1", color: "#fff"}}
+    profiles[id].name = id //For DISPLAY in dashboard, will change to UserName
+    profiles[id].color = bgcolor
+    console.log(`Create new session with data:`, profiles[id]);
+    mainLog(`Create new session with data:` + JSON.stringify(profiles[id]));
+    appData.set('profiles', (profiles))
   } else {
-    console.log("ssList exist! Re-creating... ");
-    bgcolor = ssList[`${id}`]['color']
+    console.log("profiles exist! Re-creating... ");
+    bgcolor = profiles[`${id}`]['color']
     console.log("Restoring session: ", id, ", bgColor: ", bgcolor)
     mainLog(`Restoring session: : ${id}, bgColor: ${bgcolor}`)
   }
