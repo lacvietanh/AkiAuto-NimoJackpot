@@ -1,13 +1,35 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, Menu, ipcMain, dialog } = require('electron')
+const {
+  app, BrowserWindow, Menu, ipcMain,
+  dialog, session, shell
+} = require('electron')
+const USERDATA = app.getPath('userData')
 const path = require('path')
 const fs = require('fs')
 const Store = require('electron-store')
 const appData = new Store()
-var profiles = appData.get('profiles') || {}
+// appData.get('ssList') 
 var HomeWd = splashWd = {}
-
-
+const gameWindowList = []
+const SS = {
+  // the session persist on disk.
+  path: `${USERDATA}/Partitions`,
+  getList: () => fs.readdirSync(SS.path),
+  count: () => SS.getList().length,
+  new: () => {
+    let color = randomHexColor()
+      , id = SS.count()
+    log(`ssList['${id}'] empty! Creating... `)
+    // example: ssList: {ss1: {name: "ss1", color: "#fff"}}
+    ssList[id] = {}
+    ssList[id].name = id // can change soon, may be userName when logged in
+    ssList[id].color = color
+    console.log(`Create new session with data:`, ssList[id]);
+    log(`Created new session with data:` + JSON.stringify(ssList[id]));
+    console.log('create new GameWindow with session: ', id, color)
+  }
+}
+console.log(`SS path: ${SS.path}, SS count: ${SS.count()}, SS list: ${SS.getList()}`)
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
   return '#' + hex;
@@ -37,25 +59,30 @@ function createSplashWindow() {
   return sw
 }
 function createHomeWindow() {
-  let Hwin = new BrowserWindow({
+  let HomeWd = new BrowserWindow({
     width: 600, minWidth: 500,
-    height: 500, minHeight: 400,
-    transparent: true,
+    height: 500, minHeight: 400, maxHeight: 600,
+    resizable: false,
     show: false,
     frame: false,
+    transparent: true,
+    autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: false,
-      preload: path.join(__dirname, 'web/dashboard-pre.js'),
-      partition: 'persist:home'
+      nodeIntegration: false
+      , contextIsolation: false
+      , preload: path.join(__dirname, 'web/dashboard-pre.js')
+      // , partition: 'persist:home'
     }
   })
-  Hwin.loadFile('web/dashboard.html');
-  HomeWd = Hwin
-  return Hwin
+  HomeWd.loadFile('web/dashboard.html')
+  HomeWd.on('close', (e) => {
+    HomeWd.webContents.send('action', 'ask-to-quit')
+    e.preventDefault()
+  })
+  return HomeWd
 }
-function newGameWindow(accName = 'acc1', bgcolor = "#888") {
+function newGameWindow(ssid, color) {
   let Gwin = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
@@ -64,69 +91,52 @@ function newGameWindow(accName = 'acc1', bgcolor = "#888") {
     frame: false,
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
-    backgroundColor: bgcolor,
+    backgroundColor: color,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: false,
-      partition: "persist:" + accName,
-      preload: path.join(__dirname, 'AkiAuto-Jackpot.js')
+      partition: "persist:" + "ss" + ssid,
+      preload: path.join(__dirname, 'pre-jackpot.js')
     }
   })
-  let c = gameWindows.length
-  gameWindows.push(Gwin.id)
-  console.log('gameWindows: (', gameWindows.length, '); Ids: ', gameWindows);
   Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+  let c = gameWindowList.length
+  gameWindowList.push(Gwin.id)
   Gwin.once('ready-to-show', () => {
     Gwin.show()
-    HomeWd.webContents.send('data', profiles[accName])
+    HomeWd.webContents.send('data', 'Created Game Window: ' + JSON.stringify(ssList[ssid])) //report to HomeWd
     Gwin.setPosition(c * 50, c * 45, true)
     Gwin.webContents.openDevTools({ mode: 'bottom' })
   })
+  Gwin.once('closed', () => {
+    gameWindowList.splice(indexOf(Gwin.id), 1)
+  })
   return Gwin;
 }
-function newGameSs(accName) {
-  let bgcolor, z
-  let id = `ss${accName}`
-  if (!profiles[id]) {
-    console.log(`profiles['${id}'] empty! Creating... `);
-    bgcolor = randomHexColor();
-    profiles[id] = {} // example: {ss1: {name: "ss1", color: "#fff"}}
-    profiles[id].name = id //For DISPLAY in dashboard, will change to UserName
-    profiles[id].color = bgcolor
-    console.log(`Create new session with data:`, profiles[id]);
-    mainLog(`Create new session with data:` + JSON.stringify(profiles[id]));
-    appData.set('profiles', (profiles))
-  } else {
-    console.log("profiles exist! Re-creating... ");
-    bgcolor = profiles[`${id}`]['color']
-    console.log("Restoring session: ", id, ", bgColor: ", bgcolor)
-    mainLog(`Restoring session: : ${id}, bgColor: ${bgcolor}`)
-  }
-  console.log('create new GameWindow with session: ', id, bgcolor)
-  return newGameWindow(id, bgcolor)
+function log(mess, sendToMain = true) {
+  console.log(mess)
+  sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
 }
-function mainLog(mess) {
-  HomeWd.webContents.send('mainLog', mess)
-}
+
+
+////////////////////////////////////// START APP HERE ///////////////////////////////////////////
 app.whenReady().then(() => {
-  ////////////////////////////////////// START APP HERE ///////////////////////////////////////////
+  session.fromPartition('ss1').clearStorageData()
+    .then(console.log("cleared!"))
+
   splashWd = createSplashWindow()
   splashWd.webContents.send('mess', 'Đang tải bảng điều khiển...')
   HomeWd = createHomeWindow()
   HomeWd.webContents.once('ready-to-show', () => {
     splashWd.webContents.send('mess', 'Đang tải cửa sổ game...')
-    let firstGameWindow = newGameSs(1)
-    firstGameWindow.webContents.once('did-finish-load', () => {
-      splashWd.webContents.send('mess', 'Hoàn tất! Chúc bạn một ngày vui vẻ😉')
-      setTimeout(() => {
-        splashWd.destroy()
-        HomeWd.show()
-        HomeWd.on('close', (e) => {
-          HomeWd.webContents.send('action', 'ask-to-quit')
-          e.preventDefault()
-        })
-      }, 700)
-    })
+    // let firstGameWindow = newAcc(1)
+    // firstGameWindow.webContents.once('did-finish-load', () => {
+    splashWd.webContents.send('mess', 'Hoàn tất! Chúc bạn một ngày vui vẻ😉')
+    setTimeout(() => {
+      splashWd.destroy()
+      HomeWd.show()
+    }, 700)
+    // })
   })
 
 })
@@ -134,13 +144,13 @@ app.whenReady().then(() => {
 ////////////////////////  IPC AREA 
 ipcMain.on('new', (event, mess) => {
   switch (mess) {
-    case 'session':
+    case 'acc':
       let c = gameWindows.length, s = c + 1
-      mainLog(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
-      let wd = newGameSs(s)
-      wd.webContents.once('did-finish-load', () => {
+      log(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
+      let wd = newAcc(s)
+      wd.webContents.once('dom-ready', () => {
         setTimeout(() => {
-          mainLog(`Tải xong cửa sổ game mới. session id: <b>ss${s}</b>, tổng ${s}`)
+          log(`Tải xong cửa sổ game mới. acc id: <b>acc${s}</b>, tổng ${s}`)
           HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
           HomeWd.focus();
         }, 3000)
@@ -155,7 +165,11 @@ ipcMain.on('action', (ev, mess) => {
   switch (mess) {
     case 'QUITAPP': console.log('received QUITAPP action!'); HomeWd.destroy(); app.quit();
       break
-    case 'MINIMIZE': senderWd.minimize()
+    case 'MINIMIZE':
+      let backup = senderWd.transparent
+      backup ? senderWd.transparent = false : null
+      senderWd.minimize();
+      senderWd.transparent = backup
       break
     default: console.log('ipc received "action" but', mess, 'not defined yet!')
       break
