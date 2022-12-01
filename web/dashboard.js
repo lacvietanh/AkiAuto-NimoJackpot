@@ -6,17 +6,18 @@ function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 
-appData = {
+const APP_LOGS = $id("APP_LOGS")
+const appData = {
   wins: [] //list window: {wdid,ss}
   , sess: [] //list session: {ssid, sscol}
   , accs: [] //list accounts: {username, bean, }
 }
-winMan = class {
+const winMan = class {
   static init() {
     let data = [
       { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
     ]
-    data.forEach((row) => { winMan.addRow(row) });
+    data.forEach((row) => { winMan.addRow(row) })
   }
   static addRow(x) {
     $qs('#AccountTable tbody').innerHTML += `
@@ -43,17 +44,16 @@ winMan = class {
 }
 
 function mainLog(mess) {
-  let x = $id('APP_LOGS')
-  x.innerHTML += "<br>" + mess
-  x.scrollTop = x.scrollHeight
+  APP_LOGS.innerHTML += "<br>" + mess
+  APP_LOGS.scrollTop = APP_LOGS.scrollHeight
 }
 menu = class {
   static updateSelect(td) {
     $id('panel-UserName').innerHTML = td.innerHTML;
   }
-  static newSession(btnCall) {
+  static newAcc(btnCall) {
     btnCall.classList.add('is-loading')
-    ipc.send('new', 'session')
+    ipc.send('new', 'acc')
   }
   static AskToQuit() {
     let rep = window.confirm('QUIT APP?')

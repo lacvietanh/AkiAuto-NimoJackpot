@@ -1,3 +1,4 @@
+// Listen ipc mess from main process:
 const { ipcRenderer } = require('electron')
 ipc = class {
   static send(mess, data) {

@@ -17,8 +17,8 @@
     <div class="left">
       <div class="trafficLight">
         <button class="close" onclick="menu.AskToQuit()" title="Thoát Auto">&nbsp;</button>
-        <button class="min" onclick="menu.Minimize()">&nbsp;</button>
-        <button class="max">&nbsp;</button>
+        <button class="min" onclick="menu.Minimize()" title="Minimize">&nbsp;</button>
+        <button class="max" title="Maximize is disabled">&nbsp;</button>
       </div>
     </div>
     <div class="has-text-centered p-1">
@@ -87,18 +87,18 @@
       <div class="has-text-centered has-text-weight-bold">
         <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
       </div>
-        <div class="field has-addons mt-2">
-          <p class="control">
-            <input id=panel-minimum-prize class="input is-small" type="number" placeholder="Prize tối thiểu" value="300000">
-          </p>
-          <div class="control">
-            <button class="button is-success is-small">CHẠY</button>
-          </div>
-          <div class="control">
-            <button class="button is-danger is-small">DỪNG</button>
-          </div>
+      <div class="field has-addons mt-2">
+        <p class="control">
+          <input id=panel-minimum-prize class="input is-small" type="number" placeholder="Prize tối thiểu" value="300000">
+        </p>
+        <div class="control">
+          <button class="button is-success is-small">CHẠY</button>
+        </div>
+        <div class="control">
+          <button class="button is-danger is-small">DỪNG</button>
         </div>
       </div>
+    </div>
     </div>
   </section>
   <footer id="APP_STATUS" class="">
