@@ -27,9 +27,12 @@ const SS = {
     console.log(`Create new session with data:`, ssList[id]);
     log(`Created new session with data:` + JSON.stringify(ssList[id]));
     console.log('create new GameWindow with session: ', id, color)
-  }
+  },
+  clear: (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
 }
+
 console.log(`SS path: ${SS.path}, SS count: ${SS.count()}, SS list: ${SS.getList()}`)
+
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
   return '#' + hex;
@@ -96,7 +99,7 @@ function newGameWindow(ssid, color) {
       nodeIntegration: false,
       contextIsolation: false,
       partition: "persist:" + "ss" + ssid,
-      preload: path.join(__dirname, 'pre-jackpot.js')
+      preload: path.join(__dirname, 'web/pre-jackpot.js')
     }
   })
   Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
