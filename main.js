@@ -58,8 +58,8 @@ function createSplashWindow() {
 }
 function createHomeWindow() {
   let HomeWd = new BrowserWindow({
-    width: 600, minWidth: 500,
-    height: 500, minHeight: 400, maxHeight: 600,
+    width: 600, 
+    height: 700,
     resizable: false,
     show: false,
     frame: false,

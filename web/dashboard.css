@@ -16,6 +16,9 @@ html {
 .codeFont {
   font-family: monospace;
 }
+.borderNONE {
+  border: none !important;
+}
 .counter.parent {
   counter-reset: countVar;
 }
@@ -59,7 +62,7 @@ thead {
   z-index: 9999;
   color: #eee;
   background-color: #999;
-  border-radius: 15px 100% 0 0;
+  border-radius: 15px 15px 0 0;
 }
 #APP_SIDEMENU {
   -webkit-app-region: drag;
@@ -209,9 +212,10 @@ thead {
 }
 #APP_BODY section.top {
   min-height: 45vh;
+  height: calc(100vh - 300px);
 }
 #APP_BODY section.bottom {
-  min-height: 30vh;
+  height: 175px;
   position: absolute;
   bottom: 85px;
   left: 50px;

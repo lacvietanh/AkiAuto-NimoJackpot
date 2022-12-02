@@ -15,22 +15,28 @@ const appData = {
 const winMan = class {
   static init() {
     let data = [
-      { wid: 1, username: "vua cỏ", color: "#8f5ab2", ssid: "001", pool: "Lớn", bean: "37000" },
+      { wid: 3, username: "vua cỏ", color: "#8f5ab2", ssid: "001", bet: "450", pool: "Nhỏ", bean: "280k" },
+      { wid: 4, username: "vua bài", color: "#324687", ssid: "002", bet: "900", pool: "Nhỏ", bean: "403k" },
+      { wid: 5, username: "vua nghiện", color: "#990840", ssid: "003", bet: "9000", pool: "Lớn", bean: "1.2M" },
+      { wid: 6, username: "vua nghiện", color: "#990840", ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
+      { wid: 7, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
     ]
     data.forEach((row) => { winMan.addRow(row) })
   }
   static addRow(x) {
     $qs('#AccountTable tbody').innerHTML += /*html*/`
-    <tr class="accSelector">
-      <td class="counter child"></td>
-      <td id="window-${x.wid}" class='is-inline-flex'>
+    <tr class="accSelector" >
+      <td class="counter child borderNONE"></td>
+      <td id="window-${x.wid}" class='winID noSort borderNONE'
+      style="display:flex;justify-content:center;">
         <label class="switch">
-          <input type="checkbox" name=${x.wid}>
-        <span class="slider round"></span>
-      </label>
+          <input type="checkbox" name=autoToggle checked>
+          <span class="slider round"></span>
+        </label>
       </td>
       <td class='uname'>${x.username}</td>
       <td class='ss' style="color:${x.color}">${x.ssid}</td>
+      <td class='bet'>${x.bet}</td>
       <td class='pool'>${x.pool}</td>
       <td class='bean'>${x.bean}</td>
     </tr>
