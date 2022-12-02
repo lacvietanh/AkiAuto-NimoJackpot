@@ -34,38 +34,59 @@
   </section>
 
   <aside id="APP_SIDEMENU">
-    <a class="button" href="#section_toggle" title="Bật - Tắt">
-      <img src="svgs/solid/toggle-on.svg">
-    </a>
-    <a class="button" href="#section_window" title="Quản lý cửa sổ">
-      <img src="svgs/solid/clone.svg">
-    </a>
-    <a class="button" href="#section_session" title="Quản lý session">
-      <img src="svgs/regular/rectangle-list.svg">
-    </a>
-    <a class="button" href="#section_config" title="Thiết lập Auto">
-      <img src="svgs/solid/gears.svg">
-    </a>
+    <div class="top">
+      <button class="button" href="#section_toggle" title="Bật - Tắt">
+        <img src="svgs/solid/toggle-on.svg">
+      </button>
+      <!-- <button class="button" href="#section_window" title="Quản lý cửa sổ">
+        <img src="svgs/solid/clone.svg">
+      </button> -->
+      <button class="button" href="#section_session" title="Quản lý session">
+        <img src="svgs/regular/rectangle-list.svg">
+      </button>
+      <button class="button" href="#section_config" title="Thiết lập Auto">
+        <img src="svgs/solid/users-gear.svg">
+      </button>
+    </div>
     <hr class="m-2 has-background-grey">
-    <a class="button" href="#section_appAbout" title="Thông tin ứng dụng">
-      <img src="svgs/brands/adn.svg">
-    </a>
-    <a class="button" href="#section_help" title="Câu hỏi thường gặp">
-      <img src="svgs/regular/circle-question.svg">
-    </a>
-    <a class="button" href="#section_setting" title="Tùy chỉnh ứng dụng">
-      <img src="svgs/solid/gear.svg">
-    </a>
+    <div class="bottom">
+      <button class="button" href="#section_appAbout" title="Thông tin ứng dụng">
+        <img src="svgs/brands/adn.svg">
+      </button>
+      <button class="button" href="#section_help" title="Câu hỏi thường gặp">
+        <img src="svgs/regular/circle-question.svg">
+      </button>
+      <button class="button" href="#section_setting" title="Tùy chỉnh ứng dụng">
+        <img src="svgs/solid/gear.svg">
+      </button>
+      <button class="button" href="#section_setting" title="Tùy chỉnh ứng dụng">
+        <img src="svgs/solid/receipt.svg">
+      </button>
+    </div>
   </aside>
 
+  <!----- APP BODY ----->
   <section id="APP_BODY" class="">
+    <!-- SECTION: TOGGLE  -->
+    <section class="box top" id="section_toggle">
+      <p class="boxtitle">Quản lý cửa sổ</p>
+      <div class="">
+        <label class="switch">
+          <input type="checkbox" checked>
+          <span class="slider round"></span>
+        </label>
+        <label class="switch">
+          <input type="checkbox" >
+          <span class="slider round"></span>
+        </label>
+      </div>
+    </section>
+
     <!-- ACCOUNT LIST  -->
-    <div id="AccountList" class="p-1">
-      <div class="table-container box pt-2">
-        <p class="title is-size-5 mb-2 has-text-centered">Quản lý cửa sổ</p>
-        <table id="AccountTable" class="
-      table sortable is-bordered is-striped is-hoverable is-fullwidth is-narrow
-      ">
+    <section id="AccountList" class="box top">
+      <p class="boxtitle">Quản lý session</p>
+      <div class="table-container">
+        <table id="AccountTable" class="table sortable is-bordered is-striped is-hoverable is-fullwidth is-narrow">
           <thead class="has-background-warning">
             <tr class="">
               <th></th>
@@ -80,31 +101,67 @@
           </tbody>
         </table>
       </div>
-    </div> <!-- END ACCOUNT LIST  -->
+    </section> <!-- END ACCOUNT LIST  -->
 
     <!-- PANNEL  -->
-    <div id="MainPanel" class="box container pt-1 m-1 has-background-info-light">
-      <div class="has-text-centered has-text-weight-bold">
-        <span id="panel-UserName" class="">Chưa chọn tài khoản</span>
-      </div>
-      <div class="field has-addons mt-2">
+    <section id="AUTO_GLOBAL" class="box bottom p-2 pt-5">
+      <p class="boxtitle">Thiết lập Auto Tổng</p>
+      <!-- PRIZE CONFIG  -->
+      <script>
+        function syncSliderAndPrizeTarget(e) {
+          let number = $id('AUTO-PRIZE-TARGET')
+          let slider = $id('AUTO-PRIZE-SLIDER')
+          e === number ? slider.value = number.value : number.value = slider.value;
+        }
+      </script>
+      <div class="field has-addons is-align-items-center has-background-link-light p-2">
         <p class="control">
-          <input id=panel-minimum-prize class="input is-small" type="number" placeholder="Prize tối thiểu" value="300000">
+          <a class="button is-small is-ghost"> Khi thưởng dưới: </a>
         </p>
-        <div class="control">
-          <button class="button is-success is-small">CHẠY</button>
-        </div>
-        <div class="control">
-          <button class="button is-danger is-small">DỪNG</button>
-        </div>
+        <p class="control ml-4 mr-4">
+          <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
+            class="input is-rounded has-background-info has-text-warning has-text-weight-bold has-text-centered is-size-5"
+            onchange="syncSliderAndPrizeTarget(this)">
+          <input type="range" id="AUTO-PRIZE-SLIDER" min="200000" max="5000000" value=500000
+            style="width:100%" oninput="syncSliderAndPrizeTarget(this)">
+        </p>
+        <p class="is-flex is-flex-wrap-wrap" style="min-width: 100px">
+          <label class="m-0 mb-1 radio has-text-link">
+            <input type="radio" name="AUTO-STOP-BEHAVIOR" value="stop" checked> Dừng luôn
+          </label>
+          <label class="m-0 mt-1 radio has-text-link">
+            <input type="radio" name="AUTO-STOP-BEHAVIOR" value="wait"> Chờ lên lại
+          </label>
+        </p>
       </div>
-    </div>
-    </div>
+      <!-- RUN CONFIG  -->
+      <div class="field has-addons">
+        <p class="control">
+          <a class="button is-small is-static"> Cách chạy: </a>
+        </p>
+        <p class="control">
+          <span class="select is-small">
+            <select id="AUTO_CONFIG-PRIZE">
+              <option value="auto">Bấm nút AUTO</option>
+              <option value="spin" disabled>Bấm nút SPIN</option>
+            </select>
+          </span>
+        </p>
+        <p class="control">
+          <input type="text" class="input is-small" readonly style="visibility: hidden">
+        </p>
+        <p class="control">
+          <button class="button is-small is-success">CHẠY HẾT</button>
+        </p>
+        <p class="control">
+          <button class="button is-danger is-small">DỪNG HẾT</button>
+        </p>
+      </div>
+
+    </section>
   </section>
   <footer id="APP_STATUS" class="">
-    <div id="APP_LOGS">
-      Welcome!...
-    </div>
+    <div id="APP_LOGS"> </div>
     <a href="https://toolauto.akivn.net" target="_blank" class="has-text-grey-dark has-text-weight-bold">ToolAuto.AkiVN.net</a>
   </footer>
 </body>

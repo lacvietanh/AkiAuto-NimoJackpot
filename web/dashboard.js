@@ -44,7 +44,8 @@ const winMan = class {
 }
 
 function mainLog(mess) {
-  APP_LOGS.innerHTML += "<br>" + mess
+  let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 19)
+  APP_LOGS.innerHTML += `<br>${time_}  ${mess}`
   APP_LOGS.scrollTop = APP_LOGS.scrollHeight
 }
 menu = class {
@@ -65,6 +66,6 @@ menu = class {
 }
 
 window.addEventListener('load', () => {
-  winMan.init()
+  mainLog('Welcome!')
 })
 
