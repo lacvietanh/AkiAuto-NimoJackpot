@@ -11,15 +11,12 @@ const appData = new Store()
 // appData.get('ssList') 
 var HomeWd = splashWd = {}
 const gameWindowList = []
-const SS = {
-  // the session persist on disk.
-  path: `${USERDATA}/Partitions`,
-  getList: () => fs.readdirSync(SS.path),
-  count: () => SS.getList().length,
-  new: () => {
-    let color = randomHexColor()
-      , id = SS.count()
-    log(`ssList['${id}'] empty! Creating... `)
+const ss = class {  // the session persist on disk.
+  static path = `${USERDATA}/Partitions`
+  static list = () => fs.readdirSync(ss.path)
+  static count = () => ss.getList().length
+  constructor(id = ss.count(), color = randomHexColor()) {
+    log(`Creating new session: ssid=${id}; name=${id}; color=${color}`)
     // example: ssList: {ss1: {name: "ss1", color: "#fff"}}
     ssList[id] = {}
     ssList[id].name = id // can change soon, may be userName when logged in
@@ -27,11 +24,9 @@ const SS = {
     console.log(`Create new session with data:`, ssList[id]);
     log(`Created new session with data:` + JSON.stringify(ssList[id]));
     console.log('create new GameWindow with session: ', id, color)
-  },
-  clear: (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
+  }
+  static clear = (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
 }
-
-console.log(`SS path: ${SS.path}, SS count: ${SS.count()}, SS list: ${SS.getList()}`)
 
 function randomHexColor() {
   let hex = Math.floor(Math.random() * 16777215).toString(16)
@@ -121,12 +116,8 @@ function log(mess, sendToMain = true) {
   sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
 }
 
-
 ////////////////////////////////////// START APP HERE ///////////////////////////////////////////
 app.whenReady().then(() => {
-  session.fromPartition('ss1').clearStorageData()
-    .then(console.log("cleared!"))
-
   splashWd = createSplashWindow()
   splashWd.webContents.send('mess', 'Đang tải bảng điều khiển...')
   HomeWd = createHomeWindow()
