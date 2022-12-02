@@ -15,19 +15,24 @@ const appData = {
 const winMan = class {
   static init() {
     let data = [
-      { wdid: 1, ssid: "ss01", username: "vua cỏ", bean: "37000", status: "Running" },
+      { wid: 1, username: "vua cỏ", color: "#8f5ab2", ssid: "001", pool: "Lớn", bean: "37000" },
     ]
     data.forEach((row) => { winMan.addRow(row) })
   }
   static addRow(x) {
-    $qs('#AccountTable tbody').innerHTML += `
-    <tr class="accSelector" onclick="winMan.selectAcc(this)">
+    $qs('#AccountTable tbody').innerHTML += /*html*/`
+    <tr class="accSelector">
       <td class="counter child"></td>
-      <td style="background-color:#${x.col}">${x.ssid}</td>
-      <td>${x.username}</td>
-      <td>${x.bean}</td>
-      <td>${x.status}</td>
-      <td>${x.wdid}</td>
+      <td id="window-${x.wid}" class='is-inline-flex'>
+        <label class="switch">
+          <input type="checkbox" name=${x.wid}>
+        <span class="slider round"></span>
+      </label>
+      </td>
+      <td class='uname'>${x.username}</td>
+      <td class='ss' style="color:${x.color}">${x.ssid}</td>
+      <td class='pool'>${x.pool}</td>
+      <td class='bean'>${x.bean}</td>
     </tr>
   `;
   }
@@ -67,5 +72,6 @@ menu = class {
 
 window.addEventListener('load', () => {
   mainLog('Welcome!')
+  winMan.init()
 })
 

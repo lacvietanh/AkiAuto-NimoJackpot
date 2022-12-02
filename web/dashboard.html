@@ -70,16 +70,25 @@
     <!-- SECTION: TOGGLE  -->
     <section class="box top" id="section_toggle">
       <p class="boxtitle">Quản lý cửa sổ</p>
-      <div class="">
-        <label class="switch">
-          <input type="checkbox" checked>
-          <span class="slider round"></span>
-        </label>
-        <label class="switch">
-          <input type="checkbox" >
-          <span class="slider round"></span>
-        </label>
+
+      <div class="table-container">
+        <table id="AccountTable" class="table sortable is-striped is-fullwidth">
+          <thead class="has-background-warning">
+            <tr class="">
+              <th></th>
+              <th></th>
+              <th>UserName</th>
+              <th>Session</th>
+              <th>Hũ</th>
+              <th>Đậu</th>
+            </tr>
+          </thead>
+          <tbody class="counter parent">
+          </tbody>
+        </table>
       </div>
+
+
     </section>
 
     <!-- ACCOUNT LIST  -->
@@ -120,7 +129,7 @@
         </p>
         <p class="control ml-4 mr-4">
           <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
-            class="input is-rounded has-background-info has-text-warning has-text-weight-bold has-text-centered is-size-5"
+            class="input is-rounded has-background-link has-text-warning has-text-weight-bold has-text-centered is-size-5"
             onchange="syncSliderAndPrizeTarget(this)">
           <input type="range" id="AUTO-PRIZE-SLIDER" min="200000" max="5000000" value=500000
             style="width:100%" oninput="syncSliderAndPrizeTarget(this)">
