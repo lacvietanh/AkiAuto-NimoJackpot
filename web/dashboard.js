@@ -112,7 +112,9 @@ menu = class {
   static Minimize() {
     ipc.send('action', 'MINIMIZE')
   }
-  static view(what, size) {
+  static toggleExpand(id, btnCall) {
+    $id(id).classList.toggle('expand')
+    btnCall ? btnCall.classList.toggle('is-active') : null
   }
 }
 function preventSortable() {

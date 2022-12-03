@@ -60,7 +60,8 @@
       <button class="button" href="#section_setting" title="Tùy chỉnh ứng dụng">
         <img src="svgs/solid/gear.svg">
       </button>
-      <button class="button" href="#section_setting" onclick="menu.view('APP_LOGS','full')" title="Mở rộng bảng nhật ký">
+      <button class="button" href="#section_setting" title="Mở rộng bảng nhật ký"
+        onclick="menu.toggleExpand('APP_LOGS',this)">
         <img src="svgs/solid/receipt.svg">
       </button>
     </div>
@@ -148,6 +149,9 @@
             let slider = $id('AUTO-PRIZE-SLIDER')
             e === number ? slider.value = number.value : number.value = slider.value;
           }
+          function mainLogUpdatePrizeValue(value) {
+            mainLog(`UPDATE: Prize Target = <b style=color:#ffea00>${value}</b>`)
+          }
         </script>
         <div class="field has-addons is-align-items-center has-background-link-light p-2">
           <p class="control">
@@ -158,9 +162,11 @@
             <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
               class="input has-text-weight-bold has-text-centered is-size-5"
               style="background-color: #0075ff; color: #ffea00;height: 2em;"
-              onchange="syncSliderAndPrizeTarget(this)">
+              oninput="syncSliderAndPrizeTarget(this)"
+              onchange="mainLogUpdatePrizeValue(this.value)">
             <input type="range" id="AUTO-PRIZE-SLIDER" min="100000" max="4000000" value=400000
-              style="width:100%" oninput="syncSliderAndPrizeTarget(this)">
+              style="width:100%" oninput="syncSliderAndPrizeTarget(this)"
+              onchange="mainLogUpdatePrizeValue(this.value)">
           </p>
           <p class="is-flex is-flex-wrap-wrap" style="min-width: 100px">
             <label class="m-0 mb-1 radio has-text-link">
@@ -200,9 +206,12 @@
     </section>
 
   </section> <!-- END APP_BODY -->
-  <footer id="APP_STATUS" class="">
-    <div id="APP_LOGS"> </div>
-    <a href="https://toolauto.akivn.net" target="_blank" class="has-text-grey-dark has-text-weight-bold">ToolAuto.AkiVN.net</a>
+  <footer>
+    <div id="APP_STATUS" class="">
+      <div id="APP_LOGS">
+      </div>
+      <a href="https://toolauto.akivn.net" target="_blank" class="has-text-grey-dark has-text-weight-bold">ToolAuto.AkiVN.net</a>
+    </div>
   </footer>
 </body>
 

@@ -86,6 +86,7 @@ function createHomeWindow() {
   return HomeWd
 }
 function newGameWindow(ssid, color) {
+  // Cần thiết kế chế độ session riêng biệt (ko có persist)
   let Gwin = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
