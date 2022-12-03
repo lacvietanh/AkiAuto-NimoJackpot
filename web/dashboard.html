@@ -38,9 +38,9 @@
       <button class="button" href="#section_toggle" title="Bật - Tắt">
         <img src="svgs/solid/toggle-on.svg">
       </button>
-      <!-- <button class="button" href="#section_window" title="Quản lý cửa sổ">
+      <button class="button" href="#section_window" title="Quản lý cửa sổ">
         <img src="svgs/solid/clone.svg">
-      </button> -->
+      </button>
       <button class="button" href="#section_session" title="Quản lý session">
         <img src="svgs/regular/rectangle-list.svg">
       </button>
@@ -66,21 +66,20 @@
   </aside>
 
   <!----- APP BODY ----->
-  <section id="APP_BODY" class="">
+  <section id="APP_BODY" class="UserSelectNONE">
     <!-- SECTION: TOGGLE  -->
-    <section class="box top" id="section_toggle">
-      <p class="boxtitle">Quản lý cửa sổ</p>
-
+    <section class="box top show" id="section_toggle">
+      <p class="boxtitle">Bật / tắt auto cho từng cửa sổ game</p>
       <div class="table-container">
-        <table id="AccountTable" class="table sortable is-fullwidth">
-          <thead class="">
+        <table id="WindowTable" class="table sortable is-fullwidth is-narrow">
+          <thead class="has-background-link-light">
             <tr class="">
               <th></th>
-              <th>AUTO</th>
+              <th title="bật hoặc tắt auto cho từng cửa sổ">AUTO</th>
               <th>UserName</th>
               <th title="Session ID">SSID</th>
-              <th>BET</th>
-              <th>HŨ</th>
+              <th title="số đậu cược">BET</th>
+              <th title="hũ lớn hay hũ nhỏ">HŨ</th>
               <th>ĐẬU</th>
             </tr>
           </thead>
@@ -113,62 +112,67 @@
     </section> <!-- END ACCOUNT LIST  -->
 
     <!-- PANNEL  -->
-    <section id="AUTO_GLOBAL" class="box bottom p-2 pt-5">
+    <section id="AUTO_GLOBAL" class="box bottom show">
       <p class="boxtitle">Thiết lập Auto Tổng</p>
-      <!-- PRIZE CONFIG  -->
-      <script>
-        function syncSliderAndPrizeTarget(e) {
-          let number = $id('AUTO-PRIZE-TARGET')
-          let slider = $id('AUTO-PRIZE-SLIDER')
-          e === number ? slider.value = number.value : number.value = slider.value;
-        }
-      </script>
-      <div class="field has-addons is-align-items-center has-background-link-light p-2">
-        <p class="control">
-          <a class="button is-small is-ghost"> Khi thưởng dưới: </a>
-        </p>
-        <p class="control ml-4 mr-4">
-          <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
-            class="input is-rounded has-background-link has-text-warning has-text-weight-bold has-text-centered is-size-5"
-            onchange="syncSliderAndPrizeTarget(this)">
-          <input type="range" id="AUTO-PRIZE-SLIDER" min="200000" max="5000000" value=500000
-            style="width:100%" oninput="syncSliderAndPrizeTarget(this)">
-        </p>
-        <p class="is-flex is-flex-wrap-wrap" style="min-width: 100px">
-          <label class="m-0 mb-1 radio has-text-link">
-            <input type="radio" name="AUTO-STOP-BEHAVIOR" value="stop" checked> Dừng luôn
-          </label>
-          <label class="m-0 mt-1 radio has-text-link">
-            <input type="radio" name="AUTO-STOP-BEHAVIOR" value="wait"> Chờ lên lại
-          </label>
-        </p>
-      </div>
-      <!-- RUN CONFIG  -->
-      <div class="field has-addons">
-        <p class="control">
-          <a class="button is-small is-static"> Cách chạy: </a>
-        </p>
-        <p class="control">
-          <span class="select is-small">
-            <select id="AUTO_CONFIG-PRIZE">
-              <option value="auto">Bấm nút AUTO</option>
-              <option value="spin" disabled>Bấm nút SPIN</option>
-            </select>
-          </span>
-        </p>
-        <p class="control">
-          <input type="text" class="input is-small" readonly style="visibility: hidden">
-        </p>
-        <p class="control">
-          <button class="button is-small is-success">CHẠY HẾT</button>
-        </p>
-        <p class="control">
-          <button class="button is-danger is-small">DỪNG HẾT</button>
-        </p>
-      </div>
-
+      <form onsubmit="return false" class="UserSelectNONE">
+        <!-- RUNNING CONFIG  -->
+        <div class="is-flex is-justify-content-space-between">
+          <div class="field has-addons">
+            <p class="control">
+              <button class="button is-small is-success is-rounded"
+                onclick="winMan.ALL(true)">CHẠY HẾT</button>
+            </p>
+            <p class="control">
+              <button class="button is-danger is-small is-rounded"
+                onclick="winMan.ALL(false)">DỪNG HẾT</button>
+            </p>
+          </div>
+          <div class="field has-addons">
+            <p class="control">
+              <a class="button is-small is-static"> Cách chạy: </a>
+            </p>
+            <p class="control">
+              <span class="select is-small">
+                <select id="AUTO_CONFIG-PRIZE">
+                  <option value="auto">Bấm nút AUTO</option>
+                  <option value="spin" disabled>Bấm nút SPIN</option>
+                </select>
+              </span>
+            </p>
+          </div>
+        </div>
+        <!-- PRIZE CONFIG  -->
+        <script>
+          function syncSliderAndPrizeTarget(e) {
+            let number = $id('AUTO-PRIZE-TARGET')
+            let slider = $id('AUTO-PRIZE-SLIDER')
+            e === number ? slider.value = number.value : number.value = slider.value;
+          }
+        </script>
+        <div class="field has-addons is-align-items-center has-background-link-light p-2">
+          <p class="control">
+            <a class="button is-small is-ghost"> Khi thưởng dưới: </a>
+          </p>
+          <p class="ml-4 mr-4">
+            <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
+              class="input is-rounded has-background-link has-text-warning has-text-weight-bold has-text-centered is-size-5"
+              onchange="syncSliderAndPrizeTarget(this)">
+            <input type="range" id="AUTO-PRIZE-SLIDER" min="200000" max="5000000" value=500000
+              style="width:100%" oninput="syncSliderAndPrizeTarget(this)">
+          </p>
+          <p class="is-flex is-flex-wrap-wrap" style="min-width: 100px">
+            <label class="m-0 mb-1 radio has-text-link">
+              <input type="radio" name="AUTO-STOP-BEHAVIOR" value="stop" checked> Dừng luôn
+            </label>
+            <label class="m-0 mt-1 radio has-text-link">
+              <input type="radio" name="AUTO-STOP-BEHAVIOR" value="wait"> Chờ lên lại
+            </label>
+          </p>
+        </div>
+      </form>
     </section>
-  </section>
+
+  </section> <!-- END APP_BODY -->
   <footer id="APP_STATUS" class="">
     <div id="APP_LOGS"> </div>
     <a href="https://toolauto.akivn.net" target="_blank" class="has-text-grey-dark has-text-weight-bold">ToolAuto.AkiVN.net</a>

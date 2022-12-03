@@ -3,6 +3,8 @@ function $id(id) { return document.getElementById(id); }
 function $qs(s) { return document.querySelector(s); }
 function $qsa(a) { return document.querySelectorAll(a); }
 function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
+Boolean.prototype.toOnOff = (v) => { let r; v ? r = 'ON' : r = 'OFF'; return r }
+
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 
@@ -20,19 +22,23 @@ const winMan = class {
       { wid: 5, username: "vua nghiện", color: "#990840", ssid: "003", bet: "9000", pool: "Lớn", bean: "1.2M" },
       { wid: 6, username: "vua nghiện", color: "#990840", ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
       { wid: 7, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 8, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 9, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 10, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
     ]
     data.forEach((row) => { winMan.addRow(row) })
   }
   static addRow(x) {
-    $qs('#AccountTable tbody').innerHTML += /*html*/`
-    <tr class="accSelector" >
+    $qs('#WindowTable tbody').innerHTML += /*html*/`
+    <tr class="accSelector" onclick="winMan.toggleROW(this)">
       <td class="counter child borderNONE"></td>
       <td id="window-${x.wid}" class='winID noSort borderNONE'
-      style="display:flex;justify-content:center;">
-        <label class="switch">
-          <input type="checkbox" name=autoToggle checked>
+        style="display:flex;justify-content:center;">
+        <div class="switch">
+          <input type="checkbox" name=autoToggle 
+            onchange="winMan.toggle('${x.wid}',this.checked)">
           <span class="slider round"></span>
-        </label>
+        </div>
       </td>
       <td class='uname'>${x.username}</td>
       <td class='ss' style="color:${x.color}">${x.ssid}</td>
@@ -41,6 +47,14 @@ const winMan = class {
       <td class='bean'>${x.bean}</td>
     </tr>
   `;
+  }
+  static toggleROW(tr) {
+    let t = tr.querySelector('input[name=autoToggle]')
+    t.click()
+  }
+  static toggle(wid, value) {
+
+    mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for window id ${wid}`)
   }
   static selectAcc(tr) {
     if (!tr.classList.contains('selected')) {
@@ -51,6 +65,11 @@ const winMan = class {
     } else {
       console.log(` already selected`);
     }
+  }
+  static ALL(value) {
+    let t = $id('WindowTable').querySelectorAll('input[name=autoToggle]')
+    t.forEach(sw => sw.checked = value)
+    mainLog(``)
   }
 }
 

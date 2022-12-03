@@ -19,6 +19,9 @@ html {
 .borderNONE {
   border: none !important;
 }
+.UserSelectNONE {
+  user-select: none;
+}
 .counter.parent {
   counter-reset: countVar;
 }
@@ -31,16 +34,16 @@ thead {
 }
 ::-webkit-scrollbar-track {
   box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.302);
-  /* border-radius: 10px; */
+  border-radius: 10px;
+  margin: 10px;
   background-color: #F5F5F5;
 }
 ::-webkit-scrollbar {
   width: 7px;
   height: 7px;
-  background-color: #F5F5F5;
 }
 ::-webkit-scrollbar-thumb {
-  /* border-radius: 10px; */
+  border-radius: 10px;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, .3);
   background-color: #555;
 }
@@ -90,7 +93,7 @@ thead {
   min-height: 309px;
   height: calc(100vh - 60px);
   overflow-y: auto;
-  background-color: #f2f2f2;
+  background-color: #828282;
   padding: 5px;
   padding-bottom: 55px;
 }
@@ -210,22 +213,28 @@ thead {
   max-width: fit-content;
   filter: invert(80%);
 }
+#APP_BODY section.box.show {
+  display: block;
+}
+#APP_BODY section.box {
+  padding: 0.7rem;
+  display: none;
+}
 #APP_BODY section.top {
   min-height: 45vh;
-  height: calc(100vh - 300px);
+  height: calc(100vh - 280px);
+  overflow: auto;
 }
 #APP_BODY section.bottom {
-  height: 175px;
+  height: 160px;
   position: absolute;
-  bottom: 85px;
+  bottom: 81px;
   left: 50px;
-  right: 7px;
   margin: 0 5px;
-  box-shadow: 0px 0px 20px 0px #1115;
 }
 #APP_BODY section .boxtitle {
-  margin-top: -1rem;
-  margin-bottom: 10px;
+  margin-top: -0.5rem;
+  margin-bottom: 0.3rem;
   text-align: center;
   font-weight: bold;
 }
@@ -246,7 +255,7 @@ tr.accSelector:hover {
 }
 tr.accSelector.selected {
   color: white;
-  background-color: #ff4f0b !important;
+  background-color: #ff7640 !important;
 }
 /* SWITCH TOGGLE  */
 .switch {
