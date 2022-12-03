@@ -47,7 +47,7 @@ const winMan = class {
   static addRow(x) {
     $qs('#WindowTable tbody').innerHTML += /*html*/`
     <tr class="accSelector" onclick="winMan.toggleROW(this)">
-      <td class="counter child borderNONE"></td>
+      <td class="borderNONE">${x.wid}</td>
       <td id="window_${x.wid}" class='winID noSort borderNONE'
         style="display:flex;justify-content:center;">
         <div class="switch">
@@ -115,10 +115,7 @@ menu = class {
   static view(what, size) {
   }
 }
-
-window.addEventListener('load', () => {
-  mainLog('Welcome!')
-  winMan.init()
+function preventSortable() {
   if ($qs('table.sortable')) {
     $qsa('table.sortable').forEach(table => {
       let th = table.querySelectorAll('th.DONT_SORTABLE') || []
@@ -127,5 +124,11 @@ window.addEventListener('load', () => {
       }
     })
   }
+}
+
+window.addEventListener('load', () => {
+  mainLog('Welcome!')
+  winMan.init()
+  preventSortable()
 })
 

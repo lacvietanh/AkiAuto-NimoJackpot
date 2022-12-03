@@ -162,9 +162,8 @@ th:not(.DONT_SORTABLE) {
   background-color: #ff8222;
 }
 .trafficLight {
-  position: absolute;
-  top: 5px;
-  left: 8px;
+  margin-top: 5px;
+  margin-left: 10px;
 }
 #APP_TITLEBAR.active .trafficLight button {
   opacity: 1;
@@ -244,10 +243,6 @@ th:not(.DONT_SORTABLE) {
 /* ELEMENTS */
 .panel-info {
   height: 150px;
-  overflow-y: auto;
-}
-#AccountList .table-container {
-  height: 285px;
   overflow-y: auto;
 }
 tr.accSelector {
