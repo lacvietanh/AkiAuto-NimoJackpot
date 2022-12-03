@@ -35,7 +35,7 @@
 
   <aside id="APP_SIDEMENU">
     <div class="top">
-      <button class="button" href="#section_toggle" title="Bật - Tắt">
+      <button class="button is-active" href="#section_toggle" title="Bật - Tắt">
         <img src="svgs/solid/toggle-on.svg">
       </button>
       <button class="button" href="#section_window" title="Quản lý cửa sổ">
@@ -44,12 +44,12 @@
       <button class="button" href="#section_session" title="Quản lý session">
         <img src="svgs/regular/rectangle-list.svg">
       </button>
-      <button class="button" href="#section_config" title="Thiết lập Auto">
-        <img src="svgs/solid/users-gear.svg">
-      </button>
     </div>
     <hr class="m-2 has-background-grey">
     <div class="bottom">
+      <button class="button is-active" href="#section_config" title="Thiết lập Auto">
+        <img src="svgs/solid/users-gear.svg">
+      </button>
       <button class="button" href="#section_appAbout" title="Thông tin ứng dụng">
         <img src="svgs/brands/adn.svg">
       </button>
@@ -59,7 +59,7 @@
       <button class="button" href="#section_setting" title="Tùy chỉnh ứng dụng">
         <img src="svgs/solid/gear.svg">
       </button>
-      <button class="button" href="#section_setting" title="Tùy chỉnh ứng dụng">
+      <button class="button" href="#section_setting" onclick="menu.view('APP_LOGS','full')" title="Mở rộng bảng nhật ký">
         <img src="svgs/solid/receipt.svg">
       </button>
     </div>
@@ -74,7 +74,7 @@
         <table id="WindowTable" class="table sortable is-fullwidth is-narrow">
           <thead class="has-background-link-light">
             <tr class="">
-              <th class="DONT_SORTABLE"></th>
+              <th class="DONT_SORTABLE">ID</th>
               <th class="DONT_SORTABLE" title="bật hoặc tắt auto cho từng cửa sổ">AUTO</th>
               <th>UserName</th>
               <th title="Session ID">SSID</th>

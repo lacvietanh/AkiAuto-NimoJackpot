@@ -8,7 +8,15 @@ Boolean.prototype.toOnOff = function () {
   v ? r = 'ON' : r = 'OFF'
   return r
 }
-
+const color = class {
+  static invertHex(hex) {
+    return '#' + ("000000" + (0xFFFFFF ^ parseInt(hex.substring(1), 16)).toString(16)).slice(-6);
+  }
+  static randomHex() {
+    let hex = Math.floor(Math.random() * 16777215).toString(16)
+    return '#' + hex;
+  }
+}
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 
@@ -21,17 +29,17 @@ const appData = {
 const winMan = class {
   static init() {
     let data = [
-      { wid: 3, username: "vua cỏ", color: "#8f5ab2", ssid: "001", bet: "450", pool: "Nhỏ", bean: "280k" },
-      { wid: 4, username: "vua bài", color: "#324687", ssid: "002", bet: "900", pool: "Nhỏ", bean: "403k" },
-      { wid: 5, username: "vua nghiện", color: "#990840", ssid: "003", bet: "9000", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: "#990840", ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: "#990840", ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: "#990840", ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 7, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 7, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 8, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 9, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 10, username: "vua tôm", color: "#267890", ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 3, username: "vua cỏ", color: color.randomHex(), ssid: "001", bet: "450", pool: "Nhỏ", bean: "280k" },
+      { wid: 4, username: "vua bài", color: color.randomHex(), ssid: "002", bet: "900", pool: "Nhỏ", bean: "403k" },
+      { wid: 5, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "9000", pool: "Lớn", bean: "1.2M" },
+      { wid: 6, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
+      { wid: 6, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
+      { wid: 6, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
+      { wid: 7, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 7, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 8, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 9, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 10, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
     ]
     data.forEach((row) => { winMan.addRow(row) })
   }
@@ -48,7 +56,10 @@ const winMan = class {
         </div>
       </td>
       <td class='uname'>${x.username}</td>
-      <td class='ss' style="color:${x.color}">${x.ssid}</td>
+      <td class='ss' 
+        style="color:${x.color};background:${color.invertHex(x.color)};">
+        ${x.ssid}
+      </td>
       <td class='bet'>${x.bet}</td>
       <td class='pool'>${x.pool}</td>
       <td class='bean'>${x.bean}</td>
@@ -65,7 +76,7 @@ const winMan = class {
   static ALL(value) {
     let t = $id('WindowTable').querySelectorAll('input[name=autoToggle]')
     t.forEach(sw => sw.checked = value)
-    mainLog(`TURN <b>${value.toOnOff()}</b> AUTO FOR ALL <b>${t.length}</b> WINDOWS`, 'red')
+    mainLog(`TURN <b>${value.toOnOff()}</b> AUTO FOR ALL <b>${t.length}</b> WINDOWS`, 'yellow')
   }
   static selectAcc(tr) {
     if (!tr.classList.contains('selected')) {
@@ -89,9 +100,9 @@ menu = class {
   static updateSelect(td) {
     $id('panel-UserName').innerHTML = td.innerHTML;
   }
-  static newAcc(btnCall) {
+  static new(what, btnCall) {
     btnCall.classList.add('is-loading')
-    ipc.send('new', 'acc')
+    ipc.send('new', what)
   }
   static AskToQuit() {
     let rep = window.confirm('QUIT APP?')
@@ -99,6 +110,8 @@ menu = class {
   }
   static Minimize() {
     ipc.send('action', 'MINIMIZE')
+  }
+  static view(what, size) {
   }
 }
 

@@ -15,7 +15,7 @@ const ss = class {  // the session persist on disk.
   static path = `${USERDATA}/Partitions`
   static list = () => fs.readdirSync(ss.path)
   static count = () => ss.getList().length
-  constructor(id = ss.count(), color = randomHexColor()) {
+  constructor(id = ss.count(), color = color.randomHex()) {
     log(`Creating new session: ssid=${id}; name=${id}; color=${color}`)
     // example: ssList: {ss1: {name: "ss1", color: "#fff"}}
     ssList[id] = {}
@@ -28,9 +28,14 @@ const ss = class {  // the session persist on disk.
   static clear = (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
 }
 
-function randomHexColor() {
-  let hex = Math.floor(Math.random() * 16777215).toString(16)
-  return '#' + hex;
+const color = class {
+  static invertHex(hex) {
+    return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()
+  }
+  static randomHex() {
+    let hex = Math.floor(Math.random() * 16777215).toString(16)
+    return '#' + hex;
+  }
 }
 function ObjEmpty(obj) {
   for (var i in obj) {
@@ -58,7 +63,7 @@ function createSplashWindow() {
 }
 function createHomeWindow() {
   let HomeWd = new BrowserWindow({
-    width: 600, 
+    width: 600,
     height: 700,
     resizable: false,
     show: false,
