@@ -1,7 +1,7 @@
 // Modules to control application life and create native browser window
 const {
   app, BrowserWindow, Menu, ipcMain,
-  dialog, session, shell
+  dialog, session, shell, globalShortcut
 } = require('electron')
 const USERDATA = app.getPath('userData')
 const path = require('path')
@@ -15,7 +15,7 @@ const ss = class {  // the session persist on disk.
   static path = `${USERDATA}/Partitions`
   static list = () => fs.readdirSync(ss.path)
   static count = () => ss.getList().length
-  constructor(id = ss.count(), color = color.randomHex()) {
+  constructor(id = ss.count(), color = COLOR.randomHex()) {
     log(`Creating new session: ssid=${id}; name=${id}; color=${color}`)
     // example: ssList: {ss1: {name: "ss1", color: "#fff"}}
     ssList[id] = {}
@@ -28,7 +28,7 @@ const ss = class {  // the session persist on disk.
   static clear = (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
 }
 
-const color = class {
+const COLOR = class {
   static invertHex(hex) {
     return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()
   }
@@ -75,7 +75,7 @@ function createHomeWindow() {
       nodeIntegration: false
       , contextIsolation: false
       , preload: path.join(__dirname, 'web/dashboard-pre.js')
-      // , partition: 'persist:home'
+      , partition: 'persist:_dashboard_'
     }
   })
   HomeWd.loadFile('web/dashboard.html')
@@ -85,8 +85,9 @@ function createHomeWindow() {
   })
   return HomeWd
 }
-function newGameWindow(ssid, color) {
-  // Cần thiết kế chế độ session riêng biệt (ko có persist)
+function newGameWindow(ssid, specSS = false) {
+  let ssPar_
+  specSS ? ssPar_ = (new Date()).getTime() : ssPar_ = `persist:ss${ssid}`;
   let Gwin = new BrowserWindow({
     width: 540, minWidth: 540,
     height: 700, minHeight: 250,
@@ -95,25 +96,30 @@ function newGameWindow(ssid, color) {
     frame: false,
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
-    backgroundColor: color,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: false,
-      partition: "persist:" + "ss" + ssid,
+      partition: ssPar_,
       preload: path.join(__dirname, 'web/pre-jackpot.js')
     }
   })
   Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-  let c = gameWindowList.length
-  gameWindowList.push(Gwin.id)
+  let c = gameWindowList.length, thisWid = Gwin.id
+  gameWindowList.push(thisWid)
   Gwin.once('ready-to-show', () => {
     Gwin.show()
-    HomeWd.webContents.send('data', 'Created Game Window: ' + JSON.stringify(ssList[ssid])) //report to HomeWd
+    // report to HomeWd
+    // HomeWd.webContents.send('data', 'Created Game Window: ' + JSON.stringify(ssList[ssid])) 
     Gwin.setPosition(c * 50, c * 45, true)
     Gwin.webContents.openDevTools({ mode: 'bottom' })
   })
   Gwin.once('closed', () => {
-    gameWindowList.splice(indexOf(Gwin.id), 1)
+    // đang lỗi chỗ này, khi lệnh quit áp đặt việc close các cửa sổ:
+    let gwl = gameWindowList || null
+    if (gwl) {
+      mainLog(`Đang đóng cửa sổ ${thisWid}, hiện đang có: ${gwl.length}`);
+      gwl.splice(indexOf(thisWid), 1)
+    }
   })
   return Gwin;
 }
@@ -135,25 +141,37 @@ app.whenReady().then(() => {
     setTimeout(() => {
       splashWd.destroy()
       HomeWd.show()
-    }, 700)
+    }, 1700)
     // })
   })
-
+  if (process.platform === 'darwin') {
+    globalShortcut.register('Command+Q', () => {
+      HomeWd.webContents.send('action', 'ask-to-quit')
+    })
+  }
 })
 
 ////////////////////////  IPC AREA 
 ipcMain.on('new', (event, mess) => {
+  let c = gameWindowList.length, s = c + 1
   switch (mess) {
-    case 'acc':
-      let c = gameWindows.length, s = c + 1
+    // case 'acc': // đã bỏ
+    //   log(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
+    //   let wd = newAcc(s)
+    //   wd.webContents.once('dom-ready', () => {
+    //     setTimeout(() => {
+    //       log(`Tải xong cửa sổ game mới. acc id: <b>acc${s}</b>, tổng ${s}`)
+    //       HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
+    //       HomeWd.focus();
+    //     }, 3000)
+    //   })
+    //   break;
+    case 'specSS':
       log(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
-      let wd = newAcc(s)
+      let wd = newGameWindow('SPEC', true)
       wd.webContents.once('dom-ready', () => {
-        setTimeout(() => {
-          log(`Tải xong cửa sổ game mới. acc id: <b>acc${s}</b>, tổng ${s}`)
-          HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
-          HomeWd.focus();
-        }, 3000)
+        HomeWd.webContents.send('removeLoading', 'TITLEBAR_BTN_NEW')
+        HomeWd.focus()
       })
       break;
     default: console.log('ipc received "new" but', mess, 'not defined yet!')
@@ -189,8 +207,7 @@ ipcMain.on('get', (ev, mess) => {
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
   }
-})
-////////////////////////  END IPC AREA
+}) ////////////////////////  END IPC AREA
 
 app.on('activate', () => {    // For macOS
   let c = BrowserWindow.getAllWindows().length

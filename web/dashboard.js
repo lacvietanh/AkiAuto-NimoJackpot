@@ -8,7 +8,7 @@ Boolean.prototype.toOnOff = function () {
   v ? r = 'ON' : r = 'OFF'
   return r
 }
-const color = class {
+const COLOR = class {
   static invertHex(hex) {
     return '#' + ("000000" + (0xFFFFFF ^ parseInt(hex.substring(1), 16)).toString(16)).slice(-6);
   }
@@ -30,17 +30,17 @@ const appData = {
 const winMan = class {
   static init() {
     let data = [
-      { wid: 3, username: "vua cỏ", color: color.randomHex(), ssid: "001", bet: "450", pool: "Nhỏ", bean: "280k" },
-      { wid: 4, username: "vua bài", color: color.randomHex(), ssid: "002", bet: "900", pool: "Nhỏ", bean: "403k" },
-      { wid: 5, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "9000", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: color.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 7, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 7, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 8, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 9, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 10, username: "vua tôm", color: color.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 3, username: "vua cỏ", color: COLOR.randomHex(), ssid: "001", bet: "450", pool: "Nhỏ", bean: "280k" },
+      { wid: 4, username: "vua bài", color: COLOR.randomHex(), ssid: "002", bet: "900", pool: "Nhỏ", bean: "403k" },
+      { wid: 5, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "9000", pool: "Lớn", bean: "1.2M" },
+      { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
+      { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
+      { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
+      { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 8, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 9, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      { wid: 10, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
     ]
     data.forEach((row) => { winMan.addRow(row) })
   }
@@ -58,7 +58,7 @@ const winMan = class {
       </td>
       <td class='uname'>${x.username}</td>
       <td class='ss' 
-        style="color:${x.color};background:${color.invertHex(x.color)};">
+        style="color:${x.color};background:${COLOR.invertHex(x.color)};">
         ${x.ssid}
       </td>
       <td class='bet'>${x.bet}</td>
