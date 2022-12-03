@@ -29,7 +29,7 @@ html {
   counter-increment: countVar;
   content: counter(countVar);
 }
-thead {
+th:not(.DONT_SORTABLE) {
   cursor: pointer;
 }
 ::-webkit-scrollbar-track {

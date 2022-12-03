@@ -3,7 +3,11 @@ function $id(id) { return document.getElementById(id); }
 function $qs(s) { return document.querySelector(s); }
 function $qsa(a) { return document.querySelectorAll(a); }
 function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
-Boolean.prototype.toOnOff = (v) => { let r; v ? r = 'ON' : r = 'OFF'; return r }
+Boolean.prototype.toOnOff = function () {
+  let r, v = this.valueOf()
+  v ? r = 'ON' : r = 'OFF'
+  return r
+}
 
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
@@ -32,11 +36,11 @@ const winMan = class {
     $qs('#WindowTable tbody').innerHTML += /*html*/`
     <tr class="accSelector" onclick="winMan.toggleROW(this)">
       <td class="counter child borderNONE"></td>
-      <td id="window-${x.wid}" class='winID noSort borderNONE'
+      <td id="window_${x.wid}" class='winID noSort borderNONE'
         style="display:flex;justify-content:center;">
         <div class="switch">
-          <input type="checkbox" name=autoToggle 
-            onchange="winMan.toggle('${x.wid}',this.checked)">
+          <input type="checkbox" name=autoToggle data-target="window_${x.wid}"
+            onchange="winMan.toggle(this.dataset.target,this.checked)">
           <span class="slider round"></span>
         </div>
       </td>
@@ -52,9 +56,13 @@ const winMan = class {
     let t = tr.querySelector('input[name=autoToggle]')
     t.click()
   }
-  static toggle(wid, value) {
-
-    mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for window id ${wid}`)
+  static toggle(TargetID, value) {
+    mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for window id ${TargetID}`)
+  }
+  static ALL(value) {
+    let t = $id('WindowTable').querySelectorAll('input[name=autoToggle]')
+    t.forEach(sw => sw.checked = value)
+    mainLog(`TURN ${value.toOnOff()} AUTO FOR ALL <b>${t.length}</b> WINDOWS`)
   }
   static selectAcc(tr) {
     if (!tr.classList.contains('selected')) {
@@ -65,11 +73,6 @@ const winMan = class {
     } else {
       console.log(` already selected`);
     }
-  }
-  static ALL(value) {
-    let t = $id('WindowTable').querySelectorAll('input[name=autoToggle]')
-    t.forEach(sw => sw.checked = value)
-    mainLog(``)
   }
 }
 
@@ -98,5 +101,13 @@ menu = class {
 window.addEventListener('load', () => {
   mainLog('Welcome!')
   winMan.init()
+  if ($qs('table.sortable')) {
+    $qsa('table.sortable').forEach(table => {
+      let th = table.querySelectorAll('th.DONT_SORTABLE') || []
+      if (th.length) {
+        th.forEach(e => { e.outerHTML = e.outerHTML })
+      }
+    })
+  }
 })
 
