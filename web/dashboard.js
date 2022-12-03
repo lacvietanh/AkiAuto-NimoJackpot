@@ -62,7 +62,7 @@ const winMan = class {
   static ALL(value) {
     let t = $id('WindowTable').querySelectorAll('input[name=autoToggle]')
     t.forEach(sw => sw.checked = value)
-    mainLog(`TURN ${value.toOnOff()} AUTO FOR ALL <b>${t.length}</b> WINDOWS`)
+    mainLog(`TURN <b>${value.toOnOff()}</b> AUTO FOR ALL <b>${t.length}</b> WINDOWS`, 'red')
   }
   static selectAcc(tr) {
     if (!tr.classList.contains('selected')) {
@@ -76,9 +76,10 @@ const winMan = class {
   }
 }
 
-function mainLog(mess) {
+function mainLog(mess, color) {
   let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 19)
-  APP_LOGS.innerHTML += `<br>${time_}  ${mess}`
+  let c = color || "";
+  APP_LOGS.innerHTML += `<br>${time_}  <span style="color:${c}"> ${mess} </span>`
   APP_LOGS.scrollTop = APP_LOGS.scrollHeight
 }
 menu = class {
