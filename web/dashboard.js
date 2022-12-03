@@ -19,6 +19,7 @@ const color = class {
 }
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
+window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('active') })
 
 const APP_LOGS = $id("APP_LOGS")
 const appData = {

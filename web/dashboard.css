@@ -225,11 +225,11 @@ th:not(.DONT_SORTABLE) {
 }
 #APP_BODY section.top {
   min-height: 45vh;
-  height: calc(100vh - 280px);
+  height: calc(100vh - 320px);
   overflow: auto;
 }
 #APP_BODY section.bottom {
-  height: 160px;
+  height: 200px;
   position: absolute;
   bottom: 81px;
   left: 50px;
@@ -303,4 +303,12 @@ input:checked+.slider:before {
 }
 .slider.round:before {
   border-radius: 50%;
+}
+.ColPrizeBig {
+  background-color: #f18e51 !important;
+  color: #ffea00 !important;
+}
+.ColPrizeSmall {
+  background-color: #768bd8 !important;
+  color: #ffe906 !important;
 }

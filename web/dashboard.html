@@ -114,7 +114,7 @@
     <!-- PANNEL  -->
     <section id="AUTO_GLOBAL" class="box bottom show">
       <p class="boxtitle">Thiết lập Auto Tổng</p>
-      <form onsubmit="return false" class="UserSelectNONE">
+      <div class="UserSelectNONE">
         <!-- RUNNING CONFIG  -->
         <div class="is-flex is-justify-content-space-between">
           <div class="field has-addons">
@@ -151,25 +151,52 @@
         </script>
         <div class="field has-addons is-align-items-center has-background-link-light p-2">
           <p class="control">
-            <a class="button is-small is-ghost"> Khi thưởng dưới: </a>
+            <a class="button is-small is-ghost"> Khi thưởng<br>thấp hơn: </a>
           </p>
           <p class="ml-4 mr-4">
+            <!-- AUTO-PRIZE-TARGET -->
             <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
-              class="input is-rounded has-background-link has-text-warning has-text-weight-bold has-text-centered is-size-5"
+              class="input has-text-weight-bold has-text-centered is-size-5"
+              style="background-color: #0075ff; color: #ffea00;height: 2em;"
               onchange="syncSliderAndPrizeTarget(this)">
-            <input type="range" id="AUTO-PRIZE-SLIDER" min="200000" max="5000000" value=500000
+            <input type="range" id="AUTO-PRIZE-SLIDER" min="100000" max="4000000" value=400000
               style="width:100%" oninput="syncSliderAndPrizeTarget(this)">
           </p>
           <p class="is-flex is-flex-wrap-wrap" style="min-width: 100px">
             <label class="m-0 mb-1 radio has-text-link">
               <input type="radio" name="AUTO-STOP-BEHAVIOR" value="stop" checked> Dừng luôn
             </label><br>
-            <label class="m-0 mt-1 radio has-text-link">
+            <label class="m-0 mt-1 radio has-text-grey">
               <input type="radio" name="AUTO-STOP-BEHAVIOR" value="wait" disabled> Chờ lên lại
             </label>
           </p>
         </div>
-      </form>
+        <div class="field has-addons is-justify-content-center">
+          <p class="control">
+            <a class="button is-static is-small is-rounded ">
+              Hũ lớn:
+            </a>
+          </p>
+          <p class="control">
+            <span id="DATA-UPDATE-PRIZE-BIG" type="text" style="width: 75px;"
+              class="ColPrizeBig input is-small has-text-weight-bold">
+              0000000
+            </span>
+          <p class="control">
+            <a class="button is-small is-rounded is-loading "> Đang cập nhật</a>
+          </p>
+          <p class="control" id="DATA-UPDATE-PRIZE-SMALL">
+            <span id="DATA-UPDATE-PRIZE-SMALL" type="text" style="width: 75px;"
+              class="ColPrizeSmall input is-small has-text-weight-bold">
+              0000000
+            </span>
+          </p>
+          <p class="control">
+            <a class="button is-static is-small is-rounded">
+              Hũ nhỏ:
+            </a>
+          </p>
+        </div>
     </section>
 
   </section> <!-- END APP_BODY -->
