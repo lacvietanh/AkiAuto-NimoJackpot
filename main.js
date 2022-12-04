@@ -93,8 +93,8 @@ const GameWindow = class {
       this.list.push(wid)
       // log('gamewindow List sau khi push: ' + this.list) //deb
       log(`Đã mở thêm cửa sổ game mới. Đang có: ${this.list.length}`)
-    } else if (type == 'remove') {
-      this.list.splice(indexOf(wid), 1)
+    } else if (type == 'remove', wid) {
+      this.list.splice(this.list.indexOf(wid), 1)
       console.log(`Đã đóng cửa sổ ${wid}, Đang có: ${this.list.length}`);
     }
   }
@@ -137,7 +137,7 @@ function log(mess, sendToMain = true) {
   sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
 }
 
-////////////////////////////////////// START APP HERE ///////////////////////////////////////////
+//////////////////////////////// START APP HERE /////////////////////////////////
 app.whenReady().then(() => {
   splashWd = createSplashWindow()
   splashWd.webContents.send('mess', 'Đang tải bảng điều khiển...')

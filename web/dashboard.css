@@ -68,7 +68,7 @@ th:not(.DONT_SORTABLE) {
   color: #eee;
   background-color: #6836d294;
   border-radius: 15px 15px 0 0;
-  transition: 0.3s;
+  transition: 0.2s;
 }
 #APP_SIDEMENU {
   -webkit-app-region: drag;
