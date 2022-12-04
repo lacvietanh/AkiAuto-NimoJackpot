@@ -148,8 +148,11 @@ const GameWindow = class {
     return wd;
   }
   static log_close(id, ssid) {
-    log(`Đã đóng cửa sổ game ${id} (sử dụng session ${ssid})`)
+    if (GameWindow.ForceQuit == 0) { //prevent Object Detroyed
+      log(`Đã đóng cửa sổ game ${id} (sử dụng session ${ssid})`)
+    }
   }
+  static ForceQuit = 0 //quit by user or by app.quit?
 }
 
 function log(mess, sendToMain = true) {
@@ -221,7 +224,9 @@ ipcMain.on('new', (event, mess) => {
 ipcMain.on('action', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   switch (mess) {
-    case 'QUITAPP': console.log('received QUITAPP action!'); HomeWd.destroy(); app.quit();
+    case 'QUITAPP':
+      console.log('received QUITAPP action!'); GameWindow.ForceQuit = 1
+      HomeWd.destroy(); app.quit();
       break
     case 'MINIMIZE':
       let backup = senderWd.transparent
