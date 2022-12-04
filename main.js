@@ -10,7 +10,7 @@ const Store = require('electron-store')
 const appData = new Store()
 // appData.get('ssList') 
 var HomeWd = splashWd = {}
-const gameWindowList = []
+
 const ss = class {  // the session persist on disk.
   static path = `${USERDATA}/Partitions`
   static list = () => fs.readdirSync(ss.path)
@@ -85,43 +85,52 @@ function createHomeWindow() {
   })
   return HomeWd
 }
-function newGameWindow(ssid, specSS = false) {
-  let ssPar_
-  specSS ? ssPar_ = (new Date()).getTime() : ssPar_ = `persist:ss${ssid}`;
-  let Gwin = new BrowserWindow({
-    width: 540, minWidth: 540,
-    height: 700, minHeight: 250,
-    transparent: true,
-    show: false,
-    frame: false,
-    autoHideMenuBar: true,
-    icon: path.join(__dirname, 'icon.ico'),
-    webPreferences: {
-      nodeIntegration: false,
-      contextIsolation: false,
-      partition: ssPar_,
-      preload: path.join(__dirname, 'web/pre-jackpot.js')
+const GameWindow = class {
+  static list = []
+  static listUpdate(type = 'add', wid) {
+    if (type == 'add') {
+      // log('gamewindow List: ' + this.list) //deb
+      this.list.push(wid)
+      // log('gamewindow List sau khi push: ' + this.list) //deb
+      log(`Đã mở thêm cửa sổ game mới. Đang có: ${this.list.length}`)
+    } else if (type == 'remove') {
+      this.list.splice(indexOf(wid), 1)
+      console.log(`Đã đóng cửa sổ ${wid}, Đang có: ${this.list.length}`);
     }
-  })
-  Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-  let c = gameWindowList.length, thisWid = Gwin.id
-  gameWindowList.push(thisWid)
-  Gwin.once('ready-to-show', () => {
-    Gwin.show()
-    // report to HomeWd
-    // HomeWd.webContents.send('data', 'Created Game Window: ' + JSON.stringify(ssList[ssid])) 
-    Gwin.setPosition(c * 50, c * 45, true)
-    Gwin.webContents.openDevTools({ mode: 'bottom' })
-  })
-  Gwin.once('closed', () => {
-    // đang lỗi chỗ này, khi lệnh quit áp đặt việc close các cửa sổ:
-    let gwl = gameWindowList || null
-    if (gwl) {
-      mainLog(`Đang đóng cửa sổ ${thisWid}, hiện đang có: ${gwl.length}`);
-      gwl.splice(indexOf(thisWid), 1)
-    }
-  })
-  return Gwin;
+  }
+  static move(browserWd) {
+    let c = GameWindow.list.length
+    browserWd.setPosition(c * 50, c * 45, true)
+  }
+  constructor(ssid, specSS = false, ssPar_ = "") {
+    specSS ? ssPar_ = (new Date()).getTime() : ssPar_ = `persist:ss${ssid}`;
+    let Gwin = new BrowserWindow({
+      width: 540, minWidth: 540,
+      height: 700, minHeight: 250,
+      transparent: true,
+      show: false,
+      frame: false,
+      autoHideMenuBar: true,
+      icon: path.join(__dirname, 'icon.ico'),
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: false,
+        partition: ssPar_,
+        preload: path.join(__dirname, 'web/pre-jackpot.js')
+      }
+    })
+    Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+    Gwin.once('ready-to-show', () => {
+      Gwin.show()
+      GameWindow.move(Gwin)
+      GameWindow.listUpdate('add', Gwin.id)
+      Gwin.webContents.openDevTools({ mode: 'bottom' })
+    })
+    Gwin.once('close', () => {
+      GameWindow.listUpdate('remove', Gwin.id)
+    })
+    return Gwin;
+  }
 }
 function log(mess, sendToMain = true) {
   console.log(mess)
@@ -141,7 +150,7 @@ app.whenReady().then(() => {
     setTimeout(() => {
       splashWd.destroy()
       HomeWd.show()
-    }, 1700)
+    }, 1300)
     // })
   })
   if (process.platform === 'darwin') {
@@ -153,22 +162,9 @@ app.whenReady().then(() => {
 
 ////////////////////////  IPC AREA 
 ipcMain.on('new', (event, mess) => {
-  let c = gameWindowList.length, s = c + 1
   switch (mess) {
-    // case 'acc': // đã bỏ
-    //   log(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
-    //   let wd = newAcc(s)
-    //   wd.webContents.once('dom-ready', () => {
-    //     setTimeout(() => {
-    //       log(`Tải xong cửa sổ game mới. acc id: <b>acc${s}</b>, tổng ${s}`)
-    //       HomeWd.webContents.send('removeLoading', 'panel-btn-newSs')
-    //       HomeWd.focus();
-    //     }, 3000)
-    //   })
-    //   break;
     case 'specSS':
-      log(`Đang mở cửa sổ game mới... (Đang có: ${c})`)
-      let wd = newGameWindow('SPEC', true)
+      let wd = new GameWindow('SPEC', true)
       wd.webContents.once('dom-ready', () => {
         HomeWd.webContents.send('removeLoading', 'TITLEBAR_BTN_NEW')
         HomeWd.focus()
