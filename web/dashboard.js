@@ -109,6 +109,7 @@ menu = class {
   }
   static new(what, btnCall) {
     btnCall.classList.add('is-loading')
+    btnCall.disabled = true
     ipc.send('new', what)
   }
   static AskToQuit() {

@@ -6,10 +6,10 @@ ipc = class {
   }
   static getResponse(question) {
     ipcRenderer.send('get', question)
-    return new Promise(function (resolve, reject) {
+    return new Promise(r => {
       ipcRenderer.once(`response-${question}`, (ev, data) => {
-        // console.log(`respond for question "${question}":`, data) //DEB
-        resolve(data)
+        console.log(`respond for question "${question}":`, data)
+        r(data)
       })
     })
   }
@@ -17,6 +17,7 @@ ipc = class {
 
 ipcRenderer.on('removeLoading', (event, EleId) => {
   $id(EleId).classList.remove('is-loading')
+  $id(EleId).disabled = false
 })
 ipcRenderer.on('data', (event, data) => {
   console.log('received data from window ', event.senderId, '. Data: ', data)
@@ -27,6 +28,8 @@ ipcRenderer.on('mainLog', (event, mess) => {
 ipcRenderer.on('action', (event, mess) => {
   switch (mess) {
     case 'ask-to-quit': menu.AskToQuit();
+      break;
+    case 'click-btn-TITLEBAR_BTN_NEW': $id('TITLEBAR_BTN_NEW').click()
       break;
     default: console.log('ipc received "action" but', mess, 'not defined yet!');
       break;

@@ -5,10 +5,10 @@ ipc = class {
   }
   static getResponse(question) {
     ipcRenderer.send('get', question)
-    return new Promise(function (resolve, reject) {
+    return new Promise(r => {
       ipcRenderer.once(`response-${question}`, (ev, data) => {
-        // console.log(`respond for question "${question}":`, data) //DEB
-        resolve(data)
+        console.log(`respond for question "${question}":`, data)
+        r(data)
       })
     })
   }

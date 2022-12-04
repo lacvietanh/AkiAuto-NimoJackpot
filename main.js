@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 const {
-  app, BrowserWindow, Menu, ipcMain,
+  app, BrowserWindow, Menu, MenuItem, ipcMain,
   dialog, session, shell, globalShortcut
 } = require('electron')
 const execSync = require('child_process').execSync;
@@ -105,9 +105,16 @@ function createHomeWindow() {
   return HomeWd
 }
 const GameWindow = class {
-  constructor(ssid, $partition = "") {
-    ssid == 'SPEC' ? $partition = (new Date()).getTime() : $partition = `persist:${ssid}`;
-    let Gwin = new BrowserWindow({
+  static count = 0
+  static list = {} // to manage what ssid use for BrowserWindow (id) 
+  constructor(ssid = "SPEC", $par = (new Date()).getTime()) {
+    ssid != 'SPEC' ? $par = `persist:${ssid}` : log('Open new sperate session: ' + $par)
+    GameWindow.count += 1 // for handle move()
+    this.move = function () {
+      let c = GameWindow.count
+      wd.setPosition(c * 50, c * 45, true)
+    }
+    let wd = new BrowserWindow({
       width: 540, minWidth: 540,
       height: 700, minHeight: 250,
       transparent: true,
@@ -118,50 +125,69 @@ const GameWindow = class {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: false,
-        partition: $partition,
-        preload: path.join(__dirname, 'web/pre-jackpot.js')
+        partition: $par,
+        preload: path.join(__dirname, 'web/jackpot-pre.js')
       }
     })
-    Gwin.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-    Gwin.once('ready-to-show', () => {
-      Gwin.show()
-      GameWindow.move(Gwin)
-      GameWindow.listUpdate('add', Gwin.id)
-      Gwin.webContents.openDevTools({ mode: 'bottom' })
+    let id = this.id = wd.id
+    this.ssid = ssid // chưa sử dụng
+    this.par = $par // for handle delete on disk
+    GameWindow.list[id] = ssid
+    wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+    log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${$par}`)
+    wd.once('ready-to-show', () => {
+      wd.show()
+      wd.webContents.openDevTools({ mode: 'bottom' })
+      this.move()
     })
-    Gwin.once('close', () => {
-      GameWindow.listUpdate('remove', Gwin.id)
+    wd.once('close', () => {
+      GameWindow.count -= 1
+      delete GameWindow.list[id]
+      GameWindow.log_close(id, ssid)
     })
-    return Gwin;
+    return wd;
   }
-  static list = []
-  static listUpdate(type = 'add', wid) {
-    if (type == 'add') {
-      this.list.push(wid)
-      log(`Đã mở thêm cửa sổ game mới. Đang có: ${this.list.length}`)
-    } else if (type == 'remove') {
-      this.list.splice(this.list.indexOf(wid), 1)
-      log(`Đã đóng cửa sổ ${wid}, Đang có: ${this.list.length}`);
-    }
-  }
-  static move(browserWd) {
-    let c = GameWindow.list.length
-    browserWd.setPosition(c * 50, c * 45, true)
+  static log_close(id, ssid) {
+    log(`Đã đóng cửa sổ game ${id} (sử dụng session ${ssid})`)
   }
 }
+
 function log(mess, sendToMain = true) {
   console.log(mess)
   sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
 }
+function initMenu() {
+  const menu = Menu.getApplicationMenu()
+  menu.items[0] = (new MenuItem({
+    label: 'AkiAuto',
+    submenu: [
+      {
+        label: 'Quit', accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',
+        click: () => { HomeWd.webContents.send('action', 'ask-to-quit') }
+      },
+      {
+        label: "NEW SPEC SESSION",
+        accelerator: 'CommandOrControl+N',
+        click: () => {
+          HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
+        }
+      }
+    ]
+  }))
+  const menuWithoutQuit = menu?.items.filter((item) => item.role !== 'appmenu')
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menuWithoutQuit))
+}
 
 //////////////////////////////// START APP HERE /////////////////////////////////
 app.whenReady().then(() => {
+  initMenu()
   splashWd = createSplashWindow()
   splashWd.webContents.send('mess', 'Đang tải bảng điều khiển...')
   HomeWd = createHomeWindow()
   HomeWd.webContents.once('ready-to-show', () => {
     splashWd.webContents.send('mess', 'Đang tải cửa sổ game...')
-    // let firstGameWindow = newAcc(1)
+    // NOTE: Chỗ này cần tạo 1 cửa sổ mẫu để lấy thông tin PRIZE
+    // let firstGameWindow = new GameWindow(1)
     // firstGameWindow.webContents.once('did-finish-load', () => {
     splashWd.webContents.send('mess', 'Hoàn tất! Chúc bạn một ngày vui vẻ😉')
     setTimeout(() => {
@@ -170,18 +196,19 @@ app.whenReady().then(() => {
     }, 1300)
     // })
   })
-  if (process.platform === 'darwin') {
-    globalShortcut.register('Command+Q', () => {
-      HomeWd.webContents.send('action', 'ask-to-quit')
-    })
-  }
+  ////////// GLOBAL OS SHORTCUT //////////
+  // if (process.platform === 'darwin') {
+  //   globalShortcut.register('Command+Q', () => {
+  //     HomeWd.webContents.send('action', 'ask-to-quit')
+  //   })
+  // }
 })
 
 ////////////////////////  IPC AREA 
 ipcMain.on('new', (event, mess) => {
   switch (mess) {
     case 'specSS':
-      let wd = new GameWindow('SPEC')
+      let wd = new GameWindow()
       wd.webContents.once('dom-ready', () => {
         HomeWd.webContents.send('removeLoading', 'TITLEBAR_BTN_NEW')
         HomeWd.focus()
@@ -211,21 +238,21 @@ ipcMain.on('log', (ev, mess) => {
 })
 ipcMain.on('get', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
+  let result
   switch (mess) {
     case 'appInfo':
-      let appInfo = {
+      result = {
         appBrand: 'AkiNet', appName: app.getName(), appVersion: app.getVersion()
       }
-      senderWd.send('appInfo', appInfo) //respond to what window requester
-      senderWd.send(`response-${mess}`, appInfo) //respond to what window requester
       break
     case 'totalCodeLines':
-      let output
-      output = sh(`a=$(grep -c "" main.js);for i in web/*.* ;do a=$a+$(grep -c "" $i);done;echo $a|bc`)
-      senderWd.send(`response-${mess}`, output)
+      result = sh(`
+        a=$(grep -c "" main.js);for i in web/*.* ;do a=$a+$(grep -c "" $i);done;echo $a|bc
+      `)
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
   }
+  senderWd.send(`response-${mess}`, result)
 }) ////////////////////////  END IPC AREA
 
 app.on('activate', () => {    // For macOS
