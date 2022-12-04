@@ -3,6 +3,12 @@ function $id(id) { return document.getElementById(id); }
 function $qs(s) { return document.querySelector(s); }
 function $qsa(a) { return document.querySelectorAll(a); }
 function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
+function mainLog(mess, color) {
+  let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 19)
+  let c = color || "";
+  APP_LOGS.innerHTML += `<br>${time_}  <span style="color:${c}"> ${mess} </span>`
+  APP_LOGS.scrollTop = APP_LOGS.scrollHeight
+}
 Boolean.prototype.toOnOff = function () {
   let r, v = this.valueOf()
   v ? r = 'ON' : r = 'OFF'
@@ -23,7 +29,7 @@ window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('acti
 
 const APP_LOGS = $id("APP_LOGS")
 const appData = {
-  wins: [] //list window: {wdid,ss}
+  wins: [] //list window: {wid,ss}
   , sess: [] //list session: {ssid, sscol}
   , accs: [] //list accounts: {username, bean, }
 }
@@ -36,17 +42,18 @@ const winMan = class {
       { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
       { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
       { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 8, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 9, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      { wid: 10, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      // { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      // { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      // { wid: 8, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      // { wid: 9, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
+      // { wid: 10, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
     ]
     data.forEach((row) => { winMan.addRow(row) })
   }
   static addRow(x) {
+    let styleString = `background-color:${x.color}`
     $qs('#WindowTable tbody').innerHTML += /*html*/`
-    <tr class="accSelector" onclick="winMan.toggleROW(this)">
+    <tr class="accSelector" onclick="winMan.toggleByRow(this)">
       <td class="borderNONE">${x.wid}</td>
       <td id="window_${x.wid}" class='winID noSort borderNONE'
         style="display:flex;justify-content:center;">
@@ -57,9 +64,9 @@ const winMan = class {
         </div>
       </td>
       <td class='uname'>${x.username}</td>
-      <td class='ss' 
-        style="color:${x.color};background:${COLOR.invertHex(x.color)};">
-        ${x.ssid}
+      <td>
+        <span class=ssid> ${x.ssid} </span>
+        <span class=ssColor style="${styleString}"> </span>
       </td>
       <td class='bet'>${x.bet}</td>
       <td class='pool'>${x.pool}</td>
@@ -67,14 +74,14 @@ const winMan = class {
     </tr>
   `;
   }
-  static toggleROW(tr) {
+  static toggleByRow(tr) {
     let t = tr.querySelector('input[name=autoToggle]')
     t.click()
   }
   static toggle(TargetID, value) {
     mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for window id ${TargetID}`)
   }
-  static ALL(value) {
+  static toggleAll(value) {
     let t = $id('WindowTable').querySelectorAll('input[name=autoToggle]')
     t.forEach(sw => sw.checked = value)
     mainLog(`TURN <b>${value.toOnOff()}</b> AUTO FOR ALL <b>${t.length}</b> WINDOWS`, 'yellow')
@@ -91,13 +98,12 @@ const winMan = class {
   }
 }
 
-function mainLog(mess, color) {
-  let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 19)
-  let c = color || "";
-  APP_LOGS.innerHTML += `<br>${time_}  <span style="color:${c}"> ${mess} </span>`
-  APP_LOGS.scrollTop = APP_LOGS.scrollHeight
-}
 menu = class {
+  static init() {
+    ['top', 'bottom'].forEach(c => {
+      $qs(`#APP_SIDEMENU .${c} button`).classList.add('is-active')
+    })
+  }
   static updateSelect(td) {
     $id('panel-UserName').innerHTML = td.innerHTML;
   }
@@ -121,16 +127,15 @@ function preventSortable() {
   if ($qs('table.sortable')) {
     $qsa('table.sortable').forEach(table => {
       let th = table.querySelectorAll('th.DONT_SORTABLE') || []
-      if (th.length) {
-        th.forEach(e => { e.outerHTML = e.outerHTML })
-      }
+      th.forEach(e => { e.outerHTML = e.outerHTML })
     })
   }
 }
 
 window.addEventListener('load', () => {
-  mainLog('Welcome!')
+  menu.init()
   winMan.init()
+  mainLog('Welcome!')
   preventSortable()
 })
 

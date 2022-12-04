@@ -4,6 +4,15 @@ ipc = class {
   static send(mess, data) {
     ipcRenderer.send(mess, data)
   }
+  static getResponse(question) {
+    ipcRenderer.send('get', question)
+    return new Promise(function (resolve, reject) {
+      ipcRenderer.once(`response-${question}`, (ev, data) => {
+        // console.log(`respond for question "${question}":`, data) //DEB
+        resolve(data)
+      })
+    })
+  }
 }
 
 ipcRenderer.on('removeLoading', (event, EleId) => {
@@ -29,4 +38,3 @@ addEventListener('load', () => { //test
   // mainLog('loaded! from preload using page function')
   // ipc.send('log', 'loaded! from preload to main process!')
 })
-

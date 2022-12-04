@@ -3,12 +3,31 @@ const {
   app, BrowserWindow, Menu, ipcMain,
   dialog, session, shell, globalShortcut
 } = require('electron')
-const USERDATA = app.getPath('userData')
-const path = require('path')
-const fs = require('fs')
+const execSync = require('child_process').execSync;
+const sh = (cmd) => execSync(cmd, { encoding: 'utf-8' });  // the default is 'buffer'
 const Store = require('electron-store')
+const fs = require('fs')
+const path = require('path')
+const USERDATA = app.getPath('userData')
 const appData = new Store()
 // appData.get('ssList') 
+
+const generateUUID = () => {
+  let
+    d = new Date().getTime(),
+    d2 = (performance && performance.now && (performance.now() * 1000)) || 0;
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    let r = Math.random() * 16;
+    if (d > 0) {
+      r = (d + r) % 16 | 0;
+      d = Math.floor(d / 16);
+    } else {
+      r = (d2 + r) % 16 | 0;
+      d2 = Math.floor(d2 / 16);
+    }
+    return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+  });
+}
 var HomeWd = splashWd = {}
 
 const ss = class {  // the session persist on disk.
@@ -86,24 +105,8 @@ function createHomeWindow() {
   return HomeWd
 }
 const GameWindow = class {
-  static list = []
-  static listUpdate(type = 'add', wid) {
-    if (type == 'add') {
-      // log('gamewindow List: ' + this.list) //deb
-      this.list.push(wid)
-      // log('gamewindow List sau khi push: ' + this.list) //deb
-      log(`Đã mở thêm cửa sổ game mới. Đang có: ${this.list.length}`)
-    } else if (type == 'remove', wid) {
-      this.list.splice(this.list.indexOf(wid), 1)
-      console.log(`Đã đóng cửa sổ ${wid}, Đang có: ${this.list.length}`);
-    }
-  }
-  static move(browserWd) {
-    let c = GameWindow.list.length
-    browserWd.setPosition(c * 50, c * 45, true)
-  }
-  constructor(ssid, specSS = false, ssPar_ = "") {
-    specSS ? ssPar_ = (new Date()).getTime() : ssPar_ = `persist:ss${ssid}`;
+  constructor(ssid, $partition = "") {
+    ssid == 'SPEC' ? $partition = (new Date()).getTime() : $partition = `persist:${ssid}`;
     let Gwin = new BrowserWindow({
       width: 540, minWidth: 540,
       height: 700, minHeight: 250,
@@ -115,7 +118,7 @@ const GameWindow = class {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: false,
-        partition: ssPar_,
+        partition: $partition,
         preload: path.join(__dirname, 'web/pre-jackpot.js')
       }
     })
@@ -130,6 +133,20 @@ const GameWindow = class {
       GameWindow.listUpdate('remove', Gwin.id)
     })
     return Gwin;
+  }
+  static list = []
+  static listUpdate(type = 'add', wid) {
+    if (type == 'add') {
+      this.list.push(wid)
+      log(`Đã mở thêm cửa sổ game mới. Đang có: ${this.list.length}`)
+    } else if (type == 'remove') {
+      this.list.splice(this.list.indexOf(wid), 1)
+      log(`Đã đóng cửa sổ ${wid}, Đang có: ${this.list.length}`);
+    }
+  }
+  static move(browserWd) {
+    let c = GameWindow.list.length
+    browserWd.setPosition(c * 50, c * 45, true)
   }
 }
 function log(mess, sendToMain = true) {
@@ -164,7 +181,7 @@ app.whenReady().then(() => {
 ipcMain.on('new', (event, mess) => {
   switch (mess) {
     case 'specSS':
-      let wd = new GameWindow('SPEC', true)
+      let wd = new GameWindow('SPEC')
       wd.webContents.once('dom-ready', () => {
         HomeWd.webContents.send('removeLoading', 'TITLEBAR_BTN_NEW')
         HomeWd.focus()
@@ -193,13 +210,19 @@ ipcMain.on('log', (ev, mess) => {
   console.log(mess)
 })
 ipcMain.on('get', (ev, mess) => {
+  let senderWd = BrowserWindow.fromWebContents(ev.sender)
   switch (mess) {
     case 'appInfo':
-      let senderWd = BrowserWindow.fromWebContents(ev.sender)
       let appInfo = {
         appBrand: 'AkiNet', appName: app.getName(), appVersion: app.getVersion()
       }
-      senderWd.send('appInfo', appInfo) //respond to every window asker
+      senderWd.send('appInfo', appInfo) //respond to what window requester
+      senderWd.send(`response-${mess}`, appInfo) //respond to what window requester
+      break
+    case 'totalCodeLines':
+      let output
+      output = sh(`a=$(grep -c "" main.js);for i in web/*.* ;do a=$a+$(grep -c "" $i);done;echo $a|bc`)
+      senderWd.send(`response-${mess}`, output)
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
   }
