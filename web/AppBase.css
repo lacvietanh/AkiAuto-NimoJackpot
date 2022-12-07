@@ -1,0 +1,292 @@
+/* GLOBAL  */
+html {
+  overflow-y: hidden;
+  scroll-behavior: smooth;
+  background-color: transparent;
+  max-width: 600px;
+  max-height: 700px;
+}
+:target:before {
+  content: "";
+  display: block;
+  height: 100px;
+  margin: -100px 0 0;
+}
+.codeFont {
+  font-family: monospace;
+}
+.borderNONE {
+  border: none !important;
+}
+.UserSelectNONE {
+  user-select: none;
+}
+.counter.parent {
+  counter-reset: countVar;
+}
+.counter.child::after {
+  counter-increment: countVar;
+  content: counter(countVar);
+}
+th:not(.DONT_SORTABLE) {
+  cursor: pointer;
+}
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.302);
+  border-radius: 10px;
+  margin: 10px;
+  background-color: #F5F5F5;
+}
+::-webkit-scrollbar {
+  width: 7px;
+  height: 7px;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, .3);
+  background-color: #555;
+}
+/* CUSTOM APP TITLE BAR  */
+#APP_TITLEBAR.active {
+  background-color: #222;
+}
+#APP_TITLEBAR {
+  -webkit-app-region: drag;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0;
+  left: 50px;
+  right: 0;
+  height: 30px;
+  z-index: 9999;
+  color: #eee;
+  background-color: #6836d294;
+  border-radius: 15px 15px 0 0;
+  transition: 0.2s;
+}
+#APP_SIDEMENU {
+  -webkit-app-region: drag;
+  user-select: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: fixed;
+  top: 30px;
+  left: 0;
+  width: 50px;
+  height: calc(100vh - 60px);
+  border-radius: 15px 0 0 15px;
+  padding: 5px;
+  background-color: #424b6b;
+  background:
+    linear-gradient(90deg,
+      #300d57 0%,
+      #120421 100%);
+}
+#APP_BODY {
+  margin-top: 30px;
+  margin-bottom: 30px;
+  margin-left: 50px;
+  min-height: 309px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+  background-color: #828282;
+  padding: 5px;
+  padding-bottom: 55px;
+}
+#APP_LOGS {
+  font-family: monospace;
+  font-size: 0.8rem;
+  word-wrap: break-word;
+  color: #6a975e;
+  background-color: #333;
+  position: absolute;
+  width: 100%;
+  height: 50px;
+  padding: 0.5em;
+  bottom: 30px;
+  border-radius: 15px 15px 0 0;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  transition: height 0.1s;
+}
+#APP_LOGS.expand {
+  height: 500px;
+}
+#APP_STATUS {
+  background-color: #300d57;
+  background:
+    linear-gradient(90deg,
+      #0009 0%,
+      #300d57 50%,
+      #0009 100%);
+  height: 30px;
+  display: flex;
+  border-radius: 0 0 15px 15px;
+  position: fixed;
+  left: 50px;
+  right: 0;
+  bottom: 0;
+  justify-content: center;
+  z-index: 5;
+}
+#APP_TITLEBAR button {
+  -webkit-app-region: none;
+  cursor: pointer;
+  transition: 0.4s;
+}
+#APP_TITLEBAR .right {
+  padding: 3px 7px;
+  min-width: 170px;
+  height: 30px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#APP_TITLEBAR button:hover {
+  box-shadow:
+    0px 0px 5px 4px rgb(255 255 255 / 49%)
+}
+#APP_TITLEBAR .right button {
+  margin: 0 2px;
+  font-size: 12px;
+  height: 2em;
+  background-color: #b88a66;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+}
+#APP_TITLEBAR.active .right button {
+  background-color: #ff8222;
+}
+.trafficLight {
+  margin-top: 5px;
+  margin-left: 10px;
+}
+#APP_TITLEBAR.active .trafficLight button {
+  opacity: 1;
+}
+.trafficLight button {
+  border-radius: 100%;
+  padding: 0;
+  height: 12px;
+  width: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+  margin-right: 3.5px;
+  background-color: #ddd;
+  position: relative;
+  outline: none;
+  opacity: 0.5;
+}
+.trafficLight .close {
+  background-color: #ff6159;
+}
+.trafficLight .min {
+  background-color: #ffbd2e;
+}
+.trafficLight .max {
+  background-color: #28c941;
+}
+#APP_SIDEMENU .button {
+  -webkit-app-region: none;
+  margin: 5px auto;
+  width: 38px;
+  height: 38px;
+  background-color: transparent;
+  border: none;
+  transition: background-color 0.3s;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+#APP_SIDEMENU .button:hover,
+#APP_SIDEMENU .button.is-active {
+  background-color: #c360267a;
+}
+#APP_SIDEMENU .button:hover :first-child {
+  filter: invert(100%);
+}
+#APP_SIDEMENU .button img {
+  width: 25px;
+  height: 25px;
+  user-select: none;
+  -webkit-user-drag: none;
+  max-width: fit-content;
+  filter: invert(80%);
+}
+#APP_BODY section.box.show {
+  display: block;
+  /* cần làm cho nó nhảy ra từ bên trái */
+}
+#APP_BODY section.box {
+  padding: 0.7rem;
+  display: none;
+}
+#APP_BODY section.top {
+  min-height: 45vh;
+  height: calc(100vh - 320px);
+  overflow: auto;
+}
+#APP_BODY section.bottom {
+  height: 200px;
+  overflow: auto;
+  position: absolute;
+  bottom: 81px;
+  left: 50px;
+  right: 0;
+  margin: 0 5px;
+}
+#APP_BODY section .boxtitle {
+  margin-top: -0.5rem;
+  margin-bottom: 0.3rem;
+  text-align: center;
+  font-weight: bold;
+}
+/* SWITCH TOGGLE  */
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 2.8em;
+  height: 1.5em;
+}
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: .2s;
+  display: flex;
+  align-items: center;
+}
+.slider:before {
+  content: "";
+  height: 1em;
+  width: 1em;
+  margin-left: .3em;
+  background-color: white;
+  transition: .2s;
+}
+input:checked+.slider {
+  background-color: #48c78e;
+}
+input:checked+.slider:before {
+  transform: translateX(1.1em);
+}
+.slider.round {
+  border-radius: 34px;
+}
+.slider.round:before {
+  border-radius: 50%;
+}

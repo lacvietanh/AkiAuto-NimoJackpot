@@ -117,7 +117,7 @@ const GameWindow = class {
       wd.setPosition(c * 50, c * 45, true)
     }
     let wd = new BrowserWindow({
-      width: 540, minWidth: 540,
+      width: 540, minWidth: 540, maxWidth: 540,
       height: 700, minHeight: 250,
       transparent: true,
       show: false,
@@ -135,7 +135,8 @@ const GameWindow = class {
     this.ssid = ssid // chưa sử dụng
     this.par = par // for handle delete on disk
     GameWindow.list[id] = ssid
-    wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+    // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+    wd.loadFile('web/game.html')
     log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${par}`)
     wd.once('ready-to-show', () => {
       wd.show()
@@ -176,7 +177,7 @@ function initMenu() {
       },
       {
         label: "NEW SPEC SESSION",
-        accelerator: 'CommandOrControl+N',
+        accelerator: 'CommandOrControl+Shift+N',
         click: () => {
           HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
         }

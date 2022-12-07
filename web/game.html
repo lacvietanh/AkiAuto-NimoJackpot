@@ -1,0 +1,98 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Window</title>
+  <link rel="stylesheet" href="AppBase.css">
+  <link rel="stylesheet" href="bulma.min.css">
+</head>
+
+<body>
+  <!-- APP TITLE BAR  -->
+  <section id=APP_TITLEBAR class="active">
+    <div class="left">
+      <div class="trafficLight">
+        <button class="close" onclick="menu.AskToQuit()" title="Thoát Auto">&nbsp;</button>
+        <button class="min" onclick="menu.Minimize()" title="Minimize">&nbsp;</button>
+        <button class="max" title="Maximize is disabled">&nbsp;</button>
+      </div>
+    </div>
+    <div class="has-text-centered p-1">
+      <p id=APP_TITLE class="is-size-6">
+        UserName
+      </p>
+    </div>
+    <div class="right">
+      <button id=TITLEBAR_BTN_NEW class="button is-rounded is-warning"
+        title="Mở thêm cửa sổ mới cho session này"
+        onclick="menu.new('windowSameSS',this)">
+        + Thêm Cửa sổ (Cùng Acc)
+      </button>
+    </div>
+  </section>
+
+  <aside id="APP_SIDEMENU">
+    <div class="top">
+      <button class="button" title="Bật - Tắt">
+        <img src="svgs/solid/toggle-on.svg">
+      </button>
+      <button class="button" title="Quản lý cửa sổ">
+        <img src="svgs/solid/clone.svg">
+      </button>
+      <button class="button" title="Quản lý session">
+        <img src="svgs/regular/rectangle-list.svg">
+      </button>
+    </div>
+    <hr class="m-2 has-background-grey">
+    <div class="bottom">
+      <button class="button" title="Thiết lập Auto">
+        <img src="svgs/solid/users-gear.svg">
+      </button>
+      <button class="button" title="Thông tin ứng dụng">
+        <img src="svgs/brands/adn.svg">
+      </button>
+      <button class="button" title="Câu hỏi thường gặp">
+        <img src="svgs/regular/circle-question.svg">
+      </button>
+      <button class="button" title="Tùy chỉnh ứng dụng">
+        <img src="svgs/solid/gear.svg">
+      </button>
+      <button class="button" title="Mở rộng bảng nhật ký"
+        onclick="menu.toggleExpand('APP_LOGS',this)">
+        <img src="svgs/solid/receipt.svg">
+      </button>
+    </div>
+  </aside>
+
+  <!----- APP BODY ----->
+  <section id="APP_BODY" class="UserSelectNONE">
+    <section id="GameWindow" class="box top show">
+    </section>
+    <section id="GamePannel" class="box bottom show">
+      <p class="boxtitle"></p>
+      <div class="is-flex is-justify-content-space-between">
+        <div> left </div>
+        <div>
+          <label class="switch is-size-3">
+            <input type="checkbox" name=autoToggle
+              onclick="winMan.toggle(this.dataset.target,this.checked)">
+            <span class="slider round"></span>
+          </label>
+        </div>
+        <div> right </div>
+      </div>
+    </section>
+  </section> <!-- END APP_BODY -->
+  <footer>
+    <div id="APP_STATUS" class="">
+      <div id="APP_LOGS">
+      </div>
+      <a href="https://toolauto.akivn.net" target="_blank"
+        class="has-text-grey-dark has-text-weight-bold">ToolAuto.AkiVN.net</a>
+    </div>
+  </footer>
+</body>
+
+</html>

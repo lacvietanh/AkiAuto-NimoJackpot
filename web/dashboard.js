@@ -3,16 +3,19 @@ function $id(id) { return document.getElementById(id); }
 function $qs(s) { return document.querySelector(s); }
 function $qsa(a) { return document.querySelectorAll(a); }
 function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
+window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
+window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
+window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('active') })
+Boolean.prototype.toOnOff = function () {
+  let r, v = this.valueOf()
+  v ? r = 'ON' : r = 'OFF'
+  return r
+}
 function mainLog(mess, color) {
   let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 19)
   let c = color || "";
   APP_LOGS.innerHTML += `<br>${time_}  <span style="color:${c}"> ${mess} </span>`
   APP_LOGS.scrollTop = APP_LOGS.scrollHeight
-}
-Boolean.prototype.toOnOff = function () {
-  let r, v = this.valueOf()
-  v ? r = 'ON' : r = 'OFF'
-  return r
 }
 const COLOR = class {
   static invertHex(hex) {
@@ -23,9 +26,6 @@ const COLOR = class {
     return '#' + hex;
   }
 }
-window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
-window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
-window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('active') })
 
 const APP_LOGS = $id("APP_LOGS")
 const appData = {
@@ -100,9 +100,20 @@ const winMan = class {
 
 menu = class {
   static init() {
-    ['top', 'bottom'].forEach(c => {
-      $qs(`#APP_SIDEMENU .${c} button`).classList.add('is-active')
-    })
+    $qsa(`#APP_SIDEMENU button.toggleShow`).forEach((btn) => {
+      btn.addEventListener('click', () => menu.toggleShow(btn))
+    });
+    ['top', 'bottom'].forEach(c => { // active first button each position
+      $qs(`#APP_SIDEMENU .${c} button.toggleShow`).click()
+    });
+  }
+  static toggleShow(btnCall) {
+    let target = $id(btnCall.dataset.target) || []
+    // remove current active same position
+    let oldActive = btnCall.parentElement.querySelector('.toggleShow.is-active') || null
+    oldActive ? oldActive.click() : null
+    btnCall ? btnCall.classList.toggle('is-active') : null
+    target ? target.classList.toggle('show') : null
   }
   static updateSelect(td) {
     $id('panel-UserName').innerHTML = td.innerHTML;
@@ -123,6 +134,7 @@ menu = class {
     $id(id).classList.toggle('expand')
     btnCall ? btnCall.classList.toggle('is-active') : null
   }
+
 }
 function preventSortable() {
   if ($qs('table.sortable')) {

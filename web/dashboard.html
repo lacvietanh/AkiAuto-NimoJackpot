@@ -6,6 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AkiAuto - NimoJackpot</title>
   <link rel="stylesheet" href="bulma.min.css">
+  <link rel="stylesheet" href="AppBase.css">
   <link rel="stylesheet" href="dashboard.css">
   <script src="sorttable.js"></script>
   <script src="dashboard.js" defer></script>
@@ -27,7 +28,8 @@
       </p>
     </div>
     <div class="right">
-      <button id=TITLEBAR_BTN_NEW class="button is-rounded is-warning" title="Session này sẽ xóa khi đóng cửa sổ"
+      <button id=TITLEBAR_BTN_NEW class="button is-rounded is-warning"
+        title="Session này sẽ xóa khi đóng cửa sổ"
         onclick="menu.new('specSS',this)">
         + NEW SPEC SESSION
       </button>
@@ -36,7 +38,8 @@
 
   <aside id="APP_SIDEMENU">
     <div class="top">
-      <button class="button" title="Bật - Tắt">
+      <button class="button toggleShow" title="Bật - Tắt"
+        data-target="section_toggle">
         <img src="svgs/solid/toggle-on.svg">
       </button>
       <button class="button" title="Quản lý cửa sổ">
@@ -48,18 +51,23 @@
     </div>
     <hr class="m-2 has-background-grey">
     <div class="bottom">
-      <button class="button" title="Thiết lập Auto">
+      <button class="button toggleShow" title="Thiết lập Auto"
+        data-target="AUTO_GLOBAL">
         <img src="svgs/solid/users-gear.svg">
+      </button>
+      <button class="button toggleShow" title="Phím tắt"
+        data-target="KeyboardShortcut">
+        <img src="svgs/solid/keyboard.svg">
       </button>
       <button class="button" title="Thông tin ứng dụng">
         <img src="svgs/brands/adn.svg">
       </button>
-      <button class="button" title="Câu hỏi thường gặp">
+      <button class="button" title="FAQ">
         <img src="svgs/regular/circle-question.svg">
       </button>
-      <button class="button" title="Tùy chỉnh ứng dụng">
+      <!-- <button class="button" title="Tùy chỉnh ứng dụng">
         <img src="svgs/solid/gear.svg">
-      </button>
+      </button> -->
       <button class="button" title="Mở rộng bảng nhật ký"
         onclick="menu.toggleExpand('APP_LOGS',this)">
         <img src="svgs/solid/receipt.svg">
@@ -70,7 +78,7 @@
   <!----- APP BODY ----->
   <section id="APP_BODY" class="UserSelectNONE">
     <!-- SECTION: TOGGLE  -->
-    <section class="box top show" id="section_toggle">
+    <section class="box top" id="section_toggle">
       <p class="boxtitle">Bật / tắt auto cho từng cửa sổ game</p>
       <div class="table-container">
         <table id="WindowTable" class="table sortable is-fullwidth is-narrow">
@@ -113,7 +121,7 @@
     </section> <!-- END ACCOUNT LIST  -->
 
     <!-- PANNEL  -->
-    <section id="AUTO_GLOBAL" class="box bottom show">
+    <section id="AUTO_GLOBAL" class="box bottom">
       <p class="boxtitle">Thiết lập Auto Tổng</p>
       <div class="UserSelectNONE">
         <!-- RUNNING CONFIG  -->
@@ -203,6 +211,54 @@
             </a>
           </p>
         </div>
+      </div>
+    </section>
+    <section id="KeyboardShortcut" class="box bottom">
+      <p class="boxtitle">Phím tắt</p>
+      <p class="help">
+        Cmd/Ctrl: là <b>Cmd trên Mac</b> hoặc <b>Control trên Window</b>
+        <br>
+        Những nút <b>in đậm là "Đã hoạt động"</b>, còn lại là "dự kiến"
+      </p>
+      <table class="table is-bordered is-fullwidth is-size-7 is-narrow">
+        <thead class="has-background-grey-light">
+          <th>Phím</th>
+          <th>Chức năng</th>
+          <th>?</th>
+        </thead>
+        <tbody>
+          <tr>
+            <td><b>Cmd/Ctrl R</b></td>
+            <td>Reload</td>
+            <td>Tải lại nội dung cửa sổ</td>
+          </tr>
+          <tr>
+            <td><b>Cmd/Ctrl Shift N</b></td>
+            <td>NEW SPEC SESSION</td>
+            <td>Cửa sổ session riêng biệt</td>
+          </tr>
+          <tr>
+            <td>Cmd/Ctrl N</td>
+            <td>NEW Same Session</td>
+            <td>Thêm cửa sổ (cùng session)</td>
+          </tr>
+          <tr>
+            <td>Cmd/Ctrl A</td>
+            <td>Toogle All ON</td>
+            <td>Bật auto cho toàn bộ cửa sổ</td>
+          </tr>
+          <tr>
+            <td>Cmd/Ctrl S</td>
+            <td>Toogle All OFF</td>
+            <td>Dừng auto cho toàn bộ cửa sổ</td>
+          </tr>
+          <tr>
+            <td>F2</td>
+            <td>Change Session Color</td>
+            <td>Đổi màu đại diện của session</td>
+          </tr>
+        </tbody>
+      </table>
     </section>
 
   </section> <!-- END APP_BODY -->

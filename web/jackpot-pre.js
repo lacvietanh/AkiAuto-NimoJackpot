@@ -1,6 +1,16 @@
-// Author: Lac Viet Anh
-// Script đang còn thử nghiệm, vui lòng không sao chép..
-////
+// AkiApp-base-js:
+function $id(id) { return document.getElementById(id); }
+function $qs(s) { return document.querySelector(s); }
+function $qsa(a) { return document.querySelectorAll(a); }
+function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
+window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
+window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
+window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('active') })
+Boolean.prototype.toOnOff = function () {
+  let r, v = this.valueOf()
+  v ? r = 'ON' : r = 'OFF'
+  return r
+}
 var AkiSriptAuthor = 'Lạc Việt Anh'
   , target_percent = 70
   ;
@@ -12,142 +22,8 @@ var AkiAutoRunBtn
   , nimoNumWin
   ;
 
-var akiPanelCss = /*css*/`
-  body{margin-top:45px!important}
-  .inline-flex {
-    display: inline-flex;
-    align-items: center;
-  }
-  .akipanel {
-    font-family: Tahoma, sans-serif;
-    font-size: 0.9rem;
-  }
-  .akinav {
-    z-index: 999;
-    display: flex;
-    position: fixed;
-    top: 0;left: 0;right: 0;
-    overflow: hidden;
-    color: #eee;
-    align-items: center;
-    justify-content: space-between;
-    -webkit-app-region: drag;
-    -webkit-user-select: none;
-  }
-  .akinav>.brand {
-    height: 45px;
-    padding-left:15px;
-    display:flex;
-    align-items:center;
-    flex: 1 0 auto;
-    font-weight: bold;
-    font-family: Tahoma, sans-serif;
-    background:#333;
-    background: linear-gradient(90deg,
-      #333 20%,
-      #fff0 50%,
-      #333 80%
-      );
-  }
-  .akinav>.menu {
-    background-color: #333;
-    display: inline-flex;
-    align-items: center;
-    height: 45px;
-  }
-  .akinav>.menu>.item {
-    margin: 0 2px;
-    padding: 5px;
-    text-align: center;
-  }
-  #panel-acc-uname {
-    color: #3daadc;
-    font-weight: bold;
-  }
-  #panel-acc-balance {
-    color: orange;
-  }
-  #panel-prize-now {
-    color: yellow;
-  }
-  .btn {
-    background-color: #7ac;
-    padding: 5px;
-    border-radius: 5px;
-    color: #fff;
-    cursor: pointer;
-    border: none;
-  }
-  .bold{font-weight: bold;}
-  .show {
-    display: block !important;
-    right: 0 !important;
-  }
-  .akiinfo {
-    z-index: 999;
-    display: flex;
-    justify-content: space-around;
-    position: fixed;
-    padding: 5px;
-    font-size:0.7rem;
-    top: 45px;
-    left: 0;
-    right: 0;
-    background-color: #eee;
-  }
-  .akiinfo > div {
-    background-color: #e0e0e0;
-    padding: 3px 6px;
-    border-radius: 5px;
-  }
-`;
-var akiPanel =/*html*/`
-  <nav class=akinav>
-    <div class="brand">AkiAuto</div>
-    <div class="menu">
-      <div class="item">
-        <button id="AkiReload" class="btn" onclick="menu.NimoHomepage()">
-          Nimo  
-        <i class="fa-solid fa-up-right-from-square"></i>
-        </button>
-      </div>
-      <div class="item">
-        <button id="AkiAutoRunBtn" class="btn" onclick="menu.RUN()" style="background-color: red">RUN</button>
-      </div>
-      <div class="item">P:
-        <span id=panel-prize-now>...</span>
-      </div>
-      <div class="item">B:
-        <span id=panel-acc-balance>...</span>
-      </div>
-      <div class="item inline-flex">
-        <span id=panel-acc-uname>Not Login</span>
-        <img id=panel-acc-avt width="35" height="35" style="margin: 0 4px;">
-      </div>
-    </div>
-  </nav>
-  <div class="akiinfo">
-    <div>
-      <span>Clicked:</span>
-      <span id="counterSPIN" class="bold">0</span>
-      <br>
-      <span>AutoClicked:</span>
-      <span id="counterAUTO" class="bold">0</span>
-    </div>
-    <div>
-      <span>Max Priz:</span>
-      <span id="info-max-p" class="bold">...</span>
-      <br>
-      <span>Max Win:</span>
-      <span id="info-max-w" class="bold">...</span>
-    </div>
-    <div>
-      <span>Stop when:</span><br>
-      <input id="targetPrizeStop" class="bold" type=number style=width:75px>
-      <button onclick="menu.setTargetPercent()" class="btn" style="margin:2px">Set 70%</button>
-    </div>
-  </div>
-`;
+var akiPanelCss = ''
+var akiPanel = 
 //////////////////// END HTML ////////////////////
 
 function parseCookie() {
