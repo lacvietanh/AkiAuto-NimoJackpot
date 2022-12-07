@@ -30,23 +30,6 @@ const generateUUID = () => {
 }
 var HomeWd = splashWd = {}
 
-const ss = class {  // the session persist on disk.
-  static path = `${USERDATA}/Partitions`
-  static list = () => fs.readdirSync(ss.path)
-  static count = () => ss.getList().length
-  constructor(id = ss.count(), color = COLOR.randomHex()) {
-    log(`Creating new session: ssid=${id}; name=${id}; color=${color}`)
-    // example: ssList: {ss1: {name: "ss1", color: "#fff"}}
-    ssList[id] = {}
-    ssList[id].name = id // can change soon, may be userName when logged in
-    ssList[id].color = color
-    console.log(`Create new session with data:`, ssList[id]);
-    log(`Created new session with data:` + JSON.stringify(ssList[id]));
-    console.log('create new GameWindow with session: ', id, color)
-  }
-  static clear = (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
-}
-
 const COLOR = class {
   static invertHex(hex) {
     return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()
@@ -77,7 +60,6 @@ function createSplashWindow() {
     }
   })
   sw.loadFile('web/splash.html')
-  // sw.webContents.openDevTools({ mode: 'detach' })
   return sw
 }
 function createHomeWindow() {
@@ -94,7 +76,7 @@ function createHomeWindow() {
       nodeIntegration: false
       , contextIsolation: false
       , preload: path.join(__dirname, 'web/dashboard-pre.js')
-      , partition: 'persist:_dashboard_'
+      // , partition: 'persist:_dashboard_' // không lấy nữa, để đếm session bằng dir
     }
   })
   HomeWd.loadFile('web/dashboard.html')
@@ -104,11 +86,31 @@ function createHomeWindow() {
   })
   return HomeWd
 }
+
+const ss = class {  // the session persist on disk.
+  static ParentPath = `${USERDATA}/Partitions`
+  static list = () => fs.readdirSync(ss.ParentPath)
+  static count = () => ss.getList().length
+  constructor(
+    id = `ss${ss.count()}`,
+    color = COLOR.randomHex()) {
+    log(`Creating new session: ssid=${id}; name=${id}; color=${color}`)
+    ssList[id] = {}
+    ssList[id].name = id // can change soon, may be userName when logged in
+    ssList[id].color = color
+    console.log(`Create new session with data:`, ssList[id]);
+    log(`Created new session with data:` + JSON.stringify(ssList[id]));
+    console.log('create new GameWindow with session: ', id, color)
+  }
+  static clear = (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
+}
+
 const GameWindow = class {
+  id; ssid; par; move;
   static count = 0
   static list = {} // to manage what ssid use for BrowserWindow (id) 
-  constructor(ssid = "SPEC", $par = (new Date()).getTime()) {
-    ssid != 'SPEC' ? $par = `persist:${ssid}` : log('Open new sperate session: ' + $par)
+  constructor(ssid = "SPEC", par = (new Date()).getTime()) {
+    ssid != 'SPEC' ? par = `persist:${ssid}` : log('Open new sperate session: ' + par)
     GameWindow.count += 1 // for handle move()
     this.move = function () {
       let c = GameWindow.count
@@ -125,16 +127,16 @@ const GameWindow = class {
       webPreferences: {
         nodeIntegration: false,
         contextIsolation: false,
-        partition: $par,
+        partition: par,
         preload: path.join(__dirname, 'web/jackpot-pre.js')
       }
     })
     let id = this.id = wd.id
     this.ssid = ssid // chưa sử dụng
-    this.par = $par // for handle delete on disk
+    this.par = par // for handle delete on disk
     GameWindow.list[id] = ssid
     wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-    log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${$par}`)
+    log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${par}`)
     wd.once('ready-to-show', () => {
       wd.show()
       wd.webContents.openDevTools({ mode: 'bottom' })
@@ -165,8 +167,12 @@ function initMenu() {
     label: 'AkiAuto',
     submenu: [
       {
-        label: 'Quit', accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',
-        click: () => { HomeWd.webContents.send('action', 'ask-to-quit') }
+        label: "Reload",
+        role: 'reload',
+        accelerator: 'CommandOrControl+R',
+        click: () => {
+          HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
+        }
       },
       {
         label: "NEW SPEC SESSION",
@@ -174,11 +180,25 @@ function initMenu() {
         click: () => {
           HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
         }
+      },
+      {
+        label: 'DevTools',
+        role: 'toggleDevTools',
+        accelerator: 'F12',
+        click: () => { HomeWd.webContents.send('action', 'ask-to-quit') }
+      },
+      {
+        label: 'Quit', accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',
+        click: () => { HomeWd.webContents.send('action', 'ask-to-quit') }
       }
     ]
   }))
-  const menuWithoutQuit = menu?.items.filter((item) => item.role !== 'appmenu')
-  Menu.setApplicationMenu(Menu.buildFromTemplate(menuWithoutQuit))
+  let listRoleRemove = ['appmenu', 'viewmenu', 'help']
+  let menu_fix = menu?.items.filter((item) => {
+    return !listRoleRemove.includes(item.role)
+  })
+  // menu_fix.items.forEach((m, i) => { console.log(i, m) })
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menu_fix))
 }
 
 //////////////////////////////// START APP HERE /////////////////////////////////
