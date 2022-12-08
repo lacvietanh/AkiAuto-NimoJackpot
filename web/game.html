@@ -5,11 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Window</title>
-  <link rel="stylesheet" href="AppBase.css">
   <link rel="stylesheet" href="bulma.min.css">
+  <link rel="stylesheet" href="AppBase.css">
+  <script src="jackpot.js"></script>
 </head>
 
-<body>
+<body class="noside">
   <!-- APP TITLE BAR  -->
   <section id=APP_TITLEBAR class="active">
     <div class="left">
@@ -33,42 +34,9 @@
     </div>
   </section>
 
-  <aside id="APP_SIDEMENU">
-    <div class="top">
-      <button class="button" title="Bật - Tắt">
-        <img src="svgs/solid/toggle-on.svg">
-      </button>
-      <button class="button" title="Quản lý cửa sổ">
-        <img src="svgs/solid/clone.svg">
-      </button>
-      <button class="button" title="Quản lý session">
-        <img src="svgs/regular/rectangle-list.svg">
-      </button>
-    </div>
-    <hr class="m-2 has-background-grey">
-    <div class="bottom">
-      <button class="button" title="Thiết lập Auto">
-        <img src="svgs/solid/users-gear.svg">
-      </button>
-      <button class="button" title="Thông tin ứng dụng">
-        <img src="svgs/brands/adn.svg">
-      </button>
-      <button class="button" title="Câu hỏi thường gặp">
-        <img src="svgs/regular/circle-question.svg">
-      </button>
-      <button class="button" title="Tùy chỉnh ứng dụng">
-        <img src="svgs/solid/gear.svg">
-      </button>
-      <button class="button" title="Mở rộng bảng nhật ký"
-        onclick="menu.toggleExpand('APP_LOGS',this)">
-        <img src="svgs/solid/receipt.svg">
-      </button>
-    </div>
-  </aside>
-
   <!----- APP BODY ----->
   <section id="APP_BODY" class="UserSelectNONE">
-    <section id="GameWindow" class="box top show">
+    <section id="GameWindow" class="">
     </section>
     <section id="GamePannel" class="box bottom show">
       <p class="boxtitle"></p>
@@ -77,7 +45,7 @@
         <div>
           <label class="switch is-size-3">
             <input type="checkbox" name=autoToggle
-              onclick="winMan.toggle(this.dataset.target,this.checked)">
+              onclick="">
             <span class="slider round"></span>
           </label>
         </div>

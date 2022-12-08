@@ -7,7 +7,8 @@ const execSync = require('child_process').execSync;
 const sh = (cmd) => execSync(cmd, { encoding: 'utf-8' });  // the default is 'buffer'
 const Store = require('electron-store')
 const fs = require('fs')
-const path = require('path')
+const path = require('path');
+const { send } = require('process');
 const USERDATA = app.getPath('userData')
 const appData = new Store()
 // appData.get('ssList') 
@@ -76,7 +77,7 @@ function createHomeWindow() {
       nodeIntegration: false
       , contextIsolation: false
       , preload: path.join(__dirname, 'web/dashboard-pre.js')
-      // , partition: 'persist:_dashboard_' // không lấy nữa, để đếm session bằng dir
+      // , partition: 'persist:_dashboard_' // không lấy, để đếm session bằng dir
     }
   })
   HomeWd.loadFile('web/dashboard.html')
@@ -135,12 +136,11 @@ const GameWindow = class {
     this.ssid = ssid // chưa sử dụng
     this.par = par // for handle delete on disk
     GameWindow.list[id] = ssid
-    // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
     wd.loadFile('web/game.html')
+    // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
     log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${par}`)
     wd.once('ready-to-show', () => {
       wd.show()
-      wd.webContents.openDevTools({ mode: 'bottom' })
       this.move()
     })
     wd.once('close', () => {
@@ -185,8 +185,7 @@ function initMenu() {
       {
         label: 'DevTools',
         role: 'toggleDevTools',
-        accelerator: 'F12',
-        click: () => { HomeWd.webContents.send('action', 'ask-to-quit') }
+        accelerator: 'F12'
       },
       {
         label: 'Quit', accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',
@@ -252,15 +251,11 @@ ipcMain.on('action', (ev, mess) => {
     case 'MINIMIZE':
       let backup = senderWd.transparent
       backup ? senderWd.transparent = false : null
-      senderWd.minimize();
-      senderWd.transparent = backup
+      senderWd.minimize(); senderWd.transparent = backup
       break
     default: console.log('ipc received "action" but', mess, 'not defined yet!')
       break
   }
-})
-ipcMain.on('log', (ev, mess) => {
-  console.log(mess)
 })
 ipcMain.on('get', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
@@ -279,7 +274,15 @@ ipcMain.on('get', (ev, mess) => {
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
   }
   senderWd.send(`response-${mess}`, result)
-}) ////////////////////////  END IPC AREA
+})
+ipcMain.on('log', (ev, mess) => {
+  console.log(mess)
+})
+ipcMain.on('loadURL', (ev, mess) => {
+  let senderWd = BrowserWindow.fromWebContents(ev.sender)
+  senderWd.loadURL(mess)
+})
+////////////////////////  END IPC AREA
 
 app.on('activate', () => {    // For macOS
   let c = BrowserWindow.getAllWindows().length

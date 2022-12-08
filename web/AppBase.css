@@ -50,6 +50,14 @@ th:not(.DONT_SORTABLE) {
 #APP_TITLEBAR.active {
   background-color: #222;
 }
+.noside #APP_TITLEBAR,
+.noside #APP_STATUS,
+.noside #APP_BODY section.box {
+  left: 0;
+}
+.noside #APP_BODY {
+  margin-left: 0;
+}
 #APP_TITLEBAR {
   -webkit-app-region: drag;
   user-select: none;

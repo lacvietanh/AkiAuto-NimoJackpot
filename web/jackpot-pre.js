@@ -1,187 +1,45 @@
-// AkiApp-base-js:
-function $id(id) { return document.getElementById(id); }
-function $qs(s) { return document.querySelector(s); }
-function $qsa(a) { return document.querySelectorAll(a); }
-function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
-window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
-window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
-window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('active') })
-Boolean.prototype.toOnOff = function () {
-  let r, v = this.valueOf()
-  v ? r = 'ON' : r = 'OFF'
-  return r
-}
-var AkiSriptAuthor = 'Lạc Việt Anh'
-  , target_percent = 70
-  ;
-var AkiAutoRunBtn
-  , AutoInterval
-  , AkiAccUname
-  , AkiAccAvt
-  , nimoBtnSpin
-  , nimoNumWin
-  ;
-
-var akiPanelCss = ''
-var akiPanel = 
-//////////////////// END HTML ////////////////////
-
-function parseCookie() {
-  return document.cookie
-    .split(';')
-    .map(v => v.split('='))
-    .reduce((acc, v) => {
-      acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-      return acc;
-    }, {});
-}
-function delCookie(name) {
-  document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-}
-function randomStr(length) {
-  var result = '';
-  var c = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  var l = c.length;
-  for (var i = 0; i < length; i++) {
-    result += c.charAt(Math.floor(Math.random() * l));
+// Listen ipc mess from main process:
+const { ipcRenderer } = require('electron')
+ipc = class {
+  static send(mess, data) {
+    ipcRenderer.send(mess, data)
   }
-  return result;
-}
-function getNimoNum(x) {
-  // bean: 0, prize: 1, bet: 2 
-  let t = "", z;
-  document.querySelectorAll('.slots-panel-nums')[x].childNodes.forEach(s => {
-    z = s.classList[1].split('-')[1];
-    (z == "dot") ? t += '.' : t += z;
-  }); return t;
-}
-menu = class {
-  static getBean() { return getNimoNum(0) }
-  static getPrize() { return getNimoNum(1) }
-  static getBet() { return getNimoNum(2) }
-  static getUserName() {
-    if (document.cookie.includes('userName')) {
-      AkiAccUname.innerHTML = parseCookie()['userName'] || "Not Login";
-      AkiAccAvt.src = parseCookie()['avatarUrl'] || null;
-    }
+  static getResponse(question) {
+    ipcRenderer.send('get', question)
+    return new Promise(r => {
+      ipcRenderer.once(`response-${question}`, (ev, data) => {
+        console.log(`respond for question "${question}":`, data)
+        r(data)
+      })
+    })
   }
-  static UpdatePrize() {
-    document.getElementById('panel-prize-now').innerHTML = menu.getPrize();
-  }
-  static UpdateBean() {
-    document.getElementById('panel-acc-balance').innerHTML = menu.getBean();
-  }
-  static updateSpinCount() {
-    document.getElementById('counterSPIN').innerHTML = localStorage['cSpin'];
-  }
-  static updateAutoSpinCount() {
-    document.getElementById('counterAUTO').innerHTML = localStorage['cAuto'];
-  }
-  static increSpinCount() {
-    localStorage['cSpin'] = parseInt(localStorage['cSpin']) + 1;
-    menu.updateSpinCount();
-  }
-  static NimoHomepage() {
-    let options = "menubar=no,scrollbars=yes,location=no,toolbar=no";
-    return window.open('/', '_blank', 'width=1260,height=640' + options);
-  }
-  static setTargetPercent() {
-    document.getElementById('targetPrizeStop').value
-      = Math.floor(menu.getPrize() * target_percent / 100);
-  }
-  static RUN() {
-    function ClickSpin() {
-      nimoBtnSpin.click();
-      localStorage['cAuto'] = parseInt(localStorage['cAuto']) + 1;
-      menu.updateAutoSpinCount();
-    }
-    function check() {
-      //////////////////////// AUTO RUN CONDITION HERE ////////////////////////
-      let target = document.getElementById('targetPrizeStop').value;
-      if (menu.getPrize() > target) {
-        if (nimoBtnSpin.querySelector('.num-img')) {
-          console.log('Free mode... Waiting...!');
-        } else {
-          console.log(`Prize > ${target} . .  continue..`);
-          ClickSpin();
-          // setTimeout(aki.hack, 900);
-        }
-      } else {
-        console.log(`Prize below ${target} . . Waiting..`);
-      }
-    }
-    //////////////////////// END AUTO RUN CONDITION  ////////////////////////
-    if (!AutoInterval) {
-      check();
-      AutoInterval = setInterval(check, 3000);
-      AkiAutoRunBtn.innerHTML = 'STOP';
-    } else {
-      clearInterval(AutoInterval);
-      AutoInterval = false;
-      AkiAutoRunBtn.innerHTML = 'RUN';
-    }
-  }
-
 }
 
-aki = class {
-  static add() {
-    let e;
-    // Aki Panel HTML:
-    e = document.querySelector('div.akipanel');
-    e ? e.remove() : console.log('Init AkiPanel...');;
-    let panel = document.createElement('div');
-    panel.innerHTML = akiPanel;
-    panel.classList.add('akipanel');
-    document.body.appendChild(panel);
-    // Aki Panel CSS:
-    let panelCss = document.createElement('style');
-    panelCss.innerHTML = akiPanelCss;
-    panelCss.setAttribute('name', "AkiPanelCss");
-    e = document.querySelector('style[name=AkiPanelCss]');
-    e ? e.remove() : console.log('Init AkiPanel Css...');
-    document.head.appendChild(panelCss);
-    // Fontawesome:
-    let Fontawesome = document.createElement('link');
-    Fontawesome.setAttribute('name', 'fontawesome');
-    Fontawesome.type = 'text/css';
-    Fontawesome.rel = 'stylesheet';
-    Fontawesome.href = 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css';
-    e = document.querySelector('link[name=fontawesome]');
-    e ? e.remove() : console.log('Init FontAwesome...');
-    document.head.appendChild(Fontawesome);
+ipcRenderer.on('removeLoading', (event, EleId) => {
+  $id(EleId).classList.remove('is-loading')
+  $id(EleId).disabled = false
+})
+ipcRenderer.on('data', (event, data) => {
+  console.log('received data from window ', event.senderId, '. Data: ', data)
+})
+ipcRenderer.on('mainLog', (event, mess) => {
+  mainLog(mess)
+})
+ipcRenderer.on('action', (event, mess) => {
+  switch (mess) {
+    case 'ask-to-quit': menu.AskToQuit();
+      break;
+    case 'click-btn-TITLEBAR_BTN_NEW': $id('TITLEBAR_BTN_NEW').click()
+      break;
+    default: console.log('ipc received "action" but', mess, 'not defined yet!');
+      break;
   }
-  static init() {
-    // init variable:
-    AkiAutoRunBtn = document.getElementById('AkiAutoRunBtn');
-    AkiAccUname = document.getElementById('panel-acc-uname');
-    AkiAccAvt = document.getElementById('panel-acc-avt');
-    nimoBtnSpin = document.querySelector('.control-area__bet-btn');
-    nimoNumWin = document.querySelector('.control-area__win-num');
-    // nimoWalledD = document.querySelector('.nimo-wallet .c5').innerHTML;
-    // nimoWalledB = document.querySelector('.nimo-wallet .c7').innerHTML;
-    (localStorage['cSpin']) ? menu.updateSpinCount() : localStorage['cSpin'] = 0;
-    (localStorage['cAuto']) ? menu.updateAutoSpinCount() : localStorage['cAuto'] = 0;
-    // (localStorage['maxP']) ? menu.updateMaxP() : localStorage['maxP'] = 0;
-    // (localStorage['maxWin']) ? menu.updateMaxWin() : localStorage['maxWin'] = 0;
-    menu.setTargetPercent();
-    menu.getUserName();
-    menu.UpdatePrize();
-    menu.UpdateBean();
-    setInterval(() => {
-      menu.UpdatePrize();
-      menu.UpdateBean();
-    }, 3000);
-  }
-}
-/////////////////// RUN ///////////////////
-
-addEventListener('DOMContentLoaded', () => {
-  aki.add();
 })
 
 addEventListener('load', () => {
-  aki.init();
-  nimoBtnSpin.addEventListener('click', menu.increSpinCount, false);
-  console.log('AkiAuto-Nimo-Jackpot ---- Author: ' + AkiSriptAuthor);
+  ipc.send('loadGameURL','https://www.nimo.tv/fragments/act/slots-game')
+  // console.log('loaded ! from preload');
+  // mainLog('loaded! from preload using page function')
+  // ipc.send('log', 'loaded! from preload to main process!')
 })
+
