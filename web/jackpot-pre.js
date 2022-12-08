@@ -1,5 +1,6 @@
-// Listen ipc mess from main process:
+ELECTRON_DISABLE_SECURITY_WARNINGS = false
 const { ipcRenderer } = require('electron')
+
 ipc = class {
   static send(mess, data) {
     ipcRenderer.send(mess, data)
@@ -35,14 +36,26 @@ ipcRenderer.on('action', (event, mess) => {
       break;
   }
 })
-// fetch('file://.')
-  // .then(r => console.log(r))
 
 addEventListener('DOMContentLoaded', () => {
-  //
+  if (!window.location.host.includes('nimo.tv')) {
+    let injectCODE = $qsa('[name=inject]')
+    localStorage.injectCODE = JSON.stringify(injectCODE)
+    // ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+  } else {
+    let injectCODE = JSON.parse(localStorage.injectCODE)
+    injectCODE.forEach((e, i) => {
+      if (i != 3) { // link:css bulma, link:css AppBase, script:src jackpot
+        let x = e.cloneNode(true)
+        document.head.appendChild(x)
+      } else { //body 
+        document.body.innerHTML += e.innerHTML
+      }
+    })
+  }
 })
 addEventListener('load', () => {
-  // ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+
   // mainLog('loaded! from preload using page function')
   // ipc.send('log', 'loaded! from preload to main process!')
 })

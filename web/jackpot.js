@@ -23,18 +23,18 @@ var AkiAutoRunBtn
   ;
 
 var akiPanelCss = ''
-var akiPanel =
-  //////////////////// END HTML ////////////////////
+var akiPanel = ''
+//////////////////// END HTML ////////////////////
 
-  function parseCookie() {
-    return document.cookie
-      .split(';')
-      .map(v => v.split('='))
-      .reduce((acc, v) => {
-        acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
-        return acc;
-      }, {});
-  }
+function parseCookie() {
+  return document.cookie
+    .split(';')
+    .map(v => v.split('='))
+    .reduce((acc, v) => {
+      acc[decodeURIComponent(v[0].trim())] = decodeURIComponent(v[1].trim());
+      return acc;
+    }, {});
+}
 function delCookie(name) {
   document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
@@ -166,11 +166,14 @@ aki = class {
   }
 }
 /////////////////// RUN ///////////////////
-
 addEventListener('DOMContentLoaded', () => {
-  // aki.add();
+  //
 })
 
 addEventListener('load', () => {
+  // 1. Lấy nội dung của game.html đưa vào một nơi tạm nào đó (chưa thử nghiệm)
+  // 2. Load trang game của nimo
+  // 3. Chờ sự kiện sau khi load xong, lấy lại data đã cất ở trên, chích vào
+
 
 })

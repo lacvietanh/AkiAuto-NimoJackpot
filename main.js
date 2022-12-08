@@ -1,10 +1,7 @@
 const env = 'development';
 if (env === 'development') {
   try {
-    require('electron-reloader')(module, {
-      debug: true,
-      watchRenderer: true
-    });
+    require('electron-reloader')(module, { debug: true, watchRenderer: true });
   } catch (_) { console.log('Error'); }
 }
 const {
@@ -20,6 +17,7 @@ const { send } = require('process');
 const USERDATA = app.getPath('userData')
 const appData = new Store()
 // appData.get('ssList') 
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
 
 const generateUUID = () => {
   let
@@ -145,8 +143,8 @@ const GameWindow = class {
     this.ssid = ssid // chưa sử dụng
     this.par = par // for handle delete on disk
     GameWindow.list[id] = ssid
-    // wd.loadFile('web/game.html')
-    wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+    wd.loadFile('web/game.html')
+    // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
     log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${par}`)
     wd.once('ready-to-show', () => {
       wd.show()
@@ -156,6 +154,7 @@ const GameWindow = class {
       GameWindow.count -= 1
       delete GameWindow.list[id]
       GameWindow.log_close(id, ssid)
+      wd.destroy()
     })
     return wd;
   }
@@ -276,6 +275,8 @@ ipcMain.on('get', (ev, mess) => {
       result = sh(`
         a=$(grep -c "" main.js);for i in web/*.* ;do a=$a+$(grep -c "" $i);done;echo $a|bc
       `)
+      break
+    case 'appPath': result = app.getAppPath()
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
   }
