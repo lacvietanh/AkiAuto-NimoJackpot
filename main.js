@@ -129,6 +129,7 @@ const GameWindow = class {
         nodeIntegration: false,
         contextIsolation: false,
         partition: par,
+        webviewTag: true,
         preload: path.join(__dirname, 'web/jackpot-pre.js')
       }
     })

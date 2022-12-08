@@ -37,7 +37,7 @@ ipcRenderer.on('action', (event, mess) => {
 })
 
 addEventListener('load', () => {
-  ipc.send('loadGameURL','https://www.nimo.tv/fragments/act/slots-game')
+  // ipc.send('loadGameURL','https://www.nimo.tv/fragments/act/slots-game')
   // console.log('loaded ! from preload');
   // mainLog('loaded! from preload using page function')
   // ipc.send('log', 'loaded! from preload to main process!')
