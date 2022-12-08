@@ -1,4 +1,12 @@
-// Modules to control application life and create native browser window
+const env = 'development';
+if (env === 'development') {
+  try {
+    require('electron-reloader')(module, {
+      debug: true,
+      watchRenderer: true
+    });
+  } catch (_) { console.log('Error'); }
+}
 const {
   app, BrowserWindow, Menu, MenuItem, ipcMain,
   dialog, session, shell, globalShortcut
@@ -137,8 +145,8 @@ const GameWindow = class {
     this.ssid = ssid // chưa sử dụng
     this.par = par // for handle delete on disk
     GameWindow.list[id] = ssid
-    wd.loadFile('web/game.html')
-    // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
+    // wd.loadFile('web/game.html')
+    wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
     log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${par}`)
     wd.once('ready-to-show', () => {
       wd.show()
@@ -169,8 +177,7 @@ function initMenu() {
     label: 'AkiAuto',
     submenu: [
       {
-        label: "Reload",
-        role: 'reload',
+        label: "Reload", role: 'reload',
         accelerator: 'CommandOrControl+R',
         click: () => {
           HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
@@ -184,9 +191,7 @@ function initMenu() {
         }
       },
       {
-        label: 'DevTools',
-        role: 'toggleDevTools',
-        accelerator: 'F12'
+        label: 'DevTools', role: 'toggleDevTools', accelerator: 'F12'
       },
       {
         label: 'Quit', accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',

@@ -172,5 +172,5 @@ addEventListener('DOMContentLoaded', () => {
 })
 
 addEventListener('load', () => {
-  // aki.init();
+
 })
