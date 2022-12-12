@@ -4,10 +4,11 @@
 //        => thử thay bằng array??
 
 
-
-const env = 'development'
-if (env === 'development') {
+// const env = 'development'
+const env = 'production'
+if (env == 'development') {
   require('electron-reloader')(module, { debug: false, watchRenderer: true })
+  // module "hot reload" này khiến Electron rất lag trên window
 }
 //////// REQUIRE //////
 const {
