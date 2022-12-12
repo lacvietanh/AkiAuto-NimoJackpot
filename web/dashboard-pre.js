@@ -30,7 +30,9 @@ ipcRenderer.on('action', (ev, mess) => {
   switch (mess) {
     case 'ask-to-quit': menu.AskToQuit();
       break;
-    case 'click-btn-TITLEBAR_BTN_NEW': $id('TITLEBAR_BTN_NEW').click()
+    case 'click-btn-BTN-NEW-SS':      $id('BTN-NEW-SS').click()
+      break;
+    case 'click-btn-BTN-NEW-SPEC_SS': $id('BTN-NEW-SPEC_SS').click()
       break;
     default: console.log('ipc received "action" but', mess, 'not defined yet!');
       break;

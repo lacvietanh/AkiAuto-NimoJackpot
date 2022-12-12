@@ -89,11 +89,14 @@ const PatchMenu = function () {
         accelerator: 'CommandOrControl+R',
       },
       {
+        label: "NEW SESSION",
+        accelerator: 'CommandOrControl+N',
+        click: () => { HomeWd.webContents.send('action', 'click-btn-BTN-NEW-SS') }
+      },
+      {
         label: "NEW SPEC SESSION",
         accelerator: 'CommandOrControl+Shift+N',
-        click: () => {
-          HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
-        }
+        click: () => { HomeWd.webContents.send('action', 'click-btn-BTN-NEW-SPEC_SS') }
       },
       {
         label: 'DevTools', role: 'toggleDevTools', accelerator: 'F12'
@@ -133,21 +136,21 @@ const ss = class {
   //            ss2: {name: ss2, color: #33b},
   //            ss3: {name: ss3, color: #a9c},
   //          }
-  constructor() {
-    let ssid = this.id = `ss${1 + ss.count()}`
-    this.color = COLOR.randomHex()
-    log(`Creating new session: ssid=${this.id}; name=${this.id}; color=${this.color}`)
-    ss.list[ssid] = { name: this.id, color: this.color }
-    console.log(`Created! Current ss.list:`, ss.list)
-    ss.save()
-    return ssid
-  }
   static ParPath = `${USERDATA}/Partitions`
   static list = {}
   static load = () => { ss.list = appData.get('ss') || {} }
   static save = () => { appData.set('ss', ss.list) }
   static count = () => Object.keys(ss.list).length
   static clear = (ssid) => shell.trashItem(`${ss.ParPath}/${ssid}`)
+  constructor() {
+    let ssid = this.id = `ss${1 + ss.count()}`
+    this.color = COLOR.randomHex()
+    log(`Creating new session: ssid=${this.id}; name=${this.id}; color=${this.color}`)
+    ss.list[ssid] = { name: this.id, color: this.color }
+    console.log(`Created! Current ss.list:`, ss.list) // Work fine!
+    ss.save()
+    return { ssid: ssid };
+  }
 }
 const GameWindow = class {
   id; ssid; par; move;
@@ -158,7 +161,7 @@ const GameWindow = class {
       par = (new Date()).getTime()
       ssid = ssType
     } else {                    // 'newSS' or ss1, ss2, ss3,....
-      ssType == 'newSS' ? ssid = new ss() : ssid = ssType
+      ssType == 'NEW' ? ssid = (new ss()).ssid : ssid = ssType
       par = `persist:${ssid}`
     }
     GameWindow.count += 1 // for handle move()
@@ -188,7 +191,7 @@ const GameWindow = class {
     this.par = par // for handle delete on disk
     wd.loadFile('web/game.html')
     // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-    log(`created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
+    log(`Created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
       wd.show(); this.move()
     })
@@ -238,9 +241,9 @@ ipcMain.on('new', (event, mess) => {
         HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SPEC_SS')
         HomeWd.focus()
       })
-      break;
+      break
     case 'SS':
-      wd = new GameWindow('SS')
+      wd = new GameWindow('NEW')
       wd.webContents.once('dom-ready', () => {
         HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SS')
         HomeWd.focus()
