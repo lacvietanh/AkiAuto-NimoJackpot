@@ -28,6 +28,11 @@
       </p>
     </div>
     <div class="right">
+      <button class="TITLEBAR_BTN_NEW button is-rounded is-light"
+        title="Session này sẽ xóa khi đóng cửa sổ"
+        onclick="menu.new('specSS',this)">
+        + New Game
+      </button>
       <button id=TITLEBAR_BTN_NEW class="button is-rounded is-warning"
         title="Session này sẽ xóa khi đóng cửa sổ"
         onclick="menu.new('specSS',this)">
@@ -81,17 +86,16 @@
     <section class="box top" id="section_toggle">
       <p class="boxtitle">Bật / tắt auto cho từng cửa sổ game</p>
       <div class="table-container">
-        <table id="WindowTable" class="table sortable is-fullwidth is-narrow">
+        <table id="WindowTable" class="table sortable is-fullwidth is-narrow is-bordered">
           <thead class="has-background-link-light">
-            <tr class="">
-              <th class="">ID</th>
-              <th class="DONT_SORTABLE" title="bật hoặc tắt auto cho từng cửa sổ">AUTO</th>
-              <th>UserName</th>
-              <th title="Session ID">SSID</th>
-              <th title="số đậu cược">BET</th>
-              <th title="hũ lớn hay hũ nhỏ">HŨ</th>
-              <th>ĐẬU</th>
-            </tr>
+            <th class="DONT_SORTABLE" title="bật hoặc tắt auto cho từng cửa sổ">RUN</th>
+            <th class="DONT_SORTABLE" title="bật hoặc tắt auto cho từng cửa sổ">Menu</th>
+            <th class="">ID</th>
+            <th>UserName</th>
+            <th title="Session ID">SSID</th>
+            <th title="số đậu cược">BET</th>
+            <th title="hũ lớn hay hũ nhỏ">HŨ</th>
+            <th>ĐẬU</th>
           </thead>
           <tbody class="">
           </tbody>
@@ -105,14 +109,12 @@
       <div class="table-container">
         <table id="WindowTable" class="table sortable is-bordered is-striped is-hoverable is-fullwidth is-narrow">
           <thead class="has-background-warning">
-            <tr class="">
-              <th>ID</th>
-              <th>UserName</th>
-              <th>Session</th>
-              <th>Bean</th>
-              <th>Status</th>
-              <th>ID</th>
-            </tr>
+            <th>ID</th>
+            <th>UserName</th>
+            <th>Session</th>
+            <th>Bean</th>
+            <th>Status</th>
+            <th>ID</th>
           </thead>
           <tbody class="counter parent">
           </tbody>
@@ -161,22 +163,23 @@
             mainLog(`UPDATE: Prize Target = <b style=color:#ffea00>${value}</b>`)
           }
         </script>
-        <div class="field has-addons is-align-items-center has-background-link-light p-2">
+        <div class="field has-addons is-align-items-center has-background-link-light p-2"
+          style="max-width: 650px;margin: auto;">
           <p class="control">
-            <a class="button is-small is-ghost"> Khi thưởng<br>thấp hơn: </a>
+            <span class="is-size-7  has-text-centered"> Khi thưởng <br> thấp hơn: </span>
           </p>
-          <p class="ml-4 mr-4">
+          <p class="control is-expanded ml-4 mr-4">
             <!-- AUTO-PRIZE-TARGET -->
             <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
               class="input has-text-weight-bold has-text-centered is-size-5"
-              style="background-color: #0075ff; color: #ffea00;height: 2em;"
+              style="background-color: #6d6d6d; color: #ffea00;height: 2em;"
               oninput="syncSliderAndPrizeTarget(this)"
               onchange="mainLogUpdatePrizeValue(this.value)">
             <input type="range" id="AUTO-PRIZE-SLIDER" min="100000" max="4000000" value=400000
               style="width:100%" oninput="syncSliderAndPrizeTarget(this)"
               onchange="mainLogUpdatePrizeValue(this.value)">
           </p>
-          <p class="is-flex is-flex-wrap-wrap" style="min-width: 100px">
+          <p class="is-flex is-flex-wrap-wrap" style="width: 100px">
             <label class="m-0 mb-1 radio has-text-link">
               <input type="radio" name="AUTO-STOP-BEHAVIOR" value="stop" checked> Dừng luôn
             </label><br>

@@ -15,9 +15,9 @@ ipc = class {
   }
 }
 
-ipcRenderer.on('removeLoading', (event, EleId) => {
-  $id(EleId).classList.remove('is-loading')
-  $id(EleId).disabled = false
+ipcRenderer.on('btnLoadingDone', (event, btnID) => {
+  $id(btnID).classList.remove('is-loading')
+  $id(btnID).disabled = false
 })
 ipcRenderer.on('data', (event, data) => {
   console.log('received data from window ', event.senderId, '. Data: ', data)
@@ -25,7 +25,7 @@ ipcRenderer.on('data', (event, data) => {
 ipcRenderer.on('mainLog', (event, mess) => {
   mainLog(mess)
 })
-ipcRenderer.on('action', (event, mess) => {
+ipcRenderer.on('action', (ev, mess) => {
   switch (mess) {
     case 'ask-to-quit': menu.AskToQuit();
       break;
@@ -35,7 +35,9 @@ ipcRenderer.on('action', (event, mess) => {
       break;
   }
 })
-
+addEventListener('contextmenu', (ev) => {
+  ev.shiftKey ? ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y }) : null
+})
 addEventListener('load', () => { //test
   // console.log('loaded ! from preload');
   // mainLog('loaded! from preload using page function')

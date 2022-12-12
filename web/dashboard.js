@@ -11,7 +11,7 @@ Boolean.prototype.toOnOff = function () {
   v ? r = 'ON' : r = 'OFF'
   return r
 }
-function mainLog(mess, color) {
+const mainLog = function (mess, color) {
   let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 19)
   let c = color || "";
   APP_LOGS.innerHTML += `<br>${time_}  <span style="color:${c}"> ${mess} </span>`
@@ -53,16 +53,18 @@ const winMan = class {
   static addRow(x) {
     let styleString = `background-color:${x.color}`
     $qs('#WindowTable tbody').innerHTML += /*html*/`
-    <tr class="accSelector" onclick="winMan.toggleByRow(this)">
-      <td class="borderNONE">${x.wid}</td>
-      <td id="window_${x.wid}" class='winID noSort borderNONE'
-        style="display:flex;justify-content:center;">
-        <div class="switch">
+    <tr class="accSelector" >
+      <td id="window_${x.wid}" class='winID noSort borderNONE'>
+        <label class="switch">
           <input type="checkbox" name=autoToggle data-target="window_${x.wid}"
             onchange="winMan.toggle(this.dataset.target,this.checked)">
           <span class="slider round"></span>
-        </div>
+        </label>
       </td>
+      <td class="borderNONE">
+        <button class="button is-small">...</button>
+      </td>
+      <td class="">${x.wid}</td>
       <td class='uname'>${x.username}</td>
       <td>
         <span class=ssid> ${x.ssid} </span>
@@ -74,10 +76,10 @@ const winMan = class {
     </tr>
   `;
   }
-  static toggleByRow(tr) {
-    let t = tr.querySelector('input[name=autoToggle]')
-    t.click()
-  }
+  // static toggleByRow(tr) {
+  //   let t = tr.querySelector('input[name=autoToggle]')
+  //   t.click()
+  // }
   static toggle(TargetID, value) {
     mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for window id ${TargetID}`)
   }

@@ -53,7 +53,7 @@ const createSplashWindow = function () {
 }
 const createHomeWindow = function () {
   let HomeWd = new BrowserWindow({
-    width: 600,
+    width: 800,
     height: 700,
     resizable: false,
     show: false,
@@ -62,7 +62,7 @@ const createHomeWindow = function () {
     autoHideMenuBar: true,
     icon: path.join(__dirname, 'icon.ico'),
     webPreferences: {
-      nodeIntegration: false
+      nodeIntegration: true
       , contextIsolation: false
       , preload: path.join(__dirname, 'web/dashboard-pre.js')
       // , partition: DEFAULT 
@@ -128,28 +128,39 @@ const COLOR = class {
   }
 }
 const ss = class {
-  static ParPath = `${USERDATA}/Partitions`
-  static list = {}
-  static count = () => ss.getList().length
-  constructor(id, color) {
-    this.id = `ss${ss.count()}`
+  // ss.list: { 
+  //            ss1: {name: ss1, color: #fea},
+  //            ss2: {name: ss2, color: #33b},
+  //            ss3: {name: ss3, color: #a9c},
+  //          }
+  constructor(id) {
+    this.id = `ss${id}`
     this.color = COLOR.randomHex()
-    log(`Creating new session: ssid=${id}; name=${id}; color=${color}`)
-    ssList[id] = {}
+    log(`Creating new session: ssid=${this.id}; name=${this.id}; color=${this.color}`)
+    ss.list[this.id] = {}
     ssList[id].name = id // can change soon, may be userName when logged in
     ssList[id].color = color
     console.log(`Create new session with data:`, ssList[id]);
     log(`Created new session with data:` + JSON.stringify(ssList[id]));
     console.log('create new GameWindow with session: ', id, color)
   }
-  static clear = (ssid) => shell.trashItem(`${ss.path}/${ssid}`)
+  static list = {}
+  static ParPath = `${USERDATA}/Partitions`
+  static count = function (includeSPEC = true) {
+    if (includeSPEC) {
+      return Object.keys(ss.list).length
+    } else {
+
+    }
+  }
+  static clear = (ssid) => shell.trashItem(`${ss.ParPath}/${ssid}`)
 }
 const GameWindow = class {
   id; ssid; par; move;
   static count = 0
   static list = {} // to manage what ssid use for BrowserWindow (id) 
   constructor(ssid = "SPEC", par = (new Date()).getTime()) {
-    ssid != 'SPEC' ? par = `persist:${ssid}` : log('Open new sperate session: ' + par)
+    ssid != 'SPEC' ? par = `persist:${ssid}` : log('Open new SPECIFIC session: ' + par)
     GameWindow.count += 1 // for handle move()
     this.move = function () {
       let c = GameWindow.count
@@ -230,7 +241,7 @@ ipcMain.on('new', (event, mess) => {
     case 'specSS':
       let wd = new GameWindow()
       wd.webContents.once('dom-ready', () => {
-        HomeWd.webContents.send('removeLoading', 'TITLEBAR_BTN_NEW')
+        HomeWd.webContents.send('btnLoadingDone', 'TITLEBAR_BTN_NEW')
         HomeWd.focus()
       })
       break;
@@ -238,6 +249,11 @@ ipcMain.on('new', (event, mess) => {
       break;
   }
 })
+ipcMain.on('InspectMeAtPos', (ev, cursorPos) => {
+  let senderWd = BrowserWindow.fromWebContents(ev.sender)
+  senderWd.webContents.inspectElement(cursorPos.x, cursorPos.y)
+})
+
 ipcMain.on('action', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   switch (mess) {
@@ -254,6 +270,8 @@ ipcMain.on('action', (ev, mess) => {
       break
   }
 })
+
+
 ipcMain.on('get', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   let result

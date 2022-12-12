@@ -19,6 +19,7 @@
     "electron-reloader": "^1.2.3"
   },
   "dependencies": {
-    "electron-store": "^8.1.0"
+    "electron-store": "^8.1.0",
+    "remote": "^0.2.6"
   }
 }

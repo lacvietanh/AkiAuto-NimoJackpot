@@ -37,6 +37,10 @@ ipcRenderer.on('action', (event, mess) => {
   }
 })
 
+addEventListener('contextmenu', (ev) => {
+  ev.shiftKey ? ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y }) : null
+})
+
 addEventListener('DOMContentLoaded', () => {
   if (!window.location.host.includes('nimo.tv')) {
     let injectCODE = $qsa('[name=inject]')

@@ -24,3 +24,7 @@ tr.accSelector.selected {
   background-color: #768bd8 !important;
   color: #ffe906 !important;
 }
+.winID {
+  display: flex;
+  justify-content: center;
+}

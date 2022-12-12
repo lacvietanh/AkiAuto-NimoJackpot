@@ -3,7 +3,7 @@ html {
   overflow-y: hidden;
   scroll-behavior: smooth;
   background-color: transparent;
-  max-width: 600px;
+  max-width: 800px;
   max-height: 700px;
 }
 :target:before {
