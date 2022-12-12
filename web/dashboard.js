@@ -61,15 +61,17 @@ const winMan = class {
           <span class="slider round"></span>
         </label>
       </td>
-      <td class="borderNONE">
-        <button class="button is-small">...</button>
+      <td class="borderNONE menu">
+        <button class="button is-small is-light"   title="Open/Focus">o</button>
+        <button class="button is-small is-success" title="New Window">+</button>
+        <button class="button is-small is-danger"  title="Close Window">x</button>
       </td>
-      <td class="">${x.wid}</td>
-      <td class='uname'>${x.username}</td>
+      <td class="wid">${x.wid}</td>
       <td>
         <span class=ssid> ${x.ssid} </span>
         <span class=ssColor style="${styleString}"> </span>
       </td>
+      <td class='uname'>${x.username}</td>
       <td class='bet'>${x.bet}</td>
       <td class='pool'>${x.pool}</td>
       <td class='bean'>${x.bean}</td>

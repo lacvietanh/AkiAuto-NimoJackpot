@@ -25,6 +25,15 @@ tr.accSelector.selected {
   color: #ffe906 !important;
 }
 .winID {
-  display: flex;
-  justify-content: center;
+  width: 2.8em;
+  padding: 5px 0 !important;
+}
+.wid{
+  width: 2em;
+}
+td.menu {
+  width: 8.5em;
+}
+td.menu button {
+  height: 25px;
 }

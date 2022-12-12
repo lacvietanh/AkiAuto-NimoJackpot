@@ -21,6 +21,9 @@ html {
 .UserSelectNONE {
   user-select: none;
 }
+.w-fit{
+  width: fit-content;
+}
 .counter.parent {
   counter-reset: countVar;
 }

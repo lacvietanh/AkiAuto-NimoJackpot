@@ -16,6 +16,7 @@ ipc = class {
 }
 
 ipcRenderer.on('btnLoadingDone', (event, btnID) => {
+  console.log(btnID)
   $id(btnID).classList.remove('is-loading')
   $id(btnID).disabled = false
 })
@@ -36,7 +37,9 @@ ipcRenderer.on('action', (ev, mess) => {
   }
 })
 addEventListener('contextmenu', (ev) => {
-  ev.shiftKey ? ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y }) : null
+  if (ev.shiftKey && ev.altKey) {
+    ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y })
+  }
 })
 addEventListener('load', () => { //test
   // console.log('loaded ! from preload');

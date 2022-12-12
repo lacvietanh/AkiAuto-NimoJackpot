@@ -28,13 +28,13 @@
       </p>
     </div>
     <div class="right">
-      <button class="TITLEBAR_BTN_NEW button is-rounded is-light"
-        title="Session này sẽ xóa khi đóng cửa sổ"
-        onclick="menu.new('specSS',this)">
-        + New Game
+      <button id="BTN-NEW-SS" class="button is-rounded is-light"
+        title="Mở cửa sổ game cho session mới"
+        onclick="menu.new('SS',this)">
+        + New Session
       </button>
-      <button id=TITLEBAR_BTN_NEW class="button is-rounded is-warning"
-        title="Session này sẽ xóa khi đóng cửa sổ"
+      <button id=BTN-NEW-SPEC_SS class="button is-rounded is-warning"
+        title="Session này là riêng biệt, sẽ xóa khi đóng cửa sổ"
         onclick="menu.new('specSS',this)">
         + NEW SPEC SESSION
       </button>
@@ -88,11 +88,11 @@
       <div class="table-container">
         <table id="WindowTable" class="table sortable is-fullwidth is-narrow is-bordered">
           <thead class="has-background-link-light">
-            <th class="DONT_SORTABLE" title="bật hoặc tắt auto cho từng cửa sổ">RUN</th>
-            <th class="DONT_SORTABLE" title="bật hoặc tắt auto cho từng cửa sổ">Menu</th>
-            <th class="">ID</th>
-            <th>UserName</th>
+            <th class="DONT_SORTABLE borderNONE" title="bật hoặc tắt auto cho từng cửa sổ">RUN</th>
+            <th class="DONT_SORTABLE borderNONE" title="bật hoặc tắt auto cho từng cửa sổ">Menu</th>
+            <th class="" title="ID của cửa sổ">ID</th>
             <th title="Session ID">SSID</th>
+            <th>UserName</th>
             <th title="số đậu cược">BET</th>
             <th title="hũ lớn hay hũ nhỏ">HŨ</th>
             <th>ĐẬU</th>
@@ -109,7 +109,7 @@
       <div class="table-container">
         <table id="WindowTable" class="table sortable is-bordered is-striped is-hoverable is-fullwidth is-narrow">
           <thead class="has-background-warning">
-            <th>ID</th>
+            <th title="ID của cửa sổ">ID</th>
             <th>UserName</th>
             <th>Session</th>
             <th>Bean</th>
@@ -172,7 +172,7 @@
             <!-- AUTO-PRIZE-TARGET -->
             <input id=AUTO-PRIZE-TARGET type="number" placeholder="Prize tối thiểu" value="500000"
               class="input has-text-weight-bold has-text-centered is-size-5"
-              style="background-color: #6d6d6d; color: #ffea00;height: 2em;"
+              style="background-color: #dbdbdb; color: #0075ff;height: 2em;"
               oninput="syncSliderAndPrizeTarget(this)"
               onchange="mainLogUpdatePrizeValue(this.value)">
             <input type="range" id="AUTO-PRIZE-SLIDER" min="100000" max="4000000" value=400000
@@ -188,7 +188,7 @@
             </label>
           </p>
         </div>
-        <div class="field has-addons is-justify-content-center">
+        <div class="field has-addons is-justify-content-center mt-3">
           <p class="control">
             <a class="button is-static is-small is-rounded ">
               Hũ lớn

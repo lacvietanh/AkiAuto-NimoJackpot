@@ -79,7 +79,7 @@ const log = function (mess, sendToMain = true) {
   console.log(mess)
   sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
 }
-const initMenu = function () {
+const PatchMenu = function () {
   const menu = Menu.getApplicationMenu()
   menu.items[0] = (new MenuItem({
     label: 'AkiAuto',
@@ -133,34 +133,34 @@ const ss = class {
   //            ss2: {name: ss2, color: #33b},
   //            ss3: {name: ss3, color: #a9c},
   //          }
-  constructor(id) {
-    this.id = `ss${id}`
+  constructor() {
+    let ssid = this.id = `ss${1 + ss.count()}`
     this.color = COLOR.randomHex()
     log(`Creating new session: ssid=${this.id}; name=${this.id}; color=${this.color}`)
-    ss.list[this.id] = {}
-    ssList[id].name = id // can change soon, may be userName when logged in
-    ssList[id].color = color
-    console.log(`Create new session with data:`, ssList[id]);
-    log(`Created new session with data:` + JSON.stringify(ssList[id]));
-    console.log('create new GameWindow with session: ', id, color)
+    ss.list[ssid] = { name: this.id, color: this.color }
+    console.log(`Created! Current ss.list:`, ss.list)
+    ss.save()
+    return ssid
   }
-  static list = {}
   static ParPath = `${USERDATA}/Partitions`
-  static count = function (includeSPEC = true) {
-    if (includeSPEC) {
-      return Object.keys(ss.list).length
-    } else {
-
-    }
-  }
+  static list = {}
+  static load = () => { ss.list = appData.get('ss') || {} }
+  static save = () => { appData.set('ss', ss.list) }
+  static count = () => Object.keys(ss.list).length
   static clear = (ssid) => shell.trashItem(`${ss.ParPath}/${ssid}`)
 }
 const GameWindow = class {
   id; ssid; par; move;
   static count = 0
-  static list = {} // to manage what ssid use for BrowserWindow (id) 
-  constructor(ssid = "SPEC", par = (new Date()).getTime()) {
-    ssid != 'SPEC' ? par = `persist:${ssid}` : log('Open new SPECIFIC session: ' + par)
+  static list = {} // for manage what ssid use for BrowserWindow (id) 
+  constructor(ssType, ssid = "", par = "") {
+    if (ssType == 'SPEC') {     // SPECIFIC SESSION ON RAM
+      par = (new Date()).getTime()
+      ssid = ssType
+    } else {                    // 'newSS' or ss1, ss2, ss3,....
+      ssType == 'newSS' ? ssid = new ss() : ssid = ssType
+      par = `persist:${ssid}`
+    }
     GameWindow.count += 1 // for handle move()
     this.move = function () {
       let c = GameWindow.count
@@ -183,35 +183,28 @@ const GameWindow = class {
       }
     })
     let id = this.id = wd.id
+    GameWindow.list[id] = ssid  // ADD to list
     this.ssid = ssid // chưa sử dụng
     this.par = par // for handle delete on disk
-    GameWindow.list[id] = ssid
     wd.loadFile('web/game.html')
     // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
     log(`created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
-      wd.show()
-      this.move()
+      wd.show(); this.move()
     })
     wd.once('close', () => {
       GameWindow.count -= 1
-      delete GameWindow.list[id]
-      GameWindow.log_close(id, ssid)
+      delete GameWindow.list[id] // REMOVE from list
       wd.destroy()
     })
     return wd;
-  }
-  static log_close(id, ssid) {
-    if (GameWindow.ForceQuit == 0) { //prevent Object Detroyed
-      log(`Đã đóng cửa sổ game id ${id} (sử dụng session ${ssid})`)
-    }
   }
   static ForceQuit = 0 //quit by user or by app.quit?
 }
 
 //////////////////////////////// START APP HERE /////////////////////////////////
 app.whenReady().then(() => {
-  initMenu()
+  PatchMenu(); ss.load()
   splashWd = createSplashWindow()
   splashWd.webContents.send('mess', 'Đang tải bảng điều khiển...')
   HomeWd = createHomeWindow()
@@ -237,11 +230,19 @@ app.whenReady().then(() => {
 
 ////////////////////////  IPC AREA 
 ipcMain.on('new', (event, mess) => {
+  let wd
   switch (mess) {
     case 'specSS':
-      let wd = new GameWindow()
+      wd = new GameWindow('SPEC')
       wd.webContents.once('dom-ready', () => {
-        HomeWd.webContents.send('btnLoadingDone', 'TITLEBAR_BTN_NEW')
+        HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SPEC_SS')
+        HomeWd.focus()
+      })
+      break;
+    case 'SS':
+      wd = new GameWindow('SS')
+      wd.webContents.once('dom-ready', () => {
+        HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SS')
         HomeWd.focus()
       })
       break;
@@ -259,7 +260,7 @@ ipcMain.on('action', (ev, mess) => {
   switch (mess) {
     case 'QUITAPP':
       console.log('received QUITAPP action!'); GameWindow.ForceQuit = 1
-      HomeWd.destroy(); app.quit();
+      ss.save(); HomeWd.destroy(); app.quit();
       break
     case 'MINIMIZE':
       let backup = senderWd.transparent
@@ -304,10 +305,6 @@ ipcMain.on('loadURL', (ev, mess) => {
 app.on('activate', () => {    // For macOS
   let c = BrowserWindow.getAllWindows().length
   if (c === 0) createHomeWindow().show()
-})
-
-app.on('window-all-closed', () => {
-  app.quit()
 })
 
 // In this file you can include the rest of your app's specific main process
