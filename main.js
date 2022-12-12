@@ -1,3 +1,10 @@
+// NOTE:
+// - Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
+// - BUG: ví dụ xóa một session, thì new ss = count()+1 không còn chính xác 
+//        => thử thay bằng array??
+
+
+
 const env = 'development'
 if (env === 'development') {
   require('electron-reloader')(module, { debug: false, watchRenderer: true })
@@ -131,11 +138,8 @@ const COLOR = class {
   }
 }
 const ss = class {
-  // ss.list: { 
-  //            ss1: {name: ss1, color: #fea},
-  //            ss2: {name: ss2, color: #33b},
-  //            ss3: {name: ss3, color: #a9c},
-  //          }
+  // ss.list: {  ss1: {name: ss1, color: #fea},
+  //             ss2: {name: ss2, color: #33b},     }
   static ParPath = `${USERDATA}/Partitions`
   static list = {}
   static load = () => { ss.list = appData.get('ss') || {} }
@@ -147,7 +151,7 @@ const ss = class {
     this.color = COLOR.randomHex()
     log(`Creating new session: ssid=${this.id}; name=${this.id}; color=${this.color}`)
     ss.list[ssid] = { name: this.id, color: this.color }
-    console.log(`Created! Current ss.list:`, ss.list) // Work fine!
+    // console.log(`Created! Current ss.list:`, ss.list) // Work fine!
     ss.save()
     return { ssid: ssid };
   }

@@ -107,8 +107,8 @@ menu = class {
     $qsa(`#APP_SIDEMENU button.toggleShow`).forEach((btn) => {
       btn.addEventListener('click', () => menu.toggleShow(btn))
     });
-    ['top', 'bottom'].forEach(c => { // active first button each position
-      $qs(`#APP_SIDEMENU .${c} button.toggleShow`).click()
+    ['top', 'bottom'].forEach(p => { // active first button each position
+      $qs(`#APP_SIDEMENU .${p} button.toggleShow`).click()
     });
   }
   static toggleShow(btnCall) {
