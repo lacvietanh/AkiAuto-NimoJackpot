@@ -1,25 +1,20 @@
-const env = 'development';
+const env = 'development'
 if (env === 'development') {
-  try {
-    require('electron-reloader')(module, { debug: true, watchRenderer: true });
-  } catch (_) { console.log('Error'); }
+  require('electron-reloader')(module, { debug: false, watchRenderer: true })
 }
+//////// REQUIRE //////
 const {
-  app, BrowserWindow, Menu, MenuItem, ipcMain,
-  dialog, session, shell, globalShortcut
+  app, ipcMain, dialog, globalShortcut,
+  BrowserWindow, Menu, MenuItem, session,
+  shell
 } = require('electron')
-const execSync = require('child_process').execSync;
-const sh = (cmd) => execSync(cmd, { encoding: 'utf-8' });  // the default is 'buffer'
+const execSync = require('child_process').execSync
 const Store = require('electron-store')
-const fs = require('fs')
-const path = require('path');
-const { send } = require('process');
-const USERDATA = app.getPath('userData')
-const appData = new Store()
-// appData.get('ssList') 
-process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+const path = require('path')
 
-const generateUUID = () => {
+//////// MY FUNCTIONS //////
+const sh = (cmd) => execSync(cmd, { encoding: 'utf-8' })
+const generateUUID = function () {
   let
     d = new Date().getTime(),
     d2 = (performance && performance.now && (performance.now() * 1000)) || 0;
@@ -35,24 +30,11 @@ const generateUUID = () => {
     return (c == 'x' ? r : (r & 0x7 | 0x8)).toString(16);
   });
 }
-var HomeWd = splashWd = {}
-
-const COLOR = class {
-  static invertHex(hex) {
-    return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()
-  }
-  static randomHex() {
-    let hex = Math.floor(Math.random() * 16777215).toString(16)
-    return '#' + hex;
-  }
+const ObjEmpty = function (obj) {
+  for (var i in obj) { return false }
+  return true
 }
-function ObjEmpty(obj) {
-  for (var i in obj) {
-    return false;
-  }
-  return true;
-}
-function createSplashWindow() {
+const createSplashWindow = function () {
   let sw = new BrowserWindow({
     width: 809, height: 500,
     transparent: true,
@@ -69,7 +51,7 @@ function createSplashWindow() {
   sw.loadFile('web/splash.html')
   return sw
 }
-function createHomeWindow() {
+const createHomeWindow = function () {
   let HomeWd = new BrowserWindow({
     width: 600,
     height: 700,
@@ -83,7 +65,7 @@ function createHomeWindow() {
       nodeIntegration: false
       , contextIsolation: false
       , preload: path.join(__dirname, 'web/dashboard-pre.js')
-      // , partition: 'persist:_dashboard_' // không lấy, để đếm session bằng dir
+      // , partition: DEFAULT 
     }
   })
   HomeWd.loadFile('web/dashboard.html')
@@ -93,14 +75,65 @@ function createHomeWindow() {
   })
   return HomeWd
 }
+const log = function (mess, sendToMain = true) {
+  console.log(mess)
+  sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
+}
+const initMenu = function () {
+  const menu = Menu.getApplicationMenu()
+  menu.items[0] = (new MenuItem({
+    label: 'AkiAuto',
+    submenu: [
+      {
+        label: "Reload", role: 'reload',
+        accelerator: 'CommandOrControl+R',
+      },
+      {
+        label: "NEW SPEC SESSION",
+        accelerator: 'CommandOrControl+Shift+N',
+        click: () => {
+          HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
+        }
+      },
+      {
+        label: 'DevTools', role: 'toggleDevTools', accelerator: 'F12'
+      },
+      {
+        label: 'Quit', accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',
+        click: () => { HomeWd.webContents.send('action', 'ask-to-quit') }
+      }
+    ]
+  }))
+  let listRoleRemove = ['appmenu', 'viewmenu', 'help']
+  let menu_fix = menu?.items.filter((item) => {
+    return !listRoleRemove.includes(item.role)
+  })
+  Menu.setApplicationMenu(Menu.buildFromTemplate(menu_fix))
+}
 
-const ss = class {  // the session persist on disk.
-  static ParentPath = `${USERDATA}/Partitions`
-  static list = () => fs.readdirSync(ss.ParentPath)
+//////// MY VARIABLES //////
+const USERDATA = app.getPath('userData')
+const appData = new Store()
+process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = true
+var HomeWd = splashWd = {}
+
+//////// MY CLASSES //////
+const COLOR = class {
+  static invertHex(hex) {
+    return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()
+  }
+  static randomHex() {
+    let hex = Math.floor(Math.random() * 16777215).toString(16)
+    return '#' + hex;
+  }
+}
+const ss = class {
+  static ParPath = `${USERDATA}/Partitions`
+  static list = {}
   static count = () => ss.getList().length
-  constructor(
-    id = `ss${ss.count()}`,
-    color = COLOR.randomHex()) {
+  constructor(id, color) {
+    this.id = `ss${ss.count()}`
+    this.color = COLOR.randomHex()
     log(`Creating new session: ssid=${id}; name=${id}; color=${color}`)
     ssList[id] = {}
     ssList[id].name = id // can change soon, may be userName when logged in
@@ -109,9 +142,8 @@ const ss = class {  // the session persist on disk.
     log(`Created new session with data:` + JSON.stringify(ssList[id]));
     console.log('create new GameWindow with session: ', id, color)
   }
-  static clear = (ssid) => shell.trashItem(`${SS.path}/${ssid}`)
+  static clear = (ssid) => shell.trashItem(`${ss.path}/${ssid}`)
 }
-
 const GameWindow = class {
   id; ssid; par; move;
   static count = 0
@@ -145,7 +177,7 @@ const GameWindow = class {
     GameWindow.list[id] = ssid
     wd.loadFile('web/game.html')
     // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
-    log(`created GameWindow: id: ${id}, ssid: ${ssid}, partition: ${par}`)
+    log(`created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
       wd.show()
       this.move()
@@ -160,50 +192,10 @@ const GameWindow = class {
   }
   static log_close(id, ssid) {
     if (GameWindow.ForceQuit == 0) { //prevent Object Detroyed
-      log(`Đã đóng cửa sổ game ${id} (sử dụng session ${ssid})`)
+      log(`Đã đóng cửa sổ game id ${id} (sử dụng session ${ssid})`)
     }
   }
   static ForceQuit = 0 //quit by user or by app.quit?
-}
-
-function log(mess, sendToMain = true) {
-  console.log(mess)
-  sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
-}
-function initMenu() {
-  const menu = Menu.getApplicationMenu()
-  menu.items[0] = (new MenuItem({
-    label: 'AkiAuto',
-    submenu: [
-      {
-        label: "Reload", role: 'reload',
-        accelerator: 'CommandOrControl+R',
-        click: () => {
-          HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
-        }
-      },
-      {
-        label: "NEW SPEC SESSION",
-        accelerator: 'CommandOrControl+Shift+N',
-        click: () => {
-          HomeWd.webContents.send('action', 'click-btn-TITLEBAR_BTN_NEW')
-        }
-      },
-      {
-        label: 'DevTools', role: 'toggleDevTools', accelerator: 'F12'
-      },
-      {
-        label: 'Quit', accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',
-        click: () => { HomeWd.webContents.send('action', 'ask-to-quit') }
-      }
-    ]
-  }))
-  let listRoleRemove = ['appmenu', 'viewmenu', 'help']
-  let menu_fix = menu?.items.filter((item) => {
-    return !listRoleRemove.includes(item.role)
-  })
-  // menu_fix.items.forEach((m, i) => { console.log(i, m) })
-  Menu.setApplicationMenu(Menu.buildFromTemplate(menu_fix))
 }
 
 //////////////////////////////// START APP HERE /////////////////////////////////
