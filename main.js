@@ -1,11 +1,10 @@
 // NOTE:
-// - Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
-// - BUG: ví dụ xóa một session, thì new ss = count()+1 không còn chính xác 
-//        => thử thay bằng array??
+// Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
+// Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
 
 
-// const env = 'development'
-const env = 'production'
+const env = 'development'
+// const env = 'production'
 if (env == 'development') {
   require('electron-reloader')(module, { debug: false, watchRenderer: true })
   // module "hot reload" này khiến Electron rất lag trên window

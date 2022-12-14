@@ -111,6 +111,11 @@ menu = class {
       $qs(`#APP_SIDEMENU .${p} button.toggleShow`).click()
     });
   }
+  static new(what, btnCall) {
+    btnCall.classList.add('is-loading')
+    btnCall.disabled = true
+    ipc.send('new', what)
+  }
   static toggleShow(btnCall) {
     let target = $id(btnCall.dataset.target) || []
     // remove current active same position
@@ -121,11 +126,6 @@ menu = class {
   }
   static updateSelect(td) {
     $id('panel-UserName').innerHTML = td.innerHTML;
-  }
-  static new(what, btnCall) {
-    btnCall.classList.add('is-loading')
-    btnCall.disabled = true
-    ipc.send('new', what)
   }
   static AskToQuit() {
     let rep = window.confirm('QUIT APP?')
