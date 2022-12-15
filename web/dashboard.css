@@ -24,16 +24,45 @@ tr.accSelector.selected {
   background-color: #768bd8 !important;
   color: #ffe906 !important;
 }
-.winID {
+#WindowTable button {
+  height: 25px;
+}
+.winToggle {
   width: 2.8em;
   padding: 5px 0 !important;
 }
-.wid{
-  width: 2em;
+.wid {
+  width: 30px;
+  max-width: fit-content;
 }
-td.menu {
-  width: 8.5em;
-}
-td.menu button {
+.wid button {
+  flex-shrink: 0;
+  width: 40px;
   height: 25px;
+  padding: 10px;
+  margin-right: 5px;
+}
+.wid .wid_id {
+  margin-right: 5px;
+}
+.wid button img {
+  filter: invert(100%);
+  width: 150px;
+}
+.FlexContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ssid_color {
+  width: 50px;
+}
+.ss_menu{
+  width: 90px;
+}
+.ssColor {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  border-radius: 50%;
 }

@@ -133,25 +133,30 @@ const COLOR = class {
     return (Number(`0x1${hex}`) ^ 0xFFFFFF).toString(16).substr(1).toUpperCase()
   }
   static randomHex() {
-    let hex = Math.floor(Math.random() * 16777215).toString(16)
-    return '#' + hex;
+    return '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
   }
 }
 const ss = class {
-  // ss.list: {  ss1: {name: ss1, color: #fea},
-  //             ss2: {name: ss2, color: #33b},     }
+  // ss.list: {  ss1: {Uname: undefined, color: #fea},
+  //             ss2: {Uname: undefined, color: #33b},     }
   static ParPath = `${USERDATA}/Partitions`
   static list = {}
   static load = () => { ss.list = appData.get('ss') || {} }
-  static save = () => { appData.set('ss', ss.list) }
-  static count = () => Object.keys(ss.list).length
-  static clear = (ssid) => shell.trashItem(`${ss.ParPath}/${ssid}`)
+  static save = () => appData.set('ss', ss.list)
+  static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
+  static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
+  static clear = (ssid) => {
+    delete ss.list[ssid]
+    appData.delete('ss'[ssid])
+    shell.trashItem(`${ss.ParPath}/${ssid}`) // delete folder
+  }
   constructor() {
-    let ssid = this.id = `ss${1 + ss.count()}`
+    let ID_increment = 1 + ss.count()
+    let ssid = this.id = `ss${ID_increment}`
     this.color = COLOR.randomHex()
-    log(`Creating new session: ssid=${this.id}; name=${this.id}; color=${this.color}`)
-    ss.list[ssid] = { name: this.id, color: this.color }
-    // console.log(`Created! Current ss.list:`, ss.list) // Work fine!
+    log(`Creating new session: ssid=${this.id}; color=${this.color}`)
+    ss.list[ssid] = { uname: undefined, color: this.color }
+    appData.set('ssid_INCREMENT', ID_increment)
     ss.save()
     return { ssid: ssid };
   }
@@ -295,6 +300,8 @@ ipcMain.on('get', (ev, mess) => {
       `)
       break
     case 'appPath': result = app.getAppPath()
+      break
+    case 'ssList': result = ss.list
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
   }

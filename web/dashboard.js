@@ -22,8 +22,7 @@ const COLOR = class {
     return '#' + ("000000" + (0xFFFFFF ^ parseInt(hex.substring(1), 16)).toString(16)).slice(-6);
   }
   static randomHex() {
-    let hex = Math.floor(Math.random() * 16777215).toString(16)
-    return '#' + hex;
+    return '#' + (Math.random() * 0xFFFFFF << 0).toString(16).padStart(6, '0');
   }
 }
 
@@ -34,54 +33,52 @@ const appData = {
   , accs: [] //list accounts: {username, bean, }
 }
 const winMan = class {
-  static init() {
-    let data = [
-      { wid: 3, username: "vua cỏ", color: COLOR.randomHex(), ssid: "001", bet: "450", pool: "Nhỏ", bean: "280k" },
-      { wid: 4, username: "vua bài", color: COLOR.randomHex(), ssid: "002", bet: "900", pool: "Nhỏ", bean: "403k" },
-      { wid: 5, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "9000", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      { wid: 6, username: "vua nghiện", color: COLOR.randomHex(), ssid: "003", bet: "4500", pool: "Lớn", bean: "1.2M" },
-      // { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      // { wid: 7, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      // { wid: 8, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      // { wid: 9, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-      // { wid: 10, username: "vua tôm", color: COLOR.randomHex(), ssid: "004", bet: "45000", pool: "Lớn", bean: "37000" },
-    ]
-    data.forEach((row) => { winMan.addRow(row) })
+  static data = {}
+  static updateTable() {
+    let d = winMan.data, e = $qsa('#WindowTable tbody .ssid'), oldSsidList = []
+    e.forEach((e, i) => { oldSsidList[i] = e.innerHTML.trim() })
+    Object.keys(d).forEach(ss => {
+      // ex: ss1: { Uname: undefined, color: #fea }
+      d[ss]['ssid'] = ss
+      !oldSsidList.includes(d[ss]['ssid']) ? winMan.addRow(d[ss]) : null
+    })
   }
   static addRow(x) {
     let styleString = `background-color:${x.color}`
     $qs('#WindowTable tbody').innerHTML += /*html*/`
     <tr class="accSelector" >
-      <td id="window_${x.wid}" class='winID noSort borderNONE'>
+      <td id="window_${x.wid || ""}" class='winToggle noSort borderNONE'>
         <label class="switch">
-          <input type="checkbox" name=autoToggle data-target="window_${x.wid}"
+          <input type="checkbox" name=autoToggle data-target="window_${x.wid || ''}"
             onchange="winMan.toggle(this.dataset.target,this.checked)">
           <span class="slider round"></span>
         </label>
       </td>
-      <td class="borderNONE menu">
-        <button class="button is-small is-light"   title="Open/Focus">o</button>
-        <button class="button is-small is-success" title="New Window">+</button>
-        <button class="button is-small is-danger"  title="Close Window">x</button>
+      <td class=wid>
+        <div class=FlexContainer>
+          <button class="button is-small is-info" title="Open/Focus">
+            <img src="svgs/regular/window-maximize.svg">
+          </button>
+          <span class=wid_id> ${x.wid || '0'}</span>
+        </div>
       </td>
-      <td class="wid">${x.wid}</td>
-      <td>
-        <span class=ssid> ${x.ssid} </span>
-        <span class=ssColor style="${styleString}"> </span>
+      <td class=ss_menu>
+        <button class="button is-small is-success" title="Cửa sổ mới">+</button>
+        <button class="button is-small is-danger"  title="Xóa session">x</button>
       </td>
-      <td class='uname'>${x.username}</td>
-      <td class='bet'>${x.bet}</td>
-      <td class='pool'>${x.pool}</td>
-      <td class='bean'>${x.bean}</td>
+      <td class=ssid_color>
+        <div class=FlexContainer>
+          <span class=ssColor style="${styleString}"> </span>
+          <span class=ssid> ${x.ssid} </span>
+        </div>
+      </td>
+      <td class='uname'>${x.uname || 'Not Login'}</td>
+      <td class='bet'>${x.bet || ''}</td>
+      <td class='pool'>${x.pool || ''}</td>
+      <td class='bean'>${x.bean || ''}</td>
     </tr>
   `;
   }
-  // static toggleByRow(tr) {
-  //   let t = tr.querySelector('input[name=autoToggle]')
-  //   t.click()
-  // }
   static toggle(TargetID, value) {
     mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for window id ${TargetID}`)
   }
@@ -151,7 +148,6 @@ function preventSortable() {
 
 window.addEventListener('load', () => {
   menu.init()
-  winMan.init()
   mainLog('Welcome!')
   preventSortable()
 })

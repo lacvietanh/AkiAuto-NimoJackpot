@@ -16,9 +16,9 @@ ipc = class {
 }
 
 ipcRenderer.on('btnLoadingDone', (event, btnID) => {
-  console.log(btnID)
   $id(btnID).classList.remove('is-loading')
   $id(btnID).disabled = false
+  btnID == "BTN-NEW-SS" ? LoadSSID() : null;
 })
 ipcRenderer.on('data', (event, data) => {
   console.log('received data from window ', event.senderId, '. Data: ', data)
@@ -30,9 +30,9 @@ ipcRenderer.on('action', (ev, mess) => {
   switch (mess) {
     case 'ask-to-quit': menu.AskToQuit();
       break;
-    case 'click-btn-BTN-NEW-SS':      $id('BTN-NEW-SS').click()
+    case 'click-btn-BTN-NEW-SS': $id('BTN-NEW-SS').click();
       break;
-    case 'click-btn-BTN-NEW-SPEC_SS': $id('BTN-NEW-SPEC_SS').click()
+    case 'click-btn-BTN-NEW-SPEC_SS': $id('BTN-NEW-SPEC_SS').click();
       break;
     default: console.log('ipc received "action" but', mess, 'not defined yet!');
       break;
@@ -43,7 +43,16 @@ addEventListener('contextmenu', (ev) => {
     ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y })
   }
 })
+
+function LoadSSID() {
+  ipc.getResponse('ssList').then(r => {
+    winMan.data = r
+    winMan.updateTable()
+  })
+}
 addEventListener('load', () => { //test
+  LoadSSID()
+
   // console.log('loaded ! from preload');
   // mainLog('loaded! from preload using page function')
   // ipc.send('log', 'loaded! from preload to main process!')
