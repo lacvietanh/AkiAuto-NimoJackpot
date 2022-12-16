@@ -17,6 +17,7 @@ const {
 const execSync = require('child_process').execSync
 const Store = require('electron-store')
 const path = require('path')
+const fs = require('fs')
 
 //////// MY FUNCTIONS //////
 const sh = (cmd) => execSync(cmd, { encoding: 'utf-8' })
@@ -145,14 +146,12 @@ const ss = class {
   static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
   static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
   static clear = (ssid) => {
-    shell.trashItem(`${ss.ParPath}/${ssid}`) // delete folder
-    delete ss.list[ssid]
-    ss.save()
+    fs.rm(`${ss.ParPath}/${ssid}`, { recursive: true }, () => {
+      console.log(`Deleted dir: ${ss.ParPath}/${ssid}`)
+    })
+    delete ss.list[ssid]; ss.save()
     log(`Đã xóa session id: ${ssid}`)
-    if (Object.keys(ss.list).length == 0){
-      appData.set('ssid_INCREMENT', 0)
-      log('Tất cả session đã được xóa, reset số đếm (ssid) về 0')
-    }
+    Object.keys(ss.list).length == 0 ? appData.set('ssid_INCREMENT', 0) : null
   }
   constructor() {
     let ID_increment = 1 + ss.count()
