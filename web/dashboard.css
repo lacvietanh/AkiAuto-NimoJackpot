@@ -31,23 +31,8 @@ tr.accSelector.selected {
   width: 2.8em;
   padding: 5px 0 !important;
 }
-.wid {
-  width: 30px;
-  max-width: fit-content;
-}
-.wid button {
-  flex-shrink: 0;
-  width: 40px;
-  height: 25px;
-  padding: 10px;
-  margin-right: 5px;
-}
-.wid .wid_id {
-  margin-right: 5px;
-}
-.wid button img {
-  filter: invert(100%);
-  width: 150px;
+.windowCount {
+  width: 5px;
 }
 .FlexContainer {
   display: flex;

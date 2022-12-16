@@ -2,7 +2,6 @@
 // Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
 // Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
 
-
 const env = 'development'
 // const env = 'production'
 if (env == 'development') {
@@ -146,9 +145,14 @@ const ss = class {
   static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
   static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
   static clear = (ssid) => {
-    delete ss.list[ssid]
-    appData.delete('ss'[ssid])
     shell.trashItem(`${ss.ParPath}/${ssid}`) // delete folder
+    delete ss.list[ssid]
+    ss.save()
+    log(`Đã xóa session id: ${ssid}`)
+    if (Object.keys(ss.list).length == 0){
+      appData.set('ssid_INCREMENT', 0)
+      log('Tất cả session đã được xóa, reset số đếm (ssid) về 0')
+    }
   }
   constructor() {
     let ID_increment = 1 + ss.count()
@@ -229,7 +233,7 @@ app.whenReady().then(() => {
     setTimeout(() => {
       splashWd.destroy()
       HomeWd.show()
-    }, 1300)
+    }, 1700)
     // })
   })
   ////////// GLOBAL OS SHORTCUT //////////
@@ -307,6 +311,10 @@ ipcMain.on('get', (ev, mess) => {
   }
   senderWd.send(`response-${mess}`, result)
 })
+ipcMain.on('deleteSS', (ev, ssid) => {
+  ss.clear(ssid)
+  HomeWd.webContents.send('action', 'reloadSSID')
+})
 ipcMain.on('log', (ev, mess) => {
   console.log(mess)
 })
@@ -314,6 +322,7 @@ ipcMain.on('loadURL', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   senderWd.loadURL(mess)
 })
+
 ////////////////////////  END IPC AREA
 
 app.on('activate', () => {    // For macOS

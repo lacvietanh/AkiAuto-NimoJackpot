@@ -34,6 +34,8 @@ ipcRenderer.on('action', (ev, mess) => {
       break;
     case 'click-btn-BTN-NEW-SPEC_SS': $id('BTN-NEW-SPEC_SS').click();
       break;
+    case 'reloadSSID': LoadSSID();
+      break;
     default: console.log('ipc received "action" but', mess, 'not defined yet!');
       break;
   }
@@ -45,10 +47,7 @@ addEventListener('contextmenu', (ev) => {
 })
 
 function LoadSSID() {
-  ipc.getResponse('ssList').then(r => {
-    winMan.data = r
-    winMan.updateTable()
-  })
+  ipc.getResponse('ssList').then(data => { winMan.updateTable(data) })
 }
 addEventListener('load', () => { //test
   LoadSSID()

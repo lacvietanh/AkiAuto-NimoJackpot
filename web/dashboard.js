@@ -12,7 +12,7 @@ Boolean.prototype.toOnOff = function () {
   return r
 }
 const mainLog = function (mess, color) {
-  let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 19)
+  let time_ = (new Date).toLocaleString('en-US', { hour12: false }).substring(11, 20)
   let c = color || "";
   APP_LOGS.innerHTML += `<br>${time_}  <span style="color:${c}"> ${mess} </span>`
   APP_LOGS.scrollTop = APP_LOGS.scrollHeight
@@ -34,13 +34,13 @@ const appData = {
 }
 const winMan = class {
   static data = {}
-  static updateTable() {
-    let d = winMan.data, e = $qsa('#WindowTable tbody .ssid'), oldSsidList = []
-    e.forEach((e, i) => { oldSsidList[i] = e.innerHTML.trim() })
-    Object.keys(d).forEach(ss => {
+  static updateTable(data) {
+    let d = data, newSsidList = Object.keys(d)
+    $qs('#WindowTable tbody').innerHTML = ""
+    newSsidList.forEach(ss => {
       // ex: ss1: { Uname: undefined, color: #fea }
-      d[ss]['ssid'] = ss
-      !oldSsidList.includes(d[ss]['ssid']) ? winMan.addRow(d[ss]) : null
+      // add key 'ssid' inside object to exploit in addRow() -> ${x.ssid}
+      d[ss]['ssid'] = ss; winMan.addRow(d[ss])
     })
   }
   static addRow(x) {
@@ -54,22 +54,16 @@ const winMan = class {
           <span class="slider round"></span>
         </label>
       </td>
-      <td class=wid>
-        <div class=FlexContainer>
-          <button class="button is-small is-info" title="Open/Focus">
-            <img src="svgs/regular/window-maximize.svg">
-          </button>
-          <span class=wid_id> ${x.wid || '0'}</span>
-        </div>
-      </td>
+      <td class="windowCount has-text-centered">${x.windowCount || 0}</td>
       <td class=ss_menu>
         <button class="button is-small is-success" title="Cửa sổ mới">+</button>
-        <button class="button is-small is-danger"  title="Xóa session">x</button>
+        <button class="button is-small is-danger"  title="Xóa session"
+          onclick="menu.delSS(this)">x</button>
       </td>
       <td class=ssid_color>
         <div class=FlexContainer>
           <span class=ssColor style="${styleString}"> </span>
-          <span class=ssid> ${x.ssid} </span>
+          <span class=ssid>${x.ssid}</span>
         </div>
       </td>
       <td class='uname'>${x.uname || 'Not Login'}</td>
@@ -108,17 +102,26 @@ menu = class {
       $qs(`#APP_SIDEMENU .${p} button.toggleShow`).click()
     });
   }
-  static new(what, btnCall) {
-    btnCall.classList.add('is-loading')
-    btnCall.disabled = true
+  static new(what, btnCaller) {
+    btnCaller.classList.add('is-loading')
+    btnCaller.disabled = true
     ipc.send('new', what)
   }
-  static toggleShow(btnCall) {
-    let target = $id(btnCall.dataset.target) || []
+  static delSS(btnCaller) {
+    let ssid = btnCaller.parentElement.parentElement
+      .querySelector('.ssid').innerHTML.trim()
+    let r = confirm(`Bạn có chắc chắn muốn xóa session: ${ssid}?\n
+     Tất cả cửa sổ sử dụng session này sẽ bị đóng!`)
+    if (r) {
+      ipc.send('deleteSS', ssid)
+    }
+  }
+  static toggleShow(btnCaller) {
+    let target = $id(btnCaller.dataset.target) || []
     // remove current active same position
-    let oldActive = btnCall.parentElement.querySelector('.toggleShow.is-active') || null
+    let oldActive = btnCaller.parentElement.querySelector('.toggleShow.is-active') || null
     oldActive ? oldActive.click() : null
-    btnCall ? btnCall.classList.toggle('is-active') : null
+    btnCaller ? btnCaller.classList.toggle('is-active') : null
     target ? target.classList.toggle('show') : null
   }
   static updateSelect(td) {
@@ -131,9 +134,9 @@ menu = class {
   static Minimize() {
     ipc.send('action', 'MINIMIZE')
   }
-  static toggleExpand(id, btnCall) {
+  static toggleExpand(id, btnCaller) {
     $id(id).classList.toggle('expand')
-    btnCall ? btnCall.classList.toggle('is-active') : null
+    btnCaller ? btnCaller.classList.toggle('is-active') : null
   }
 
 }
