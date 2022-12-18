@@ -1,6 +1,7 @@
 // NOTE:
 // Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
 // Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
+// CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION
 
 const env = 'development'
 // const env = 'production'
@@ -151,7 +152,8 @@ const ss = class {
     })
     delete ss.list[ssid]; ss.save()
     log(`Đã xóa session id: ${ssid}`)
-    Object.keys(ss.list).length == 0 ? appData.set('ssid_INCREMENT', 0) : null
+    if (Object.keys(ss.list).length == 0) { appData.set('ssid_INCREMENT', 0) }
+    GameWindow.closeBySs(ssid)
   }
   constructor() {
     let ID_increment = 1 + ss.count()
@@ -199,6 +201,7 @@ const GameWindow = class {
     })
     let id = this.id = wd.id
     GameWindow.list[id] = ssid  // ADD to list
+    // console.log('gwlist: ', GameWindow.list) // DEBUG
     this.ssid = ssid // chưa sử dụng
     this.par = par // for handle delete on disk
     wd.loadFile('web/game.html')
@@ -210,11 +213,22 @@ const GameWindow = class {
     wd.once('close', () => {
       GameWindow.count -= 1
       delete GameWindow.list[id] // REMOVE from list
+      // console.log('gwlist after closed: ', GameWindow.list) // DEBUG
       wd.destroy()
     })
     return wd;
   }
   static ForceQuit = 0 //quit by user or by app.quit?
+  static closeBySs(ssid) {
+    let l = GameWindow.list
+    Object.keys(l).forEach(wid => {
+      if (l[wid] == ssid) {
+        // console.log(`wid=_${wid}_; l[wid]=_${l[wid]}_; ssid=_${ssid}_`) // DEBUG
+        let w = BrowserWindow.fromId(+wid).close()
+        log(`Closed window id ${wid} due to deleted session id ${ssid}`)
+      }
+    })
+  }
 }
 
 //////////////////////////////// START APP HERE /////////////////////////////////
@@ -232,7 +246,7 @@ app.whenReady().then(() => {
     setTimeout(() => {
       splashWd.destroy()
       HomeWd.show()
-    }, 1700)
+    }, 1500)
     // })
   })
   ////////// GLOBAL OS SHORTCUT //////////

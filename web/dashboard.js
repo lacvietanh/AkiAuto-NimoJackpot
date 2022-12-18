@@ -45,7 +45,7 @@ const winMan = class {
   }
   static addRow(x) {
     let styleString = `background-color:${x.color}`
-    $qs('#WindowTable tbody').innerHTML += /*html*/`
+    $qs('#WindowTable tbody').innerHTML += /*template*/`
     <tr class="accSelector" >
       <td id="window_${x.wid || ""}" class='winToggle noSort borderNONE'>
         <label class="switch">
