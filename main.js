@@ -1,7 +1,8 @@
 // NOTE:
 // Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
 // Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
-// CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION
+// CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
+// ĐANG LÀM: "Hiển thị số đếm game window trong table"
 
 const env = 'development'
 // const env = 'production'
