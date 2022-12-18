@@ -26,6 +26,15 @@ ipcRenderer.on('data', (event, data) => {
 ipcRenderer.on('mainLog', (event, mess) => {
   mainLog(mess)
 })
+ipcRenderer.on('gw', (ev, mess) => {
+  if (mess.action == 'open') {
+    // ĐANG LÀM
+  } else if (mess.action == 'close') {
+    // ĐANG LÀM
+  } else {
+    console.log(`received "gw" with undefined action "${mess.action}"`)
+  }
+})
 ipcRenderer.on('action', (ev, mess) => {
   switch (mess) {
     case 'ask-to-quit': menu.AskToQuit();

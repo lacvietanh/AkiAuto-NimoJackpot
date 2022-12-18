@@ -9,7 +9,7 @@
 tr.accSelector {
   cursor: pointer;
 }
-tr.accSelector:hover {
+#WindowTable tbody tr:hover {
   background-color: #f1e4d4;
 }
 tr.accSelector.selected {

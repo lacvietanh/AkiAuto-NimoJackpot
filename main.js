@@ -167,7 +167,7 @@ const ss = class {
   }
 }
 const GameWindow = class {
-  id; ssid; par; move;
+  id; ssid; par; move; list; closeBySs;
   static count = 0
   static list = {} // for manage what ssid use for BrowserWindow (id) 
   constructor(ssType, ssid = "", par = "") {
@@ -200,10 +200,9 @@ const GameWindow = class {
       }
     })
     let id = this.id = wd.id
-    GameWindow.list[id] = ssid  // ADD to list
+    GameWindow.list[id] = ssid  // ADD to list. ex: {3: 'ss1', 4: 'ss2'}
     // console.log('gwlist: ', GameWindow.list) // DEBUG
-    this.ssid = ssid // chưa sử dụng
-    this.par = par // for handle delete on disk
+    this.ssid = ssid 
     wd.loadFile('web/game.html')
     // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
     log(`Created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
@@ -215,6 +214,7 @@ const GameWindow = class {
       delete GameWindow.list[id] // REMOVE from list
       // console.log('gwlist after closed: ', GameWindow.list) // DEBUG
       wd.destroy()
+      HomeWd.webContents.send('gw', { action: 'close', ssid: this.ssid })
     })
     return wd;
   }
@@ -223,8 +223,9 @@ const GameWindow = class {
     let l = GameWindow.list
     Object.keys(l).forEach(wid => {
       if (l[wid] == ssid) {
-        // console.log(`wid=_${wid}_; l[wid]=_${l[wid]}_; ssid=_${ssid}_`) // DEBUG
-        let w = BrowserWindow.fromId(+wid).close()
+        let id = +wid
+        // console.log(`id=_${id}_; l[wid]=_${l[wid]}_; ssid=_${ssid}_`) // DEBUG
+        BrowserWindow.fromId(id).close()
         log(`Closed window id ${wid} due to deleted session id ${ssid}`)
       }
     })

@@ -43,11 +43,17 @@ const winMan = class {
       d[ss]['ssid'] = ss; winMan.addRow(d[ss])
     })
   }
+  static updateGwCount(ssid, data) {
+    let row = $qs(`#WindowTable tbody ${ssid}`)
+    let cE = row.querySelector('.windowCount')
+    cE.innerHTML = data
+    // Đang phân vân nên cho nó tự xin data hay truyền data cho nó
+  }
   static addRow(x) {
     let styleString = `background-color:${x.color}`
     $qs('#WindowTable tbody').innerHTML += /*template*/`
-    <tr class="accSelector" >
-      <td id="window_${x.wid || ""}" class='winToggle noSort borderNONE'>
+    <tr class="${x.ssid}" >
+      <td class='winToggle noSort'>
         <label class="switch">
           <input type="checkbox" name=autoToggle data-target="window_${x.wid || ''}"
             onchange="winMan.toggle(this.dataset.target,this.checked)">
