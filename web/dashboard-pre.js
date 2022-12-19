@@ -8,7 +8,7 @@ ipc = class {
     ipcRenderer.send('get', question)
     return new Promise(r => {
       ipcRenderer.once(`response-${question}`, (ev, data) => {
-        console.log(`respond for question "${question}":`, data)
+        // console.log(`respond for question "${question}":`, data) // DEBUG
         r(data)
       })
     })
@@ -27,10 +27,14 @@ ipcRenderer.on('mainLog', (event, mess) => {
   mainLog(mess)
 })
 ipcRenderer.on('gw', (ev, mess) => {
-  if (mess.action == 'open') {
-    // ĐANG LÀM
-  } else if (mess.action == 'close') {
-    // ĐANG LÀM
+  if (mess.action == 'updateCount') {
+    setTimeout(() => {
+      console.log(`winMan.data['${mess.ssid}']=`, winMan.data[`${mess.ssid}`]) // DEBUG
+      winMan.data[`${mess.ssid}`]['windowCount'] = mess.data
+      winMan.updateGwCount(mess.ssid)
+    }, 100)
+  } else if (mess.action == 'moreSomething') {
+    // moreSomething
   } else {
     console.log(`received "gw" with undefined action "${mess.action}"`)
   }
@@ -58,6 +62,7 @@ addEventListener('contextmenu', (ev) => {
 function LoadSSID() {
   ipc.getResponse('ssList').then(data => { winMan.updateTable(data) })
 }
+
 addEventListener('load', () => { //test
   LoadSSID()
 

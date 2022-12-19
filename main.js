@@ -3,6 +3,8 @@
 // Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
 // CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
 // ĐANG LÀM: "Hiển thị số đếm game window trong table"
+  // Vẫn chưa xong vì đống khỉ gió winMan.data hoạt động không đúng data
+  // Sau khi bị "xóa đi viết lại" không giữ đc giá trị cũ (dashboard.js:40)
 
 const env = 'development'
 // const env = 'production'
@@ -168,7 +170,7 @@ const ss = class {
   }
 }
 const GameWindow = class {
-  id; ssid; par; move; list; closeBySs;
+  id; ssid; par; move; list; closeBySs; countBySs; sendCount;
   static count = 0
   static list = {} // for manage what ssid use for BrowserWindow (id) 
   constructor(ssType, ssid = "", par = "") {
@@ -203,19 +205,18 @@ const GameWindow = class {
     let id = this.id = wd.id
     GameWindow.list[id] = ssid  // ADD to list. ex: {3: 'ss1', 4: 'ss2'}
     // console.log('gwlist: ', GameWindow.list) // DEBUG
-    this.ssid = ssid 
+    this.ssid = ssid
     wd.loadFile('web/game.html')
-    // wd.loadURL('https://www.nimo.tv/fragments/act/slots-game')
     log(`Created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
-      wd.show(); this.move()
+      wd.show(); this.move(); GameWindow.sendCount(ssid)
     })
     wd.once('close', () => {
       GameWindow.count -= 1
       delete GameWindow.list[id] // REMOVE from list
       // console.log('gwlist after closed: ', GameWindow.list) // DEBUG
       wd.destroy()
-      HomeWd.webContents.send('gw', { action: 'close', ssid: this.ssid })
+      GameWindow.sendCount(ssid)
     })
     return wd;
   }
@@ -229,6 +230,20 @@ const GameWindow = class {
         BrowserWindow.fromId(id).close()
         log(`Closed window id ${wid} due to deleted session id ${ssid}`)
       }
+    })
+  }
+  static countBySs(ssid) {
+    let l = GameWindow.list, r = 0
+    Object.keys(l).forEach(wid => {
+      l[wid] == ssid ? r++ : null
+    })
+    return r
+  }
+  static sendCount(ssid) {
+    HomeWd.webContents.send('gw', {
+      action: 'updateCount'
+      , ssid: ssid
+      , data: GameWindow.countBySs(ssid)
     })
   }
 }

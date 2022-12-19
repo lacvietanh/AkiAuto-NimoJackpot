@@ -35,21 +35,23 @@ const appData = {
 const winMan = class {
   static data = {}
   static updateTable(data) {
-    let d = data, newSsidList = Object.keys(d)
+    winMan.data = data
+    let newSsidList = Object.keys(winMan.data)
     $qs('#WindowTable tbody').innerHTML = ""
     newSsidList.forEach(ss => {
       // ex: ss1: { Uname: undefined, color: #fea }
       // add key 'ssid' inside object to exploit in addRow() -> ${x.ssid}
-      d[ss]['ssid'] = ss; winMan.addRow(d[ss])
+      winMan.data[ss]['ssid'] = ss; winMan.addRow(winMan.data[ss])
     })
   }
-  static updateGwCount(ssid, data) {
-    let row = $qs(`#WindowTable tbody ${ssid}`)
+  static updateGwCount(ssid) {
+    let data = winMan.data[ssid]['windowCount']
+    let row = $qs(`#WindowTable tbody .${ssid}`)
     let cE = row.querySelector('.windowCount')
     cE.innerHTML = data
-    // Đang phân vân nên cho nó tự xin data hay truyền data cho nó
   }
   static addRow(x) {
+    // console.log('from addRow: x=', x) // DEBUG
     let styleString = `background-color:${x.color}`
     $qs('#WindowTable tbody').innerHTML += /*template*/`
     <tr class="${x.ssid}" >
