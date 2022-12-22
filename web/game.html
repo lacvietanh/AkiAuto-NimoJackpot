@@ -5,12 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Window</title>
-  <link name=inject rel="stylesheet" href="bulma.min.css">
-  <link name=inject rel="stylesheet" href="AppBase.css">
-  <script name=inject src="jackpot.js"></script>
+  <link name=inject opt="bulma" rel="stylesheet" href="bulma.min.css">
+  <link name=inject opt="AppBase" rel="stylesheet" href="AppBase.css">
+  <script name=inject opt="jackpot" src="jackpot.js"></script>
 </head>
 
-<body name="inject" class="noside">
+<body name="inject" opt="body" class="noside">
   <!-- APP TITLE BAR  -->
   <section id=APP_TITLEBAR class="active">
     <div class="left">
@@ -26,11 +26,10 @@
       </p>
     </div>
     <div class="right">
-      <button id=TITLEBAR_BTN_NEW class="button is-rounded is-warning"
-        title="Mở thêm cửa sổ mới cho session này"
-        onclick="menu.new('windowSameSS',this)">
-        + Thêm Cửa sổ (Cùng Acc)
-      </button>
+      <div class=FlexContainer style="width:60px;">
+        <span class=ssColor style="background-color: #888;"></span>
+        <span class=ssid>ss1</span>
+      </div>
     </div>
   </section>
 

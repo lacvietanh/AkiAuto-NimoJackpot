@@ -23,9 +23,7 @@ ipcRenderer.on('removeLoading', (event, EleId) => {
 ipcRenderer.on('data', (event, data) => {
   console.log('received data from window ', event.senderId, '. Data: ', data)
 })
-ipcRenderer.on('mainLog', (event, mess) => {
-  mainLog(mess)
-})
+ipcRenderer.on('mainLog', (event, mess) => { mainLog(mess) })
 ipcRenderer.on('action', (event, mess) => {
   switch (mess) {
     case 'ask-to-quit': menu.AskToQuit();
@@ -43,16 +41,22 @@ addEventListener('contextmenu', (ev) => {
 
 addEventListener('DOMContentLoaded', () => {
   if (!window.location.host.includes('nimo.tv')) {
-    let injectCODE = $qsa('[name=inject]')
+    let injectCODE = {}
+    $qsa('[name=inject]').forEach(tag => {
+      console.log(tag)
+      injectCODE[`${tag.getAttribute('opt')}`] = tag.outerHTML
+    })
     localStorage.injectCODE = JSON.stringify(injectCODE)
-    // ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+    console.log(localStorage.injectCODE) // DEBUG
+    setTimeout(() => { ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game') }
+      , 2000)
   } else {
     let injectCODE = JSON.parse(localStorage.injectCODE)
-    injectCODE.forEach((e, i) => {
-      if (i != 3) { // link:css bulma, link:css AppBase, script:src jackpot
+    injectCODE.forEach((e) => {
+      if (e.getAttribute('opt') != "body") {
         let x = e.cloneNode(true)
         document.head.appendChild(x)
-      } else { //body 
+      } else {
         document.body.innerHTML += e.innerHTML
       }
     })

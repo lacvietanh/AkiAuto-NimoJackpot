@@ -28,11 +28,10 @@ ipcRenderer.on('mainLog', (event, mess) => {
 })
 ipcRenderer.on('gw', (ev, mess) => {
   if (mess.action == 'updateCount') {
-    setTimeout(() => {
-      console.log(`winMan.data['${mess.ssid}']=`, winMan.data[`${mess.ssid}`]) // DEBUG
-      winMan.data[`${mess.ssid}`]['windowCount'] = mess.data
-      winMan.updateGwCount(mess.ssid)
-    }, 100)
+    // console.log("received gw count: ", mess); // DEBUG
+    winMan.data[`${mess.ssid}`].windowCount = mess.data
+    // console.log(`winMan.data['${mess.ssid}']=`, winMan.data[`${mess.ssid}`]) // DEBUG
+    winMan.updateGwCount(mess.ssid)
   } else if (mess.action == 'moreSomething') {
     // moreSomething
   } else {

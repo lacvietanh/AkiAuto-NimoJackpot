@@ -301,3 +301,14 @@ input:checked+.slider:before {
 .slider.round:before {
   border-radius: 50%;
 }
+.FlexContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ssColor {
+  width: 25px;
+  height: 25px;
+  display: inline-block;
+  border-radius: 50%;
+}

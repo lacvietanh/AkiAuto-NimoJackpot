@@ -3,8 +3,8 @@
 // Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
 // CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
 // ĐANG LÀM: "Hiển thị số đếm game window trong table"
-  // Vẫn chưa xong vì đống khỉ gió winMan.data hoạt động không đúng data
-  // Sau khi bị "xóa đi viết lại" không giữ đc giá trị cũ (dashboard.js:40)
+// Vẫn chưa xong vì đống khỉ gió winMan.data hoạt động không đúng data
+// Sau khi bị "xóa đi viết lại" không giữ đc giá trị cũ (dashboard.js:40)
 
 const env = 'development'
 // const env = 'production'
@@ -209,7 +209,7 @@ const GameWindow = class {
     wd.loadFile('web/game.html')
     log(`Created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
-      wd.show(); this.move(); GameWindow.sendCount(ssid)
+      wd.show(); this.move()
     })
     wd.once('close', () => {
       GameWindow.count -= 1
@@ -234,16 +234,13 @@ const GameWindow = class {
   }
   static countBySs(ssid) {
     let l = GameWindow.list, r = 0
-    Object.keys(l).forEach(wid => {
-      l[wid] == ssid ? r++ : null
-    })
+    Object.keys(l).forEach(wid => { if (l[wid] == ssid) { r++ } })
     return r
   }
   static sendCount(ssid) {
+    let r = GameWindow.countBySs(ssid)
     HomeWd.webContents.send('gw', {
-      action: 'updateCount'
-      , ssid: ssid
-      , data: GameWindow.countBySs(ssid)
+      action: 'updateCount', ssid: ssid, data: r
     })
   }
 }
@@ -266,12 +263,6 @@ app.whenReady().then(() => {
     }, 1500)
     // })
   })
-  ////////// GLOBAL OS SHORTCUT //////////
-  // if (process.platform === 'darwin') {
-  //   globalShortcut.register('Command+Q', () => {
-  //     HomeWd.webContents.send('action', 'ask-to-quit')
-  //   })
-  // }
 })
 
 ////////////////////////  IPC AREA 
@@ -282,17 +273,26 @@ ipcMain.on('new', (event, mess) => {
       wd = new GameWindow('SPEC')
       wd.webContents.once('dom-ready', () => {
         HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SPEC_SS')
-        HomeWd.focus()
       })
       break
     case 'SS':
       wd = new GameWindow('NEW')
       wd.webContents.once('dom-ready', () => {
         HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SS')
-        HomeWd.focus()
       })
       break;
-    default: console.log('ipc received "new" but', mess, 'not defined yet!')
+    default:
+      if (mess.split('-')[0] == "GameWindowSession") {
+        let ssid = mess.split('-')[1]
+        wd = new GameWindow(ssid)
+        wd.webContents.once('dom-ready', () => {
+          HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SS-' + ssid)
+          GameWindow.sendCount(ssid)
+          wd.webContents.openDevTools({ mode: 'detach' })
+        })
+      } else {
+        console.log('ipc received "new" but', mess, 'not defined yet!')
+      }
       break;
   }
 })
@@ -345,9 +345,8 @@ ipcMain.on('deleteSS', (ev, ssid) => {
   ss.clear(ssid)
   HomeWd.webContents.send('action', 'reloadSSID')
 })
-ipcMain.on('log', (ev, mess) => {
-  console.log(mess)
-})
+ipcMain.on('getGwCount', (ev, ssid) => GameWindow.sendCount(ssid))
+ipcMain.on('log', (ev, mess) => { console.log(mess) })
 ipcMain.on('loadURL', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   senderWd.loadURL(mess)

@@ -38,14 +38,16 @@ const winMan = class {
     winMan.data = data
     let newSsidList = Object.keys(winMan.data)
     $qs('#WindowTable tbody').innerHTML = ""
-    newSsidList.forEach(ss => {
+    newSsidList.forEach(ssid => {
       // ex: ss1: { Uname: undefined, color: #fea }
       // add key 'ssid' inside object to exploit in addRow() -> ${x.ssid}
-      winMan.data[ss]['ssid'] = ss; winMan.addRow(winMan.data[ss])
+      winMan.data[ssid]['ssid'] = ssid;
+      winMan.addRow(winMan.data[ssid])
+      ipc.send('getGwCount', ssid)
     })
   }
   static updateGwCount(ssid) {
-    let data = winMan.data[ssid]['windowCount']
+    let data = winMan.data[ssid].windowCount
     let row = $qs(`#WindowTable tbody .${ssid}`)
     let cE = row.querySelector('.windowCount')
     cE.innerHTML = data
@@ -64,9 +66,10 @@ const winMan = class {
       </td>
       <td class="windowCount has-text-centered">${x.windowCount || 0}</td>
       <td class=ss_menu>
-        <button class="button is-small is-success" title="Cửa sổ mới">+</button>
+        <button class="button is-small is-success" title="Cửa sổ mới"
+          id="BTN-NEW-SS-${x.ssid}" onclick="menu.new('GameWindowSession-${x.ssid}',this)">+</button>
         <button class="button is-small is-danger"  title="Xóa session"
-          onclick="menu.delSS(this)">x</button>
+          onclick="menu.delSS(this,event)">x</button>
       </td>
       <td class=ssid_color>
         <div class=FlexContainer>
@@ -115,13 +118,16 @@ menu = class {
     btnCaller.disabled = true
     ipc.send('new', what)
   }
-  static delSS(btnCaller) {
-    let ssid = btnCaller.parentElement.parentElement
-      .querySelector('.ssid').innerHTML.trim()
-    let r = confirm(`Bạn có chắc chắn muốn xóa session: ${ssid}?\n
-     Tất cả cửa sổ sử dụng session này sẽ bị đóng!`)
-    if (r) {
-      ipc.send('deleteSS', ssid)
+  static delSS(btnCaller, ev) {
+    let ssid = btnCaller.parentElement.parentElement.classList[0], confirm_;
+    if (ev.shiftKey) {
+      confirm_ = confirm(`Chắc chắn xóa TOÀN BỘ SESSION? Tất cả cửa sổ sẽ bị đóng!`)
+      if (confirm_) {
+        $qsa('#WindowTable tbody tr').forEach(tr => { ipc.send('deleteSS', tr.classList[0]) })
+      }
+    } else {
+      confirm_ = confirm(`Chắc chắn xóa session: ${ssid}?\nTất cả cửa sổ sử dụng ${ssid} sẽ bị đóng!`)
+      if (confirm_) { ipc.send('deleteSS', ssid) }
     }
   }
   static toggleShow(btnCaller) {

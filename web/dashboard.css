@@ -34,11 +34,7 @@ tr.accSelector.selected {
 .windowCount {
   width: 5px;
 }
-.FlexContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+
 .ssid_color {
   width: 50px;
 }
