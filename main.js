@@ -1,10 +1,8 @@
 // NOTE:
 // Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
 // Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
-// CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
-// ĐANG LÀM: "Hiển thị số đếm game window trong table"
-// Vẫn chưa xong vì đống khỉ gió winMan.data hoạt động không đúng data
-// Sau khi bị "xóa đi viết lại" không giữ đc giá trị cũ (dashboard.js:40)
+// XONG: CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
+// XONG: "Hiển thị số đếm game window trong table
 
 const env = 'development'
 // const env = 'production'
@@ -149,14 +147,15 @@ const ss = class {
   static save = () => appData.set('ss', ss.list)
   static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
   static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
+  static getColor = (ssid) => ss.list[ssid]['color']
   static clear = (ssid) => {
-    fs.rm(`${ss.ParPath}/${ssid}`, { recursive: true }, () => {
-      console.log(`Deleted dir: ${ss.ParPath}/${ssid}`)
-    })
     delete ss.list[ssid]; ss.save()
     log(`Đã xóa session id: ${ssid}`)
     if (Object.keys(ss.list).length == 0) { appData.set('ssid_INCREMENT', 0) }
     GameWindow.closeBySs(ssid)
+    fs.rm(`${ss.ParPath}/${ssid}`, { recursive: true }, () => {
+      console.log(`Deleted dir: ${ss.ParPath}/${ssid}`)
+    })
   }
   constructor() {
     let ID_increment = 1 + ss.count()
@@ -210,6 +209,9 @@ const GameWindow = class {
     log(`Created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
       wd.show(); this.move()
+      wd.webContents.send('data', {
+        'ssid': ssid, 'color': ss.getColor(ssid)
+      })
     })
     wd.once('close', () => {
       GameWindow.count -= 1
@@ -304,6 +306,8 @@ ipcMain.on('InspectMeAtPos', (ev, cursorPos) => {
 ipcMain.on('action', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   switch (mess) {
+    case 'CLOSE': senderWd.close()
+      break
     case 'QUITAPP':
       console.log('received QUITAPP action!'); GameWindow.ForceQuit = 1
       ss.save(); HomeWd.destroy(); app.quit();
@@ -317,7 +321,6 @@ ipcMain.on('action', (ev, mess) => {
       break
   }
 })
-
 
 ipcMain.on('get', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
@@ -350,6 +353,12 @@ ipcMain.on('log', (ev, mess) => { console.log(mess) })
 ipcMain.on('loadURL', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   senderWd.loadURL(mess)
+})
+ipcMain.on('saveAppData', (ev, mess) => { appData.set(mess.key, mess.value) })
+ipcMain.on('getAppData', (ev, mess) => {
+  let senderWd = BrowserWindow.fromWebContents(ev.sender)
+  let data = appData.get(mess.key)
+  senderWd.webContents.send('responseAppData', data)
 })
 
 ////////////////////////  END IPC AREA

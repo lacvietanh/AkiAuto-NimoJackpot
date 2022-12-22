@@ -21,7 +21,14 @@ ipcRenderer.on('removeLoading', (event, EleId) => {
   $id(EleId).disabled = false
 })
 ipcRenderer.on('data', (event, data) => {
-  console.log('received data from window ', event.senderId, '. Data: ', data)
+  console.log('received data from window ', event.senderId, '. Data: ', data) // DEBUG
+  if (data.ssid) {
+    window.ssid = data.ssid
+    window.color = data.color
+    $qs('#APP_TITLEBAR .ssid').innerHTML = data.ssid
+    $qs('#APP_TITLEBAR .ssColor').style = `background-color:${data.color}`
+
+  }
 })
 ipcRenderer.on('mainLog', (event, mess) => { mainLog(mess) })
 ipcRenderer.on('action', (event, mess) => {
@@ -34,32 +41,53 @@ ipcRenderer.on('action', (event, mess) => {
       break;
   }
 })
-
 addEventListener('contextmenu', (ev) => {
   ev.shiftKey ? ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y }) : null
 })
 
-addEventListener('DOMContentLoaded', () => {
-  if (!window.location.host.includes('nimo.tv')) {
-    let injectCODE = {}
-    $qsa('[name=inject]').forEach(tag => {
-      console.log(tag)
-      injectCODE[`${tag.getAttribute('opt')}`] = tag.outerHTML
-    })
-    localStorage.injectCODE = JSON.stringify(injectCODE)
-    console.log(localStorage.injectCODE) // DEBUG
-    setTimeout(() => { ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game') }
-      , 2000)
-  } else {
-    let injectCODE = JSON.parse(localStorage.injectCODE)
-    injectCODE.forEach((e) => {
-      if (e.getAttribute('opt') != "body") {
-        let x = e.cloneNode(true)
-        document.head.appendChild(x)
+ipc.getResponse('appPath').then(r => { window.appPath = r })
+
+injectCode_prepare = () => {
+  let injectCODE = {}
+  $qsa('[name=inject]').forEach(tag => {
+    injectCODE[`${tag.getAttribute('opt')}`] = tag.outerHTML
+  })
+  ipc.send('saveAppData', { key: 'gameWindowHTML', value: injectCODE })
+  setTimeout(() => {
+    // ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+  }, 2000)
+}
+injectCode_run = () => {
+  ipcRenderer.send('getAppData', { key: 'gameWindowHTML' })
+  ipcRenderer.once(`responseAppData`, (ev, data) => {
+    console.log(data) // DEBUG
+    Object.keys(data).forEach((e) => {
+      // console.log('e=' + e, '\ndata[e]=' + data[e]) // DEBUG 
+      if (e != "body") {
+        let containerEle = document.createElement('x')
+        containerEle.innerHTML = data[e]
+        let ele = containerEle.firstChild
+        if (e == "jackpot") {
+          let path = "file://" + appPath + '/web/' + ele.getAttribute("src")
+          console.log('pathFix=', path)
+          ele.setAttribute("src", path)
+        } else if (e == "AppBase") {
+          let path = "file://" + appPath + '/web/' + ele.getAttribute("href")
+          console.log('pathFix=', path)
+          ele.setAttribute("href", path)
+        }
+        document.head.appendChild(ele)
       } else {
-        document.body.innerHTML += e.innerHTML
+        document.body.innerHTML += data[e]
       }
     })
+  })
+}
+addEventListener('DOMContentLoaded', () => {
+  if (!window.location.host.includes('nimo.tv')) {
+    injectCode_prepare()
+  } else {
+    injectCode_run()
   }
 })
 addEventListener('load', () => {

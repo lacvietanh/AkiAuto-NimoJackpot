@@ -5,7 +5,7 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Window</title>
-  <link name=inject opt="bulma" rel="stylesheet" href="bulma.min.css">
+  <link name=inject opt="bulma" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
   <link name=inject opt="AppBase" rel="stylesheet" href="AppBase.css">
   <script name=inject opt="jackpot" src="jackpot.js"></script>
 </head>
@@ -15,8 +15,8 @@
   <section id=APP_TITLEBAR class="active">
     <div class="left">
       <div class="trafficLight">
-        <button class="close" onclick="window.close()" title="Thoát Auto">&nbsp;</button>
-        <button class="min" onclick="menu.Minimize()" title="Minimize">&nbsp;</button>
+        <button class="close" onclick="ipc.send('action','CLOSE')" title="Đóng cửa sổ">&nbsp;</button>
+        <button class="min" onclick="ipc.send('action', 'MINIMIZE')" title="Minimize">&nbsp;</button>
         <button class="max" title="Maximize is disabled">&nbsp;</button>
       </div>
     </div>

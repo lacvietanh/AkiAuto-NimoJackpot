@@ -167,13 +167,12 @@ aki = class {
 }
 /////////////////// RUN ///////////////////
 addEventListener('DOMContentLoaded', () => {
-  //
+  console.log('hihi')
+
 })
 
 addEventListener('load', () => {
-  // 1. Lấy nội dung của game.html đưa vào một nơi tạm nào đó (chưa thử nghiệm)
-  // 2. Load trang game của nimo
-  // 3. Chờ sự kiện sau khi load xong, lấy lại data đã cất ở trên, chích vào
-
+  $qs('control-area__bet-btn').click()
+  console.log('hihi')
 
 })

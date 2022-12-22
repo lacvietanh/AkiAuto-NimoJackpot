@@ -8,7 +8,7 @@ ipc = class {
     ipcRenderer.send('get', question)
     return new Promise(r => {
       ipcRenderer.once(`response-${question}`, (ev, data) => {
-        // console.log(`respond for question "${question}":`, data) // DEBUG
+        console.log(`respond for question "${question}":`, data) // DEBUG
         r(data)
       })
     })
