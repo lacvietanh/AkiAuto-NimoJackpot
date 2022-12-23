@@ -59,7 +59,7 @@ const winMan = class {
     <tr class="${x.ssid}" >
       <td class='winToggle noSort'>
         <label class="switch">
-          <input type="checkbox" name=autoToggle data-target="window_${x.wid || ''}"
+          <input type="checkbox" name=autoToggle data-target="${x.ssid}"
             onchange="winMan.toggle(this.dataset.target,this.checked)">
           <span class="slider round"></span>
         </label>
@@ -85,7 +85,7 @@ const winMan = class {
   `;
   }
   static toggle(TargetID, value) {
-    mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for window id ${TargetID}`)
+    mainLog(`Turn <b>${value.toOnOff()}</b> AUTO for session id ${TargetID}`)
   }
   static toggleAll(value) {
     let t = $id('WindowTable').querySelectorAll('input[name=autoToggle]')

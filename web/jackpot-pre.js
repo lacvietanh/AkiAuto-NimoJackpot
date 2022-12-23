@@ -1,3 +1,8 @@
+$id = (id) => { return document.getElementById(id); }
+$qs = (s) => { return document.querySelector(s); }
+$qsa = (a) => { return document.querySelectorAll(a); }
+setHTML = (id, _html) => { document.getElementById(id).innerHTML = _html }
+
 ELECTRON_DISABLE_SECURITY_WARNINGS = false
 const { ipcRenderer } = require('electron')
 
@@ -15,7 +20,9 @@ ipc = class {
     })
   }
 }
+ipc.getResponse('appPath').then(r => { window.appPath = r })
 
+////////// IPC LISTEN 
 ipcRenderer.on('removeLoading', (event, EleId) => {
   $id(EleId).classList.remove('is-loading')
   $id(EleId).disabled = false
@@ -40,58 +47,39 @@ ipcRenderer.on('action', (event, mess) => {
       break;
   }
 })
+
 addEventListener('contextmenu', (ev) => {
   ev.shiftKey ? ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y }) : null
 })
-
-ipc.getResponse('appPath').then(r => { window.appPath = r })
-
-injectCode_prepare = () => {
-  let injectCODE = {}
-  $qsa('[name=inject]').forEach(tag => {
-    injectCODE[`${tag.getAttribute('opt')}`] = tag.outerHTML
-  })
-  ipc.send('saveAppData', { key: 'gameWindowHTML', value: injectCODE })
-  setTimeout(() => {
-    // ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
-  }, 2000)
-}
-injectCode_run = () => {
-  ipcRenderer.send('getAppData', { key: 'gameWindowHTML' })
-  ipcRenderer.once(`responseAppData-gameWindowHTML`, (ev, data) => {
-    console.log(data) // DEBUG
-    Object.keys(data).forEach((e) => {
-      // console.log('e=' + e, '\ndata[e]=' + data[e]) // DEBUG 
-      if (e != "body") {
-        let containerEle = document.createElement('x')
-        containerEle.innerHTML = data[e]
-        let ele = containerEle.firstChild
-        if (e == "jackpot") {
-          let path = "file://" + appPath + '/web/' + ele.getAttribute("src")
-          console.log('pathFix=', path)
-          ele.setAttribute("src", path)
-        } else if (e == "AppBase") {
-          let path = "file://" + appPath + '/web/' + ele.getAttribute("href")
-          console.log('pathFix=', path)
-          ele.setAttribute("href", path)
-        }
-        document.head.appendChild(ele)
-      } else {
-        document.body.innerHTML += data[e]
-      }
-    })
-  })
-}
 addEventListener('DOMContentLoaded', () => {
-  if (!window.location.host.includes('nimo.tv')) {
-    injectCode_prepare()
-  } else {
-    injectCode_run()
-  }
+  // 
 })
 addEventListener('load', () => {
+  if (window.location.host.includes('nimo.tv')) {
+    ipcRenderer.send('getAppData', { key: 'gwInjectCode' })
+    ipcRenderer.once(`responseAppData-gwInjectCode`, (ev, data) => {
+      Object.keys(data).forEach((e) => {
+        // console.log('e=' + e, '\ndata[e]=' + data[e]) // DEBUG 
+        let containerEle, ele, path
+        containerEle = document.createElement('div')
+        containerEle.innerHTML = data[e]
+        switch (e) {
+          case "body":
+            containerEle.setAttribute('id', 'AKI_HTML_INJECT')
+            document.body.appendChild(containerEle)
+            document.body.classList.add('noside')
+            break
+          case "bulma": case "jackpot": case "AppBase":
+            ele = containerEle.firstChild
+            document.head.appendChild(ele)
+            // console.log(ele) // DEBUG 
+            break
+        }
+      })
+    })
+  }
+
   ipc.send('get', 'ssInfo')
-  // mainLog('loaded! from preload using page function')
-  // ipc.send('log', 'loaded! from preload to main process!')
+
 })
 

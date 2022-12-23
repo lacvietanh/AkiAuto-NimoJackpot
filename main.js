@@ -3,6 +3,9 @@
 // Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
 // XONG: CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
 // XONG: "Hiển thị số đếm game window trong table
+// Xong: chích HTML, css vào cửa sổ game. 
+// NOTE: JS chích vào chưa chạy...
+
 
 const env = 'development'
 // const env = 'production'

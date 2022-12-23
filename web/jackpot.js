@@ -1,8 +1,4 @@
 // AkiApp-base-js:
-function $id(id) { return document.getElementById(id); }
-function $qs(s) { return document.querySelector(s); }
-function $qsa(a) { return document.querySelectorAll(a); }
-function setHTML(id, _html) { document.getElementById(id).innerHTML = _html }
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('active') })
@@ -11,7 +7,7 @@ Boolean.prototype.toOnOff = function () {
   v ? r = 'ON' : r = 'OFF'
   return r
 }
-var AkiSriptAuthor = 'Lạc Việt Anh'
+var AkiScriptAuthor = 'Lạc Việt Anh'
   , target_percent = 70
   ;
 var AkiAutoRunBtn
@@ -125,23 +121,6 @@ menu = class {
 }
 
 aki = class {
-  static add() {
-    let e;
-    // Aki Panel HTML:
-    e = document.querySelector('div.akipanel');
-    e ? e.remove() : console.log('Init AkiPanel...');;
-    let panel = document.createElement('div');
-    panel.innerHTML = akiPanel;
-    panel.classList.add('akipanel');
-    document.body.appendChild(panel);
-    // Aki Panel CSS:
-    let panelCss = document.createElement('style');
-    panelCss.innerHTML = akiPanelCss;
-    panelCss.setAttribute('name', "AkiPanelCss");
-    e = document.querySelector('style[name=AkiPanelCss]');
-    e ? e.remove() : console.log('Init AkiPanel Css...');
-    document.head.appendChild(panelCss);
-  }
   static init() {
     // init variable:
     AkiAutoRunBtn = document.getElementById('AkiAutoRunBtn');

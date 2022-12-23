@@ -6,8 +6,43 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game Window</title>
   <link name=inject opt="bulma" rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
-  <link name=inject opt="AppBase" rel="stylesheet" href="AppBase.css">
-  <script name=inject opt="jackpot" src="jackpot.js"></script>
+  <script>
+    var prepareInject = new Event('injectReady')
+    function fetchResource() {
+      fetch('./AppBase.css')
+        .then(r => r.text())
+        .then(css => {
+          let x = document.createElement('style')
+          x.innerHTML = css
+          x.setAttribute('name', 'inject')
+          x.setAttribute('opt', 'AppBase')
+          document.head.appendChild(x)
+          fetch('./jackpot.js')
+            .then(r => r.text())
+            .then(js => {
+              let x = document.createElement('script')
+              x.innerHTML = js
+              x.setAttribute('name', 'inject')
+              x.setAttribute('opt', 'jackpot')
+              document.head.appendChild(x)
+              document.dispatchEvent(prepareInject)
+            })
+        })
+    }
+    function saveInjectCode() {
+      let injectCODE = {}
+      document.querySelectorAll('[name=inject]').forEach(tag => {
+        injectCODE[`${tag.getAttribute('opt')}`] = tag.outerHTML
+      })
+      ipc.send('saveAppData', { key: 'gwInjectCode', value: injectCODE })
+    }
+
+    fetchResource()
+    document.addEventListener('injectReady', () => {
+      saveInjectCode()
+      ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+    }, { once: true })
+  </script>
 </head>
 
 <body name="inject" opt="body" class="noside">
@@ -35,13 +70,12 @@
 
   <!----- APP BODY ----->
   <section id="APP_BODY" class="UserSelectNONE">
-    <section id="GameWindow" class="">
-
-    </section>
-    <section id="GamePannel" class="box bottom show">
-      <p class="boxtitle"></p>
+    <section id="GamePanel" class="box bottom show">
       <div class="is-flex is-justify-content-space-between">
-        <div> left </div>
+        <div>
+          <button id="auto-panel-toggle" class="button is-small"
+            onclick="$id('GamePanel').classList.toggle('min')">></button>
+        </div>
         <div>
           <label class="switch is-size-3">
             <input type="checkbox" name=autoToggle
@@ -53,14 +87,6 @@
       </div>
     </section>
   </section> <!-- END APP_BODY -->
-  <footer>
-    <div id="APP_STATUS" class="">
-      <div id="APP_LOGS">
-      </div>
-      <a href="https://toolauto.akivn.net" target="_blank"
-        class="has-text-grey-dark has-text-weight-bold">ToolAuto.AkiVN.net</a>
-    </div>
-  </footer>
 </body>
 
 </html>
