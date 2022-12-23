@@ -209,9 +209,6 @@ const GameWindow = class {
     log(`Created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
       wd.show(); this.move()
-      wd.webContents.send('data', {
-        'ssid': ssid, 'color': ss.getColor(ssid)
-      })
     })
     wd.once('close', () => {
       GameWindow.count -= 1
@@ -336,9 +333,12 @@ ipcMain.on('get', (ev, mess) => {
         a=$(grep -c "" main.js);for i in web/*.* ;do a=$a+$(grep -c "" $i);done;echo $a|bc
       `)
       break
-    case 'appPath': result = app.getAppPath()
-      break
-    case 'ssList': result = ss.list
+    case 'appPath': result = app.getAppPath(); break
+    case 'ssList': result = ss.list; break
+    case 'ssInfo':
+      let ssid = GameWindow.list[senderWd.id]
+      let ssColor = ss.getColor(ssid)
+      senderWd.send('data', { ssid: ssid, color: ssColor })
       break
     default: console.log('ipc received "get" but', mess, 'not defined yet!')
   }
@@ -348,17 +348,17 @@ ipcMain.on('deleteSS', (ev, ssid) => {
   ss.clear(ssid)
   HomeWd.webContents.send('action', 'reloadSSID')
 })
-ipcMain.on('getGwCount', (ev, ssid) => GameWindow.sendCount(ssid))
-ipcMain.on('log', (ev, mess) => { console.log(mess) })
 ipcMain.on('loadURL', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   senderWd.loadURL(mess)
 })
-ipcMain.on('saveAppData', (ev, mess) => { appData.set(mess.key, mess.value) })
+ipcMain.on('getGwCount', (ev, ssid) => GameWindow.sendCount(ssid))
+ipcMain.on('log', (ev, mess) => console.log(mess))
+ipcMain.on('saveAppData', (ev, mess) => appData.set(mess.key, mess.value))
 ipcMain.on('getAppData', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   let data = appData.get(mess.key)
-  senderWd.webContents.send('responseAppData', data)
+  senderWd.webContents.send(`responseAppData-${mess.key}`, data)
 })
 
 ////////////////////////  END IPC AREA

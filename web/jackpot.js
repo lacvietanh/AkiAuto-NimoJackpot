@@ -167,12 +167,12 @@ aki = class {
 }
 /////////////////// RUN ///////////////////
 addEventListener('DOMContentLoaded', () => {
-  console.log('hihi')
+  console.log('DOMContentLoaded')
 
 })
 
 addEventListener('load', () => {
-  $qs('control-area__bet-btn').click()
-  console.log('hihi')
+  // $qs('control-area__bet-btn').click()
+  console.log('loaded')
 
 })

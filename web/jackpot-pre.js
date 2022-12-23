@@ -21,13 +21,12 @@ ipcRenderer.on('removeLoading', (event, EleId) => {
   $id(EleId).disabled = false
 })
 ipcRenderer.on('data', (event, data) => {
-  console.log('received data from window ', event.senderId, '. Data: ', data) // DEBUG
+  console.log('received data from wid ', event.senderId, ': ', data) // DEBUG
   if (data.ssid) {
     window.ssid = data.ssid
     window.color = data.color
     $qs('#APP_TITLEBAR .ssid').innerHTML = data.ssid
     $qs('#APP_TITLEBAR .ssColor').style = `background-color:${data.color}`
-
   }
 })
 ipcRenderer.on('mainLog', (event, mess) => { mainLog(mess) })
@@ -59,7 +58,7 @@ injectCode_prepare = () => {
 }
 injectCode_run = () => {
   ipcRenderer.send('getAppData', { key: 'gameWindowHTML' })
-  ipcRenderer.once(`responseAppData`, (ev, data) => {
+  ipcRenderer.once(`responseAppData-gameWindowHTML`, (ev, data) => {
     console.log(data) // DEBUG
     Object.keys(data).forEach((e) => {
       // console.log('e=' + e, '\ndata[e]=' + data[e]) // DEBUG 
@@ -91,7 +90,7 @@ addEventListener('DOMContentLoaded', () => {
   }
 })
 addEventListener('load', () => {
-
+  ipc.send('get', 'ssInfo')
   // mainLog('loaded! from preload using page function')
   // ipc.send('log', 'loaded! from preload to main process!')
 })
