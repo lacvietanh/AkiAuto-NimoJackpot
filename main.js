@@ -7,8 +7,8 @@
 // NOTE: JS chích vào chưa chạy...
 
 
-const env = 'development'
-// const env = 'production'
+// const env = 'development'
+const env = 'production'
 if (env == 'development') {
   require('electron-reloader')(module, { debug: false, watchRenderer: true })
   // module "hot reload" này khiến Electron rất lag trên window
@@ -240,10 +240,10 @@ const GameWindow = class {
     return r
   }
   static sendCount(ssid) {
-    let r = GameWindow.countBySs(ssid)
-    HomeWd.webContents.send('gw', {
-      action: 'updateCount', ssid: ssid, data: r
-    })
+    let r = GameWindow.countBySs(ssid), q = GameWindow.ForceQuit
+    if (q == 0) {
+      HomeWd.webContents.send('gw', { action: 'updateCount', ssid: ssid, data: r })
+    }
   }
 }
 

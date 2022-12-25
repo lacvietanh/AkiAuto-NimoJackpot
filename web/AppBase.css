@@ -24,7 +24,7 @@ html {
 .UserSelectNONE {
   user-select: none;
 }
-.w-fit{
+.w-fit {
   width: fit-content;
 }
 .counter.parent {
@@ -320,8 +320,10 @@ input:checked+.slider:before {
   top: 30px;
   bottom: unset;
   transition: 0.2s;
+  margin: 0 !important;
+  border-radius: 0;
 }
-#GamePanel.min{
+#GamePanel.min {
   left: 90% !important;
   right: -90% !important;
 }
