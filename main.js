@@ -7,8 +7,8 @@
 // NOTE: JS chích vào chưa chạy...
 
 
-// const env = 'development'
-const env = 'production'
+const env = 'development'
+// const env = 'production'
 if (env == 'development') {
   require('electron-reloader')(module, { debug: false, watchRenderer: true })
   // module "hot reload" này khiến Electron rất lag trên window

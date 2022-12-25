@@ -1,4 +1,3 @@
-// AkiApp-base-js:
 window.addEventListener('blur', () => { $id('APP_TITLEBAR').classList.remove('active') })
 window.addEventListener('focus', () => { $id('APP_TITLEBAR').classList.add('active') })
 window.addEventListener('click', () => { $id('APP_TITLEBAR').classList.add('active') })

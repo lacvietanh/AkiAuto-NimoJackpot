@@ -56,7 +56,7 @@ addEventListener('DOMContentLoaded', () => {
 })
 addEventListener('load', () => {
   if (window.location.host.includes('nimo.tv')) {
-    ipcRenderer.send('getAppData', { key: 'gwInjectCode' })
+    ipc.send('getAppData', { key: 'gwInjectCode' })
     ipcRenderer.once(`responseAppData-gwInjectCode`, (ev, data) => {
       Object.keys(data).forEach((e) => {
         // console.log('e=' + e, '\ndata[e]=' + data[e]) // DEBUG 
@@ -69,10 +69,17 @@ addEventListener('load', () => {
             document.body.appendChild(containerEle)
             document.body.classList.add('noside')
             break
-          case "bulma": case "jackpot": case "AppBase":
+          case "bulma": case "AppBase":
             ele = containerEle.firstChild
             document.head.appendChild(ele)
             // console.log(ele) // DEBUG 
+            break
+          case "jackpot":
+            let x = document.createElement('script')
+            x.innerHTML = data[e]
+            x.setAttribute('name', 'inject')
+            x.setAttribute('opt', 'jackpot')
+            document.head.appendChild(x)
             break
         }
       })

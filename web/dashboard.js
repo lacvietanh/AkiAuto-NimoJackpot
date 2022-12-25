@@ -56,7 +56,7 @@ const winMan = class {
     // console.log('from addRow: x=', x) // DEBUG
     let styleString = `background-color:${x.color}`
     $qs('#WindowTable tbody').innerHTML += /*template*/`
-    <tr class="${x.ssid}" >
+    <tr class="${x.ssid}">
       <td class='winToggle noSort'>
         <label class="switch">
           <input type="checkbox" name=autoToggle data-target="${x.ssid}"

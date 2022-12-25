@@ -32,7 +32,10 @@
     function saveInjectCode() {
       let injectCODE = {}
       document.querySelectorAll('[name=inject]').forEach(tag => {
-        injectCODE[`${tag.getAttribute('opt')}`] = tag.outerHTML
+        let key = tag.getAttribute('opt')
+        key == 'jackpot' ?
+          injectCODE[`${key}`] = tag.innerHTML
+          : injectCODE[`${key}`] = tag.outerHTML
       })
       ipc.send('saveAppData', { key: 'gwInjectCode', value: injectCODE })
     }
