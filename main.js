@@ -1,14 +1,15 @@
-// NOTE:
-// Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
-// Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
-// XONG: CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
-// XONG: "Hiển thị số đếm game window trong table
-// Xong: chích HTML, css vào cửa sổ game. 
-// Done: JS chích vào chưa chạy... Done 5:50 Dec 26
-
-// Cần xem lại session không đc xóa triệt để, dẫn đến newSs sai số thứ tự.
-// Nimo thỉnh thoảng load rất lâu, nên:
-// - chỉ cho count +1 SAU KHI LOAD XONG.
+/*
+NOTE:
+Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
+Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
+XONG: CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
+XONG: "Hiển thị số đếm game window trong table
+Xong: chích HTML, css vào cửa sổ game. 
+Done: JS chích vào chưa chạy... Done 5:50 Dec 26
+DONE: session không đc xóa triệt để, dẫn đến newSs sai số thứ tự.
+Nimo thỉnh thoảng load rất lâu, nên:
+- chỉ cho count +1 SAU KHI LOAD XONG.
+*/
 
 
 const env = 'development'
@@ -168,15 +169,31 @@ const ss = class {
       console.log(`Deleted dir: ${ss.ParPath}/${ssid}`)
     })
   }
-  static cleanup(){
+  static cleanup() {
+    // Đôi khi thư mục partition không đc xóa hoàn toàn => tạo ss mới không chính xác.
+    // Cần dọn dẹp dựa trên ss.list, sau đó set lại INCREMENT thành số nhỏ nhất
     let list = appData.get('ss')
-    // Đang viết.. 
-    // duyệt qua từng thư mục trong Partitions, 
-    //  nếu thư mục đó không có trong list thì xóa nó.
-    //  cuối cùng trả về INCREMENT là số tiếp theo gần nhất có trong list
+      , listKeyArr = Object.keys(list)
+    // console.log('from ss.cleanup(); list=', list) // DEBUG 
+    fs.readdirSync(ss.ParPath).forEach(f => {
+      let curPath = `${ss.ParPath}/${f}`
+      let x = fs.statSync(curPath)
+      // DELETE Partition Dir if DirName (ssid) not in config file:
+      if (x.isDirectory()) {
+        if (!listKeyArr.includes(f)) {
+          fs.rm(curPath, { recursive: true }, () => {
+            console.log(`Deleted dir: ${curPath}`)
+          })
+        }
+      }
+    })
+    // Find and set Nearest INCREMENT NUMBER (next continue number in ss.list):
+    let nextIncrementNum = +listKeyArr[listKeyArr.length - 1].slice(2)
+    console.log('setting ssid_INCREMENT number to: ', nextIncrementNum)
+    appData.set('ssid_INCREMENT', nextIncrementNum)
   }
   constructor() {
-    let ID_increment = 1 + ss.count()
+    let ID_increment = +ss.count() + 1
     let ssid = this.id = `ss${ID_increment}`
     this.color = COLOR.randomHex()
     log(`Creating new session: ssid=${this.id}; color=${this.color}`)
@@ -277,7 +294,7 @@ app.whenReady().then(() => {
     setTimeout(() => {
       splashWd.destroy()
       HomeWd.show()
-    }, 1500)
+    }, 500)
     // })
   })
 })
@@ -321,17 +338,17 @@ ipcMain.on('InspectMeAtPos', (ev, cursorPos) => {
 ipcMain.on('action', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   switch (mess) {
-    case 'CLOSE': senderWd.close()
-      break
+    case 'CLOSE': senderWd.close(); break
     case 'QUITAPP':
       console.log('received QUITAPP action!'); GameWindow.ForceQuit = 1
-      ss.save(); HomeWd.destroy(); app.quit();
+      ss.save(); ss.cleanup(); HomeWd.destroy(); app.quit();
       break
     case 'MINIMIZE':
       let backup = senderWd.transparent
       backup ? senderWd.transparent = false : null
       senderWd.minimize(); senderWd.transparent = backup
       break
+    case 'ssCleanup': ss.cleanup(); break
     default: console.log('ipc received "action" but', mess, 'not defined yet!')
       break
   }
