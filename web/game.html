@@ -58,10 +58,9 @@
         <button class="max" title="Maximize is disabled">&nbsp;</button>
       </div>
     </div>
-    <div class="has-text-centered p-1">
-      <p id=APP_TITLE class="is-size-6">
-        UserName
-      </p>
+    <div class="has-text-centered p-1 FlexContainer">
+      <img id="AkiAccAvt" width="30" height="30" class="mr-1">
+      <p id=APP_TITLE class="is-size-6"> UserName </p>
     </div>
     <div class="right">
       <div class=FlexContainer>
@@ -74,19 +73,26 @@
   <!----- APP BODY ----->
   <section id="APP_BODY" class="UserSelectNONE">
     <section id="GamePanel" class="box bottom show">
-      <div class="is-flex is-justify-content-space-between">
+      <div class="is-flex is-justify-content-space-between is-align-items-center">
         <div>
           <button id="auto-panel-toggle" class="button is-small"
-            onclick="$id('GamePanel').classList.toggle('min')">></button>
+            onclick="$id('GamePanel').classList.toggle('min')">+
+          </button>
         </div>
         <div>
-          <label class="switch is-size-3">
+          <label class="switch is-size-4">
             <input type="checkbox" name=autoToggle
               onclick="">
             <span class="slider round"></span>
           </label>
         </div>
-        <div> right </div>
+        <div class="userInfo is-flex">
+        </div>
+        <div>
+          <button id="auto-panel-toggle" class="button is-small"
+            onclick="$id('GamePanel').classList.toggle('min')">-
+          </button>
+        </div>
       </div>
     </section>
   </section> <!-- END APP_BODY -->

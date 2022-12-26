@@ -93,6 +93,7 @@ addEventListener('load', () => {
             break
         }
       })
+      afterInject()
     })
   }
 

@@ -64,7 +64,6 @@ function LoadSSID() {
 
 addEventListener('load', () => { //test
   LoadSSID()
-
   // console.log('loaded ! from preload');
   // mainLog('loaded! from preload using page function')
   // ipc.send('log', 'loaded! from preload to main process!')

@@ -56,8 +56,9 @@ menu = class {
   static getBet() { return getNimoNum(2) }
   static getUserName() {
     if (document.cookie.includes('userName')) {
-      AkiAccUname.innerHTML = parseCookie()['userName'] || "Not Login";
-      AkiAccAvt.src = parseCookie()['avatarUrl'] || null;
+      window.userName = parseCookie()['userName'] || "Not Login"
+      $id('APP_TITLE').innerHTML = window.userName
+      $id('AkiAccAvt').src = parseCookie()['avatarUrl'] || null;
     }
   }
   static UpdatePrize() {
@@ -146,11 +147,12 @@ aki = class {
 /////////////////// RUN ///////////////////
 addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded')
+  menu.getUserName()
 
 })
 
-addEventListener('load', () => {
-  // $qs('control-area__bet-btn').click()
-  console.log('loaded')
+afterInject = function () {
+  console.log('afterInject')
+  menu.getUserName()
 
-})
+}
