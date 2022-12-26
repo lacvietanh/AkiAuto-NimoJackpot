@@ -327,3 +327,6 @@ input:checked+.slider:before {
   left: 90% !important;
   right: -90% !important;
 }
+body.page-slots-game {
+  background-color: unset !important;
+}

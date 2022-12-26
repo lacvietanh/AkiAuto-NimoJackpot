@@ -9,7 +9,6 @@
 // Cần xem lại session không đc xóa triệt để, dẫn đến newSs sai số thứ tự.
 // Nimo thỉnh thoảng load rất lâu, nên:
 // - chỉ cho count +1 SAU KHI LOAD XONG.
-// - body.page-slots-game {background loại bỏ transparent}, thêm loading càng tốt
 
 
 const env = 'development'
@@ -155,8 +154,11 @@ const ss = class {
   static save = () => appData.set('ss', ss.list)
   static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
   static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
-  static getColor = (ssid) => ss.list[ssid]['color']
-  // chỗ này cần check SPEC ss, nó ko lưu color nên lỗi
+  static getColor = (ssid) => {
+    let c
+    ssid == "SPEC" ? c = "#" : c = ss.list[ssid]['color']
+    return c
+  }
   static clear = (ssid) => {
     delete ss.list[ssid]; ss.save()
     log(`Đã xóa session id: ${ssid}`)
@@ -165,6 +167,13 @@ const ss = class {
     fs.rm(`${ss.ParPath}/${ssid}`, { recursive: true }, () => {
       console.log(`Deleted dir: ${ss.ParPath}/${ssid}`)
     })
+  }
+  static cleanup(){
+    let list = appData.get('ss')
+    // Đang viết.. 
+    // duyệt qua từng thư mục trong Partitions, 
+    //  nếu thư mục đó không có trong list thì xóa nó.
+    //  cuối cùng trả về INCREMENT là số tiếp theo gần nhất có trong list
   }
   constructor() {
     let ID_increment = 1 + ss.count()

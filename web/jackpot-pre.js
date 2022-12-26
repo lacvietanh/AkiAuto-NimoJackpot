@@ -4,6 +4,7 @@ $qsa = (a) => { return document.querySelectorAll(a); }
 setHTML = (id, _html) => { document.getElementById(id).innerHTML = _html }
 
 ELECTRON_DISABLE_SECURITY_WARNINGS = false
+var customCSS
 const { ipcRenderer } = require('electron')
 
 ipc = class {
@@ -20,7 +21,15 @@ ipc = class {
     })
   }
 }
+////////// Code run before load
 ipc.getResponse('appPath').then(r => { window.appPath = r })
+if (window.location.host.includes('nimo.tv')) {
+  customCSS = document.createElement('style')
+  customCSS.innerHTML = /*css*/`
+    .NimoLoading{background-color:#fff !important};
+  `
+}
+
 
 ////////// IPC LISTEN 
 ipcRenderer.on('removeLoading', (event, EleId) => {
@@ -52,7 +61,8 @@ addEventListener('contextmenu', (ev) => {
   ev.shiftKey ? ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y }) : null
 })
 addEventListener('DOMContentLoaded', () => {
-  // 
+  console.log('DOMContentLoaded')
+  document.head.appendChild(customCSS)
 })
 addEventListener('load', () => {
   if (window.location.host.includes('nimo.tv')) {
