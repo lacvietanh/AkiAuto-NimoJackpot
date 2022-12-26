@@ -68,8 +68,12 @@ const winMan = class {
       <td class=ss_menu>
         <button class="button is-small is-success" title="Cửa sổ mới"
           id="BTN-NEW-SS-${x.ssid}" onclick="menu.new('GameWindowSession-${x.ssid}',this)">+</button>
-        <button class="button is-small is-danger"  title="Xóa session"
-          onclick="menu.delSS(this,event)">x</button>
+        <button class="button is-small is-danger"  title="Đóng các cửa sổ"
+          onclick="menu.closeAllWdSs(this)">x</button>
+        <button class="button is-small is-dark"  title="Xóa session"
+          onclick="menu.delSS(this,event)">
+          <img class=invert src="./svgs/regular/trash-can.svg" width=13>
+        </button>
       </td>
       <td class=ssid_color>
         <div class=FlexContainer>
@@ -129,6 +133,10 @@ menu = class {
       confirm_ = confirm(`Chắc chắn xóa session: ${ssid}?\nTất cả cửa sổ sử dụng ${ssid} sẽ bị đóng!`)
       if (confirm_) { ipc.send('deleteSS', ssid) }
     }
+  }
+  static closeAllWdSs(btnCaller) {
+    let ssid = btnCaller.parentElement.parentElement.classList[0]
+    ipc.send('closeAllWdSs', ssid)
   }
   static toggleShow(btnCaller) {
     let target = $id(btnCaller.dataset.target) || []

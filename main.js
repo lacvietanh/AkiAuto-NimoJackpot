@@ -168,6 +168,7 @@ const ss = class {
     fs.rm(`${ss.ParPath}/${ssid}`, { recursive: true }, () => {
       console.log(`Deleted dir: ${ss.ParPath}/${ssid}`)
     })
+    ss.cleanup()
   }
   static cleanup() {
     // Đôi khi thư mục partition không đc xóa hoàn toàn => tạo ss mới không chính xác.
@@ -262,7 +263,7 @@ const GameWindow = class {
         let id = +wid
         // console.log(`id=_${id}_; l[wid]=_${l[wid]}_; ssid=_${ssid}_`) // DEBUG
         BrowserWindow.fromId(id).close()
-        log(`Closed window id ${wid} due to deleted session id ${ssid}`)
+        log(`Closed window id ${wid} [session id ${ssid}]`)
       }
     })
   }
@@ -380,8 +381,10 @@ ipcMain.on('get', (ev, mess) => {
   senderWd.send(`response-${mess}`, result)
 })
 ipcMain.on('deleteSS', (ev, ssid) => {
-  ss.clear(ssid)
-  HomeWd.webContents.send('action', 'reloadSSID')
+  ss.clear(ssid); HomeWd.webContents.send('action', 'reloadSSID')
+})
+ipcMain.on('closeAllWdSs', (ev, ssid) => {
+  GameWindow.closeBySs(ssid); HomeWd.webContents.send('action', 'reloadSSID')
 })
 ipcMain.on('loadURL', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)

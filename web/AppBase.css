@@ -64,6 +64,9 @@ th:not(.DONT_SORTABLE) {
 .noside #APP_BODY {
   margin-left: 0;
 }
+img.invert{
+  filter: invert(100%);
+}
 #APP_TITLEBAR {
   -webkit-app-region: drag;
   user-select: none;
@@ -310,6 +313,7 @@ input:checked+.slider:before {
   align-items: center;
 }
 .ssColor {
+  margin-right: 5px;
   width: 25px;
   height: 25px;
   display: inline-block;
