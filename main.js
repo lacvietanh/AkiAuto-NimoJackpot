@@ -4,7 +4,12 @@
 // XONG: CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
 // XONG: "Hiển thị số đếm game window trong table
 // Xong: chích HTML, css vào cửa sổ game. 
-// NOTE: JS chích vào chưa chạy...
+// Done: JS chích vào chưa chạy... Done 5:50 Dec 26
+
+// Cần xem lại session không đc xóa triệt để, dẫn đến newSs sai số thứ tự.
+// Nimo thỉnh thoảng load rất lâu, nên:
+// - chỉ cho count +1 SAU KHI LOAD XONG.
+// - body.page-slots-game {background loại bỏ transparent}, thêm loading càng tốt
 
 
 const env = 'development'
@@ -151,6 +156,7 @@ const ss = class {
   static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
   static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
   static getColor = (ssid) => ss.list[ssid]['color']
+  // chỗ này cần check SPEC ss, nó ko lưu color nên lỗi
   static clear = (ssid) => {
     delete ss.list[ssid]; ss.save()
     log(`Đã xóa session id: ${ssid}`)
