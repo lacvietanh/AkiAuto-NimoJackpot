@@ -24,10 +24,7 @@ ipc = class {
 ////////// Code run before load
 ipc.getResponse('appPath').then(r => { window.appPath = r })
 if (window.location.host.includes('nimo.tv')) {
-  customCSS = document.createElement('style')
-  customCSS.innerHTML = /*css*/`
-    .NimoLoading{background-color:#fff !important};
-  `
+  document.write('<h1>LOADING...</h1>')
 }
 
 
@@ -60,10 +57,11 @@ ipcRenderer.on('action', (event, mess) => {
 addEventListener('contextmenu', (ev) => {
   ev.shiftKey ? ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y }) : null
 })
+
 addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded')
-  document.head.appendChild(customCSS)
 })
+
 addEventListener('load', () => {
   if (window.location.host.includes('nimo.tv')) {
     ipc.send('getAppData', { key: 'gwInjectCode' })

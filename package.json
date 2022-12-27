@@ -4,7 +4,7 @@
   "description": "AkiAuto for Nimo Jackpot web game",
   "keywords": [],
   "main": "./main.js",
-  "version": "2022.12.25",
+  "version": "2022.12.27",
   "author": "AkiNet",
   "build": {
     "appId": "com.aki.auto.nimojackpot"

@@ -1,7 +1,5 @@
 /*
 NOTE:
-Sau khi mở cửa sổ mới, đưa thông tin vào table để quản lý
-Tất cả các cửa sổ con khi có thay đổi sẽ gửi lệnh update cho Dashboard
 XONG: CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
 XONG: "Hiển thị số đếm game window trong table
 Xong: chích HTML, css vào cửa sổ game. 
@@ -245,6 +243,7 @@ const GameWindow = class {
     log(`Created GameWindow: id=${id}, ssid=${ssid}, partition=${par}`)
     wd.once('ready-to-show', () => {
       wd.show(); this.move()
+      wd.webContents.openDevTools({ mode: 'detach' })
     })
     wd.once('close', () => {
       GameWindow.count -= 1
@@ -323,7 +322,6 @@ ipcMain.on('new', (event, mess) => {
         wd.webContents.once('dom-ready', () => {
           HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SS-' + ssid)
           GameWindow.sendCount(ssid)
-          wd.webContents.openDevTools({ mode: 'detach' })
         })
       } else {
         console.log('ipc received "new" but', mess, 'not defined yet!')
