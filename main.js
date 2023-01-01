@@ -221,7 +221,7 @@ const GameWindow = class {
     }
     let wd = new BrowserWindow({
       width: 540, minWidth: 540, maxWidth: 540,
-      height: 700, minHeight: 250,
+      height: 700, minHeight: 140,
       transparent: true,
       show: false,
       frame: false,

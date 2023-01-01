@@ -43,7 +43,7 @@
     fetchResource()
     document.addEventListener('injectReady', () => {
       saveInjectCode()
-      ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+      // ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
     }, { once: true })
   </script>
 </head>
@@ -72,26 +72,74 @@
 
   <!----- APP BODY ----->
   <section id="APP_BODY" class="UserSelectNONE">
-    <section id="GamePanel" class="box bottom show">
-      <div class="is-flex is-justify-content-space-between is-align-items-center">
-        <div>
-          <button id="auto-panel-toggle" class="button is-small"
-            onclick="$id('GamePanel').classList.toggle('min')">+
-          </button>
-        </div>
-        <div>
+    <section id="GamePanel" class="box bottom show is-size-7">
+      <div class="gamePanelFixed">
+        <button id="auto-panel-toggle" class="button is-small is-warning is-rounded"
+          onclick="UI.gamePanelToggle()" style="margin-top: 73px;">&#8594</button>
+        <br>
+        <button id="gameSize-toggle" class="button is-small is-danger is-rounded"
+          onclick="UI.gameSizeToggle()"
+          style="margin-top: 3px;">&#8607</button>
+      </div>
+      <div class="is-flex is-justify-content-space-between is-align-items-stretch">
+        <div class="box m-1 p-3 has-text-centered" style="width: 115px;">
           <label class="switch is-size-4">
-            <input type="checkbox" name=autoToggle
-              onclick="">
+            <input id="autoConfig-switch" type="checkbox" name=autoToggle onchange="menu.RUN()">
             <span class="slider round"></span>
           </label>
+          <div class="mt-3 is-size-5" style="color: #ff8000;">
+            0000000
+          </div>
         </div>
-        <div class="userInfo is-flex">
+        <div id="panel-autoConfig" class="box m-1 p-2 is-flex is-justify-content-space-between"
+          style="width: 170px;">
+          <div class="has-text-weight-bold">
+            <div>Target:</div>
+            <div>Click:</div>
+            <div>Below:</div>
+            <div>BET:</div>
+            <div>Interval:</div>
+          </div>
+          <div class="has-text-grey">
+            <div>
+              <span id="autoConfig-prize">500000</span>
+            </div>
+            <div>
+              <label>
+                SPIN &nbsp;<input type="radio" name="auto-runType" id="" disabled>
+              </label>
+              <label>
+                <input type="radio" name="auto-runType" id="" checked> AUTO
+              </label>
+            </div>
+            <div>
+              <label>
+                WAIT <input type="radio" name="auto-stopType" id="" disabled>
+              </label>
+              <label>
+                <input type="radio" name="auto-stopType" id="" checked> STOP
+              </label>
+            </div>
+            <div id="gameInfo-BET">450 </div>
+            <div><span id="autoConfig-Interval">3000</span> ms</div>
+          </div>
         </div>
-        <div>
-          <button id="auto-panel-toggle" class="button is-small"
-            onclick="$id('GamePanel').classList.toggle('min')">-
-          </button>
+        <div id="panel-userInfo" class="box m-1 p-2 is-flex is-justify-content-space-between"
+          style="width: 150px;">
+          <div>
+            <div>Chips:</div>
+            <div>Diamond:</div>
+            <hr class="m-2">
+            <div>Tt.Win:</div>
+            <div>Tt.Lost:</div>
+          </div>
+          <div>
+            <div>000</div>
+            <div>000</div>
+            <hr class="m-2">
+            <div>000</div>
+            <div>000</div>
+          </div>
         </div>
       </div>
     </section>

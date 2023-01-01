@@ -6,8 +6,7 @@ Boolean.prototype.toOnOff = function () {
   v ? r = 'ON' : r = 'OFF'
   return r
 }
-var AkiScriptAuthor = 'Lạc Việt Anh'
-  , target_percent = 70
+var target_percent = 70
   ;
 var AkiAutoRunBtn
   , AutoInterval
@@ -19,8 +18,8 @@ var AkiAutoRunBtn
 
 var akiPanelCss = ''
 var akiPanel = ''
-//////////////////// END HTML ////////////////////
 
+//////////////////// FUNCTION ////////////////////
 function parseCookie() {
   return document.cookie
     .split(';')
@@ -49,6 +48,22 @@ function getNimoNum(x) {
     z = s.classList[1].split('-')[1];
     (z == "dot") ? t += '.' : t += z;
   }); return t;
+}
+UI = class {
+  static gamePanelToggle() {
+    let e = $id('GamePanel'), b = $id('auto-panel-toggle')
+    e.classList.toggle('min')
+    e.classList.contains('min') ? b.innerHTML = "&#8592" : b.innerHTML = "&#8594"
+  }
+  static gameSizeToggle() {
+    let e = $id('APP_BODY'), b = $id('gameSize-toggle')
+    e.classList.toggle('min')
+    if (e.classList.contains('min')) {
+      b.innerHTML = "&#8609"; window.resizeTo(540, 180)
+    } else {
+      b.innerHTML = "&#8607"; window.resizeTo(540, 700)
+    }
+  }
 }
 menu = class {
   static getBean() { return getNimoNum(0) }
@@ -86,6 +101,12 @@ menu = class {
       = Math.floor(menu.getPrize() * target_percent / 100);
   }
   static RUN() {
+    console.log('chane')
+    if (!window.location.host.includes('nimo.tv')) {
+      ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+    } else {
+      console.log('Running..')
+    }
     function ClickSpin() {
       nimoBtnSpin.click();
       localStorage['cAuto'] = parseInt(localStorage['cAuto']) + 1;
@@ -148,7 +169,6 @@ aki = class {
 addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded')
   menu.getUserName()
-
 })
 
 afterInject = function () {

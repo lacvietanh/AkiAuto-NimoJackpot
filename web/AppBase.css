@@ -64,7 +64,7 @@ th:not(.DONT_SORTABLE) {
 .noside #APP_BODY {
   margin-left: 0;
 }
-img.invert{
+img.invert {
   filter: invert(100%);
 }
 #APP_TITLEBAR {
@@ -320,16 +320,29 @@ input:checked+.slider:before {
   border-radius: 50%;
 }
 #GamePanel {
-  padding: 5px !important;
+  padding: 5px 45px 5px 25px !important;
   top: 30px;
   bottom: unset;
+  height: 130px !important;
   transition: 0.2s;
   margin: 0 !important;
-  border-radius: 0;
+  border-radius: 3px;
 }
 #GamePanel.min {
   left: 90% !important;
   right: -90% !important;
+}
+.gamePanelFixed {
+  position: fixed;
+  top: 35px;
+  right: 1px;
+  z-index: 10000 !important;
+}
+#gameSize-toggle {
+  font-size: 1.7rem;
+  padding: 12px 12px;
+  height: auto;
+  line-height: 10px;
 }
 body.page-slots-game {
   background-color: unset !important;
