@@ -43,107 +43,130 @@
     fetchResource()
     document.addEventListener('injectReady', () => {
       saveInjectCode()
-      // ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
+      // setTimeout(() => {
+        ipc.send('loadURL', gameURL)
+      // }, 1500)
     }, { once: true })
   </script>
 </head>
 
-<body name="inject" opt="body" class="noside">
-  <!-- APP TITLE BAR  -->
-  <section id=APP_TITLEBAR class="active">
-    <div class="left">
-      <div class="trafficLight">
-        <button class="close" onclick="ipc.send('action','CLOSE')" title="Đóng cửa sổ">&nbsp;</button>
-        <button class="min" onclick="ipc.send('action', 'MINIMIZE')" title="Minimize">&nbsp;</button>
-        <button class="max" title="Maximize is disabled">&nbsp;</button>
+<body class="noside">
+  <section name="inject" opt="GamePanel">
+    <!-- APP TITLE BAR  -->
+    <div id=APP_TITLEBAR class="active">
+      <div class="left">
+        <div class="trafficLight">
+          <button class="close" onclick="ipc.send('action','CLOSE')" title="Đóng cửa sổ">&nbsp;</button>
+          <button class="min" onclick="ipc.send('action', 'MINIMIZE')" title="Minimize">&nbsp;</button>
+          <button class="max" title="Maximize is disabled">&nbsp;</button>
+        </div>
+      </div>
+      <div class="has-text-centered p-1 FlexContainer">
+        <img id="AkiAccAvt" width="30" height="30" class="mr-1">
+        <p id=APP_TITLE class="is-size-6">UserName</p>
+      </div>
+      <div class="right">
+        <div class=FlexContainer>
+          <span class=ssColor style="background-color: #888;"></span>
+          <span class=ssid>ss1</span>
+        </div>
       </div>
     </div>
-    <div class="has-text-centered p-1 FlexContainer">
-      <img id="AkiAccAvt" width="30" height="30" class="mr-1">
-      <p id=APP_TITLE class="is-size-6"> UserName </p>
-    </div>
-    <div class="right">
-      <div class=FlexContainer>
-        <span class=ssColor style="background-color: #888;"></span>
-        <span class=ssid>ss1</span>
-      </div>
+
+    <!----- APP BODY ----->
+    <div id="APP_BODY" class="UserSelectNONE">
+      <section id="GamePanel" class="box bottom show is-size-7">
+        <div class="gamePanelFixed">
+          <button id="auto-panel-toggle" class="button is-small is-warning is-rounded"
+            onclick="UI.gamePanelToggle()" style="margin-top: 73px;">&#8594</button>
+          <br>
+          <button id="gameSize-toggle" class="button is-small is-danger is-rounded"
+            onclick="UI.gameSizeToggle()"
+            style="margin-top: 3px;">&#8607</button>
+        </div>
+        <div class="is-flex is-justify-content-space-between is-align-items-stretch">
+          <div class="box m-1 p-3 has-text-centered" style="width: 115px;">
+            <label class="switch is-size-4">
+              <input id="autoConfig-switch" type="checkbox" name=autoToggle onchange="menu.RUN()">
+              <span class="slider round"></span>
+            </label>
+            <div class="mt-3 is-size-5 num" id="gameInfo-prize">
+              0000000
+            </div>
+          </div>
+          <div id="panel-autoConfig" class="box m-1 p-2"
+            style="width: 170px;">
+            <div class="FlexContainer">
+              <div class="has-text-weight-bold">Target:</div>
+              <div id="autoConfig-prize" class="num">500000</div>
+            </div>
+            <div class="FlexContainer">
+              <div class="has-text-weight-bold">Click:</div>
+              <div>
+                <label>
+                  SPIN &nbsp;<input type="radio" name="auto-runType" id="" disabled>
+                </label>
+                <label>
+                  <input type="radio" name="auto-runType" id="" checked> AUTO
+                </label>
+              </div>
+            </div>
+            <div class="FlexContainer">
+              <div class="has-text-weight-bold">Below:</div>
+              <div>
+                <label>
+                  WAIT <input type="radio" name="auto-stopType" id="" disabled>
+                </label>
+                <label>
+                  <input type="radio" name="auto-stopType" id="" checked> STOP
+                </label>
+              </div>
+            </div>
+            <div class="FlexContainer">
+              <div class="has-text-weight-bold">BET:</div>
+              <div id="gameInfo-BET" class="num">000</div>
+              <div>
+                <button class="button is-small is-light mini"
+                  onclick="menu.clickBET(1)">+</button>
+                <button class="button is-small is-light mini"
+                  onclick="menu.clickBET(0)">-</button>
+              </div>
+            </div>
+            <div class="FlexContainer">
+              <div class="has-text-weight-bold">Interval:</div>
+              <div id="autoConfig-Interval" class="num">3000</div> ms
+            </div>
+          </div>
+          <div id="panel-userInfo" class="box m-1 p-2 is-flex is-justify-content-space-between"
+            style="width: 150px;">
+            <div>
+              <div>Chips:</div>
+              <div>Diamond:</div>
+              <hr class="m-2">
+              <div>Tt.Win:</div>
+              <div>Tt.Lost:</div>
+            </div>
+            <div>
+              <div class="num">000</div>
+              <div class="num">000</div>
+              <hr class="m-2">
+              <div class="num">000</div>
+              <div class="num">000</div>
+            </div>
+          </div>
+        </div>
     </div>
   </section>
+  </div> <!-- END APP_BODY -->
+  </section>
+  <section class="is-flex is-justify-content-center is-align-items-center"
+    style="position:absolute;top:160px;bottom:60;left:0;right:0;">
+    <button id="btn-LOADGAME" class="button is-large is-size-1 is-info is-rounded"
+      onclick="ipc.send('loadURL',gameURL)">
+      LOAD GAME
+    </button>
+  </section>
 
-  <!----- APP BODY ----->
-  <section id="APP_BODY" class="UserSelectNONE">
-    <section id="GamePanel" class="box bottom show is-size-7">
-      <div class="gamePanelFixed">
-        <button id="auto-panel-toggle" class="button is-small is-warning is-rounded"
-          onclick="UI.gamePanelToggle()" style="margin-top: 73px;">&#8594</button>
-        <br>
-        <button id="gameSize-toggle" class="button is-small is-danger is-rounded"
-          onclick="UI.gameSizeToggle()"
-          style="margin-top: 3px;">&#8607</button>
-      </div>
-      <div class="is-flex is-justify-content-space-between is-align-items-stretch">
-        <div class="box m-1 p-3 has-text-centered" style="width: 115px;">
-          <label class="switch is-size-4">
-            <input id="autoConfig-switch" type="checkbox" name=autoToggle onchange="menu.RUN()">
-            <span class="slider round"></span>
-          </label>
-          <div class="mt-3 is-size-5" style="color: #ff8000;">
-            0000000
-          </div>
-        </div>
-        <div id="panel-autoConfig" class="box m-1 p-2 is-flex is-justify-content-space-between"
-          style="width: 170px;">
-          <div class="has-text-weight-bold">
-            <div>Target:</div>
-            <div>Click:</div>
-            <div>Below:</div>
-            <div>BET:</div>
-            <div>Interval:</div>
-          </div>
-          <div class="has-text-grey">
-            <div>
-              <span id="autoConfig-prize">500000</span>
-            </div>
-            <div>
-              <label>
-                SPIN &nbsp;<input type="radio" name="auto-runType" id="" disabled>
-              </label>
-              <label>
-                <input type="radio" name="auto-runType" id="" checked> AUTO
-              </label>
-            </div>
-            <div>
-              <label>
-                WAIT <input type="radio" name="auto-stopType" id="" disabled>
-              </label>
-              <label>
-                <input type="radio" name="auto-stopType" id="" checked> STOP
-              </label>
-            </div>
-            <div id="gameInfo-BET">450 </div>
-            <div><span id="autoConfig-Interval">3000</span> ms</div>
-          </div>
-        </div>
-        <div id="panel-userInfo" class="box m-1 p-2 is-flex is-justify-content-space-between"
-          style="width: 150px;">
-          <div>
-            <div>Chips:</div>
-            <div>Diamond:</div>
-            <hr class="m-2">
-            <div>Tt.Win:</div>
-            <div>Tt.Lost:</div>
-          </div>
-          <div>
-            <div>000</div>
-            <div>000</div>
-            <hr class="m-2">
-            <div>000</div>
-            <div>000</div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </section> <!-- END APP_BODY -->
 </body>
 
 </html>

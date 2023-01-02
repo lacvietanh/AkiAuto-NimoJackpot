@@ -4,7 +4,6 @@ $qsa = (a) => { return document.querySelectorAll(a); }
 setHTML = (id, _html) => { document.getElementById(id).innerHTML = _html }
 
 ELECTRON_DISABLE_SECURITY_WARNINGS = false
-var customCSS
 const { ipcRenderer } = require('electron')
 
 ipc = class {
@@ -72,7 +71,7 @@ addEventListener('load', () => {
         containerEle = document.createElement('div')
         containerEle.innerHTML = data[e]
         switch (e) {
-          case "body":
+          case "GamePanel":
             containerEle.setAttribute('id', 'AKI_HTML_INJECT')
             document.body.appendChild(containerEle)
             document.body.classList.add('noside')
@@ -94,7 +93,6 @@ addEventListener('load', () => {
       afterInject()
     })
   }
-
   ipc.send('get', 'ssInfo')
 
 })

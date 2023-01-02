@@ -6,6 +6,8 @@ Boolean.prototype.toOnOff = function () {
   v ? r = 'ON' : r = 'OFF'
   return r
 }
+const gameURL = 'https://www.nimo.tv/fragments/act/slots-game'
+
 var target_percent = 70
   ;
 var AkiAutoRunBtn
@@ -15,11 +17,11 @@ var AkiAutoRunBtn
   , nimoBtnSpin
   , nimoNumWin
   ;
-
 var akiPanelCss = ''
 var akiPanel = ''
 
 //////////////////// FUNCTION ////////////////////
+getSsid = () => $qs('#APP_TITLEBAR .ssid').innerHTML
 function parseCookie() {
   return document.cookie
     .split(';')
@@ -66,18 +68,21 @@ UI = class {
   }
 }
 menu = class {
-  static getBean() { return getNimoNum(0) }
-  static getPrize() { return getNimoNum(1) }
-  static getBet() { return getNimoNum(2) }
+  static getBean = () => getNimoNum(0)
+  static getPrize = () => getNimoNum(1)
+  static getBet = () => getNimoNum(2)
   static getUserName() {
     if (document.cookie.includes('userName')) {
       window.userName = parseCookie()['userName'] || "Not Login"
       $id('APP_TITLE').innerHTML = window.userName
-      $id('AkiAccAvt').src = parseCookie()['avatarUrl'] || null;
+      $id('AkiAccAvt').src = parseCookie()['avatarUrl'] || null
+      ipc.send('updateInfo', {
+        obj: 'ss', ssid: getSsid(), uname: window.userName
+      })
     }
   }
   static UpdatePrize() {
-    document.getElementById('panel-prize-now').innerHTML = menu.getPrize();
+    $id('gameInfo-prize').innerHTML = menu.getPrize();
   }
   static UpdateBean() {
     document.getElementById('panel-acc-balance').innerHTML = menu.getBean();
@@ -88,25 +93,39 @@ menu = class {
   static updateAutoSpinCount() {
     document.getElementById('counterAUTO').innerHTML = localStorage['cAuto'];
   }
-  static increSpinCount() {
-    localStorage['cSpin'] = parseInt(localStorage['cSpin']) + 1;
-    menu.updateSpinCount();
-  }
   static NimoHomepage() {
     let options = "menubar=no,scrollbars=yes,location=no,toolbar=no";
     return window.open('/', '_blank', 'width=1260,height=640' + options);
+  }
+  static clickBET(w) {
+    if (window.location.host.includes('nimo.tv')) {
+      w ? $qs('div.control-area__plus-btn').click()
+        : $qs('div.control-area__minus-btn').click()
+      menu.updateBET()
+    }
+  }
+  static updateBET() {
+    menu.UpdatePrize()
+    let bet, pool
+    bet = menu.getBet(); $id('gameInfo-BET').innerHTML = bet;
+    if (+ bet >= 4500) {
+      pool = 'BIG'
+      $id('gameInfo-BET').classList.add('o')
+      $id('gameInfo-prize').classList.add('o')
+    } else {
+      pool = 'SMALL'
+      $id('gameInfo-BET').classList.remove('o')
+      $id('gameInfo-prize').classList.remove('o')
+    }
+    ipc.send('updateInfo', {
+      obj: 'bet', ssid: getSsid(), bet: bet, pool: pool
+    })
   }
   static setTargetPercent() {
     document.getElementById('targetPrizeStop').value
       = Math.floor(menu.getPrize() * target_percent / 100);
   }
   static RUN() {
-    console.log('chane')
-    if (!window.location.host.includes('nimo.tv')) {
-      ipc.send('loadURL', 'https://www.nimo.tv/fragments/act/slots-game')
-    } else {
-      console.log('Running..')
-    }
     function ClickSpin() {
       nimoBtnSpin.click();
       localStorage['cAuto'] = parseInt(localStorage['cAuto']) + 1;
@@ -151,8 +170,6 @@ aki = class {
     nimoNumWin = document.querySelector('.control-area__win-num');
     // nimoWalledD = document.querySelector('.nimo-wallet .c5').innerHTML;
     // nimoWalledB = document.querySelector('.nimo-wallet .c7').innerHTML;
-    (localStorage['cSpin']) ? menu.updateSpinCount() : localStorage['cSpin'] = 0;
-    (localStorage['cAuto']) ? menu.updateAutoSpinCount() : localStorage['cAuto'] = 0;
     // (localStorage['maxP']) ? menu.updateMaxP() : localStorage['maxP'] = 0;
     // (localStorage['maxWin']) ? menu.updateMaxWin() : localStorage['maxWin'] = 0;
     menu.setTargetPercent();
@@ -168,11 +185,11 @@ aki = class {
 /////////////////// RUN ///////////////////
 addEventListener('DOMContentLoaded', () => {
   console.log('DOMContentLoaded')
-  menu.getUserName()
 })
 
 afterInject = function () {
   console.log('afterInject')
   menu.getUserName()
-
+  menu.updateBET()
+  setInterval(menu.UpdatePrize, 3000)
 }

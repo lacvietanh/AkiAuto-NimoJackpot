@@ -39,7 +39,7 @@ const winMan = class {
     let newSsidList = Object.keys(winMan.data)
     $qs('#WindowTable tbody').innerHTML = ""
     newSsidList.forEach(ssid => {
-      // ex: ss1: { Uname: undefined, color: #fea }
+      // ex: ss1: { Uname: 'TheUserName', color: '#fea' }
       // add key 'ssid' inside object to exploit in addRow() -> ${x.ssid}
       winMan.data[ssid]['ssid'] = ssid;
       winMan.addRow(winMan.data[ssid])
@@ -81,10 +81,10 @@ const winMan = class {
           <span class=ssid>${x.ssid}</span>
         </div>
       </td>
-      <td class='uname'>${x.uname || 'Not Login'}</td>
-      <td class='bet'>${x.bet || ''}</td>
+      <td class='uname'>${x.Uname || 'Not Login'}</td>
+      <td class='bean'>${x.chips || ''}</td>
       <td class='pool'>${x.pool || ''}</td>
-      <td class='bean'>${x.bean || ''}</td>
+      <td class='bet'>${x.bet || ''}</td>
     </tr>
   `;
   }

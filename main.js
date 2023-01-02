@@ -10,8 +10,8 @@ Nimo thỉnh thoảng load rất lâu, nên:
 */
 
 
-// const env = 'development'
-const env = 'production'
+const env = 'development'
+// const env = 'production'
 if (env == 'development') {
   require('electron-reloader')(module, { debug: false, watchRenderer: true })
   // module "hot reload" này khiến Electron rất lag trên window
@@ -68,7 +68,7 @@ const createSplashWindow = function () {
 }
 const createHomeWindow = function () {
   let HomeWd = new BrowserWindow({
-    width: 783, minWidth: 660, maxWidth: 800,
+    width: 737, minWidth: 660, maxWidth: 800,
     height: 700, minHeight: 580,
     show: false,
     frame: false,
@@ -394,6 +394,22 @@ ipcMain.on('getAppData', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
   let data = appData.get(mess.key)
   senderWd.webContents.send(`responseAppData-${mess.key}`, data)
+})
+ipcMain.on('updateInfo', (ev, mess) => {
+  console.log('IPC _ updateInfo: ', mess)
+  switch (mess.obj) {
+    case "ss":
+      ss.list[mess.ssid].Uname = mess.uname;
+      ss.save(); HomeWd.webContents.send('action', 'reloadSSID')
+      break
+    case 'bet':
+      ss.list[mess.ssid].bet = mess.bet
+      ss.list[mess.ssid].pool = mess.pool
+      ss.save(); HomeWd.webContents.send('action', 'reloadSSID')
+      break
+    default: console.log('ipc received "updateInfo" but', mess.obj, 'not defined yet!')
+  }
+
 })
 
 ////////////////////////  END IPC AREA

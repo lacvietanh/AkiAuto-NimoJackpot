@@ -18,6 +18,18 @@ html {
 .codeFont {
   font-family: monospace;
 }
+.num {
+  color: #0b41be;
+}
+.num.o {
+  color: #d65a08;
+}
+button.mini {
+  line-height: unset !important;
+  padding: 0.1em 0.4em;
+  min-width: 0.4em;
+  height: auto;
+}
 .borderNONE {
   border: none !important;
 }
