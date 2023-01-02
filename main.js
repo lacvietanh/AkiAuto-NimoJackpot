@@ -10,8 +10,8 @@ Nimo thỉnh thoảng load rất lâu, nên:
 */
 
 
-const env = 'development'
-// const env = 'production'
+// const env = 'development'
+const env = 'production'
 if (env == 'development') {
   require('electron-reloader')(module, { debug: false, watchRenderer: true })
   // module "hot reload" này khiến Electron rất lag trên window
@@ -68,9 +68,8 @@ const createSplashWindow = function () {
 }
 const createHomeWindow = function () {
   let HomeWd = new BrowserWindow({
-    width: 800,
-    height: 700,
-    resizable: false,
+    width: 783, minWidth: 660, maxWidth: 800,
+    height: 700, minHeight: 580,
     show: false,
     frame: false,
     transparent: true,
