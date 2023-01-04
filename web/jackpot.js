@@ -16,12 +16,27 @@ var AkiAutoRunBtn
   , AkiAccAvt
   , nimoBtnSpin
   , nimoNumWin
+  , newWd
   ;
 var akiPanelCss = ''
 var akiPanel = ''
 
 //////////////////// FUNCTION ////////////////////
 getSsid = () => $qs('#APP_TITLEBAR .ssid').innerHTML
+function AskURL(opt) {
+  window.newWd = opt
+  $qs('.modal').classList.add('is-active')
+  $id('URL_input').focus()
+}
+function GoURL(newWd = window.newWd) {
+  let url = $qs('#URL_input').value
+  if (newWd) {
+    window.open(url, '_blank')
+    $qs('.modal').classList.remove('is-active')
+  } else {
+    window.location.href = url
+  }
+}
 function parseCookie() {
   return document.cookie
     .split(';')

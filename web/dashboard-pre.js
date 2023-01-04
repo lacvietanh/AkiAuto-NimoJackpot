@@ -26,6 +26,9 @@ ipcRenderer.on('data', (event, data) => {
 ipcRenderer.on('mainLog', (event, mess) => {
   mainLog(mess)
 })
+ipcRenderer.on('consoleLog', (event, mess) => {
+  console.log(mess)
+})
 ipcRenderer.on('gw', (ev, mess) => {
   if (mess.action == 'updateCount') {
     // console.log("received gw count: ", mess); // DEBUG

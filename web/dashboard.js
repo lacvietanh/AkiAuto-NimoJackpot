@@ -57,7 +57,7 @@ const winMan = class {
     let styleString = `background-color:${x.color}`
     $qs('#WindowTable tbody').innerHTML += /*template*/`
     <tr class="${x.ssid}">
-      <td class='winToggle noSort'>
+      <td class='winToggle noSort borderNONE'>
         <label class="switch">
           <input type="checkbox" name=autoToggle data-target="${x.ssid}"
             onchange="winMan.toggle(this.dataset.target,this.checked)">
@@ -66,11 +66,11 @@ const winMan = class {
       </td>
       <td class="windowCount has-text-centered">${x.windowCount || 0}</td>
       <td class=ss_menu>
-        <button class="button is-small is-success" title="Cửa sổ mới"
+        <button class="button is-success" title="Cửa sổ mới"
           id="BTN-NEW-SS-${x.ssid}" onclick="menu.new('GameWindowSession-${x.ssid}',this)">+</button>
-        <button class="button is-small is-danger"  title="Đóng các cửa sổ"
+        <button class="button is-danger"  title="Đóng các cửa sổ"
           onclick="menu.closeAllWdSs(this)">x</button>
-        <button class="button is-small is-dark"  title="Xóa session"
+        <button class="button is-dark"  title="Xóa session"
           onclick="menu.delSS(this,event)">
           <img class=invert src="./svgs/regular/trash-can.svg" width=13>
         </button>

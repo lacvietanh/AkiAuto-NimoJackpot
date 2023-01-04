@@ -9,7 +9,6 @@ Nimo thỉnh thoảng load rất lâu, nên:
 - chỉ cho count +1 SAU KHI LOAD XONG.
 */
 
-
 const env = 'development'
 // const env = 'production'
 if (env == 'development') {
@@ -69,7 +68,7 @@ const createSplashWindow = function () {
 const createHomeWindow = function () {
   let HomeWd = new BrowserWindow({
     width: 737, minWidth: 660, maxWidth: 800,
-    height: 700, minHeight: 580,
+    height: 600, minHeight: 580,
     show: false,
     frame: false,
     transparent: true,
@@ -93,15 +92,33 @@ const log = function (mess, sendToMain = true) {
   console.log(mess)
   sendToMain ? HomeWd.webContents.send('mainLog', mess) : null
 }
+const homeConsoleLog = function (what) { HomeWd.webContents.send('consoleLog', what) }
 const PatchMenu = function () {
   const menu = Menu.getApplicationMenu()
-  menu.items[0] = (new MenuItem({
+  menu.items[1] = (new MenuItem({
+    label: 'File',
+    submenu: [
+      { label: "Reload", role: 'reload', },
+      { label: "Close", role: 'close', },
+      {
+        label: "Go to URL", accelerator: 'CommandOrControl+G',
+        click: () => {
+          let w = BrowserWindow.getFocusedWindow()
+          if (w != null && w != HomeWd) { w.webContents.send('action', 'goURL') }
+        }
+      },
+      {
+        label: "Open URL", accelerator: 'CommandOrControl+O',
+        click: () => {
+          let w = BrowserWindow.getFocusedWindow()
+          if (w != null && w != HomeWd) { w.webContents.send('action', 'openURL') }
+        }
+      },
+    ],
+  }))
+  menu.items[3] = (new MenuItem({
     label: 'AkiAuto',
     submenu: [
-      {
-        label: "Reload", role: 'reload',
-        accelerator: 'CommandOrControl+R',
-      },
       {
         label: "NEW SESSION",
         accelerator: 'CommandOrControl+N',
@@ -121,7 +138,7 @@ const PatchMenu = function () {
       }
     ]
   }))
-  let listRoleRemove = ['appmenu', 'viewmenu', 'help']
+  let listRoleRemove = ['viewmenu', 'help']
   let menu_fix = menu?.items.filter((item) => {
     return !listRoleRemove.includes(item.role)
   })
@@ -396,7 +413,7 @@ ipcMain.on('getAppData', (ev, mess) => {
   senderWd.webContents.send(`responseAppData-${mess.key}`, data)
 })
 ipcMain.on('updateInfo', (ev, mess) => {
-  console.log('IPC _ updateInfo: ', mess)
+  // console.log('IPC _ updateInfo: ', mess) // DEBUG
   switch (mess.obj) {
     case "ss":
       ss.list[mess.ssid].Uname = mess.uname;

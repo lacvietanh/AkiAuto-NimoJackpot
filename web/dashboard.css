@@ -25,25 +25,26 @@ tr.accSelector.selected {
   color: #ffe906 !important;
 }
 #WindowTable button {
-  height: 25px;
+  height: 1.5em;
+  width: 2em;
+  font-size: 1em;
+  padding: 0.2em;
 }
 .winToggle {
   width: 2.8em;
   padding: 5px 0 !important;
 }
 .windowCount {
-  width: 5px;
+  width: 0.5em;
 }
-
 .ssid_color {
-  width: 50px;
+  width: 5em;
 }
-.ss_menu{
-  width: 140px;
+.ss_menu {
+  width: 8.3em;
 }
 .ssColor {
-  width: 25px;
-  height: 25px;
-  display: inline-block;
+  width: 1.5em;
+  height: 1.5em;
   border-radius: 50%;
 }

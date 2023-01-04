@@ -1,9 +1,18 @@
 /* GLOBAL  */
-#AKI_HTML_INJECT * {
-  z-index: 9999;
+#AKI_HTML_INJECT #GamePanel {
+  z-index: 99;
+}
+#AKI_HTML_INJECT #APP_BODY {
+  margin-bottom: 0;
+  min-height: 0;
+  height: 0;
+  padding: 0;
+}
+#AKI_HTML_INJECT #APP_TITLEBAR {
+  border-radius: 8px 8px 0 0;
 }
 html {
-  overflow-y: hidden;
+  overflow-y: auto;
   scroll-behavior: smooth;
   background-color: transparent;
   max-width: 800px;
@@ -339,6 +348,7 @@ input:checked+.slider:before {
   transition: 0.2s;
   margin: 0 !important;
   border-radius: 3px;
+  position: fixed !important;
 }
 #GamePanel.min {
   left: 90% !important;

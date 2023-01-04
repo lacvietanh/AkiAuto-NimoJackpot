@@ -43,14 +43,18 @@ ipcRenderer.on('data', (event, data) => {
 })
 ipcRenderer.on('mainLog', (event, mess) => { mainLog(mess) })
 ipcRenderer.on('action', (event, mess) => {
+  let x
   switch (mess) {
-    case 'ask-to-quit': menu.AskToQuit();
-      break;
-    case 'click-btn-TITLEBAR_BTN_NEW': $id('TITLEBAR_BTN_NEW').click()
-      break;
+    case 'goURL': AskURL(0); break;
+    case 'openURL': AskURL(1); break;
+    case 'click-btn-TITLEBAR_BTN_NEW': $id('TITLEBAR_BTN_NEW').click(); break;
     default: console.log('ipc received "action" but', mess, 'not defined yet!');
       break;
   }
+})
+
+addEventListener('keydown', (ev) => {
+  ev.key == 'Escape' ? $qs('.modal').classList.remove('is-active') : null
 })
 
 addEventListener('contextmenu', (ev) => {
@@ -63,6 +67,7 @@ addEventListener('DOMContentLoaded', () => {
 
 addEventListener('load', () => {
   if (window.location.host.includes('nimo.tv')) {
+  // if (window.location.host) {
     ipc.send('getAppData', { key: 'gwInjectCode' })
     ipcRenderer.once(`responseAppData-gwInjectCode`, (ev, data) => {
       Object.keys(data).forEach((e) => {

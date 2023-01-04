@@ -44,7 +44,7 @@
     document.addEventListener('injectReady', () => {
       saveInjectCode()
       // setTimeout(() => {
-        ipc.send('loadURL', gameURL)
+      ipc.send('loadURL', gameURL)
       // }, 1500)
     }, { once: true })
   </script>
@@ -52,6 +52,16 @@
 
 <body class="noside">
   <section name="inject" opt="GamePanel">
+    <div class="modal">
+      <div class="modal-background"></div>
+      <div class="modal-content">
+        <form action="" class="box has-text-centered" onsubmit="GoURL();return false;">
+          <input id=URL_input class="input" type="text" value="https://">
+          <input type="submit" class="button is-link" value="GO">
+        </form>
+      </div>
+      <button class="modal-close is-large" aria-label="close"></button>
+    </div>
     <!-- APP TITLE BAR  -->
     <div id=APP_TITLEBAR class="active">
       <div class="left">
@@ -157,6 +167,7 @@
         </div>
     </div>
   </section>
+
   </div> <!-- END APP_BODY -->
   </section>
   <section class="is-flex is-justify-content-center is-align-items-center"
