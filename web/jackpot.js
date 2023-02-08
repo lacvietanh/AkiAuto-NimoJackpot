@@ -113,6 +113,7 @@ menu = class {
     return window.open('/', '_blank', 'width=1260,height=640' + options);
   }
   static clickBET(w) {
+    // w is value 0 or 1; 1 for add or 0 for subtract.
     if (window.location.host.includes('nimo.tv')) {
       w ? $qs('div.control-area__plus-btn').click()
         : $qs('div.control-area__minus-btn').click()
@@ -125,7 +126,7 @@ menu = class {
     bet = menu.getBet(); $id('gameInfo-BET').innerHTML = bet;
     if (+ bet >= 4500) {
       pool = 'BIG'
-      $id('gameInfo-BET').classList.add('o')
+      $id('gameInfo-BET').classList.add('o') // orange
       $id('gameInfo-prize').classList.add('o')
     } else {
       pool = 'SMALL'
@@ -207,4 +208,7 @@ afterInject = function () {
   menu.getUserName()
   menu.updateBET()
   setInterval(menu.UpdatePrize, 3000)
+  $qsa('.control-area__times-control-btn > div').forEach(b => {
+    b.addEventListener('click', () => { setTimeout(menu.updateBET, 99) })
+  })
 }

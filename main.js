@@ -5,8 +5,10 @@ XONG: "Hiển thị số đếm game window trong table
 Xong: chích HTML, css vào cửa sổ game. 
 Done: JS chích vào chưa chạy... Done 5:50 Dec 26
 DONE: session không đc xóa triệt để, dẫn đến newSs sai số thứ tự.
-Nimo thỉnh thoảng load rất lâu, nên:
-- chỉ cho count +1 SAU KHI LOAD XONG.
+Nimo thỉnh thoảng load rất lâu... cần làm UX khi đợi load (lúc cửa sổ đang bị transparent)
+___2023___
+- Làm config "auto load game when open new window"
+- Cần load luôn UserName vào titlebar khi chưa load game
 */
 
 const env = 'development'
