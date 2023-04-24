@@ -1,13 +1,5 @@
 /*
-NOTE:
-XONG: CẦN PHẢI CHO ĐÓNG CỬA SỔ KHI XÓA SESSION (Xong! - Dec 19 2:40)
-XONG: "Hiển thị số đếm game window trong table
-Xong: chích HTML, css vào cửa sổ game. 
-Done: JS chích vào chưa chạy... Done 5:50 Dec 26
-DONE: session không đc xóa triệt để, dẫn đến newSs sai số thứ tự.
-Nimo thỉnh thoảng load rất lâu... cần làm UX khi đợi load (lúc cửa sổ đang bị transparent)
 ___2023___
-- Làm config "auto load game when open new window"
 - Cần load luôn UserName vào titlebar khi chưa load game
 */
 
@@ -127,11 +119,6 @@ const PatchMenu = function () {
         click: () => { HomeWd.webContents.send('action', 'click-btn-BTN-NEW-SS') }
       },
       {
-        label: "NEW SPEC SESSION",
-        accelerator: 'CommandOrControl+Shift+N',
-        click: () => { HomeWd.webContents.send('action', 'click-btn-BTN-NEW-SPEC_SS') }
-      },
-      {
         label: 'DevTools', role: 'toggleDevTools', accelerator: 'F12'
       },
       {
@@ -172,8 +159,7 @@ const ss = class {
   static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
   static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
   static getColor = (ssid) => {
-    let c
-    ssid == "SPEC" ? c = "#" : c = ss.list[ssid]['color']
+    let c = ss.list[ssid]['color']
     return c
   }
   static clear = (ssid) => {
@@ -225,13 +211,8 @@ const GameWindow = class {
   static count = 0
   static list = {} // for manage what ssid use for BrowserWindow (id) 
   constructor(ssType, ssid = "", par = "") {
-    if (ssType == 'SPEC') {     // SPECIFIC SESSION ON RAM
-      par = (new Date()).getTime()
-      ssid = ssType
-    } else {                    // 'newSS' or ss1, ss2, ss3,....
-      ssType == 'NEW' ? ssid = (new ss()).ssid : ssid = ssType
-      par = `persist:${ssid}`
-    }
+    ssType == 'NEW' ? ssid = (new ss()).ssid : ssid = ssType
+    par = `persist:${ssid}`
     GameWindow.count += 1 // for handle move()
     this.move = function () {
       let c = GameWindow.count
@@ -321,12 +302,6 @@ app.whenReady().then(() => {
 ipcMain.on('new', (event, mess) => {
   let wd
   switch (mess) {
-    case 'specSS':
-      wd = new GameWindow('SPEC')
-      wd.webContents.once('dom-ready', () => {
-        HomeWd.webContents.send('btnLoadingDone', 'BTN-NEW-SPEC_SS')
-      })
-      break
     case 'SS':
       wd = new GameWindow('NEW')
       wd.webContents.once('dom-ready', () => {
@@ -354,8 +329,14 @@ ipcMain.on('InspectMeAtPos', (ev, cursorPos) => {
 
 ipcMain.on('action', (ev, mess) => {
   let senderWd = BrowserWindow.fromWebContents(ev.sender)
+  let wtid = senderWd.getTitle() + senderWd.id
+  console.log("action from wtid=", wtid) // DEBUG
   switch (mess) {
-    case 'CLOSE': senderWd.close(); break
+    case 'CLOSE':
+      let lastBounds = senderWd.getBounds()
+      appData.set('bounds', { wtid: lastBounds })
+      senderWd.close()
+      break
     case 'QUITAPP':
       console.log('received QUITAPP action!'); GameWindow.ForceQuit = 1
       ss.save(); ss.cleanup(); HomeWd.destroy(); app.quit();
@@ -364,6 +345,9 @@ ipcMain.on('action', (ev, mess) => {
       let backup = senderWd.transparent
       backup ? senderWd.transparent = false : null
       senderWd.minimize(); senderWd.transparent = backup
+      break
+    case 'restorePosition': // in dev
+      console.log(wtid)
       break
     case 'ssCleanup': ss.cleanup(); break
     default: console.log('ipc received "action" but', mess, 'not defined yet!')
@@ -424,6 +408,7 @@ ipcMain.on('updateInfo', (ev, mess) => {
     case 'bet':
       ss.list[mess.ssid].bet = mess.bet
       ss.list[mess.ssid].pool = mess.pool
+      log(`Update BET value: ${mess.bet} [${ss.list[mess.ssid].Uname}]`)
       ss.save(); HomeWd.webContents.send('action', 'reloadSSID')
       break
     default: console.log('ipc received "updateInfo" but', mess.obj, 'not defined yet!')

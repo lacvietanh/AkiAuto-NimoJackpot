@@ -38,6 +38,8 @@ button.mini {
   padding: 0.1em 0.4em;
   min-width: 0.4em;
   height: auto;
+  box-shadow: #0008 0px 1px 3px 0px;
+
 }
 .borderNONE {
   border: none !important;

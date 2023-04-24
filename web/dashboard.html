@@ -33,11 +33,6 @@
         onclick="menu.new('SS',this)">
         + NEW SS
       </button>
-      <button id="BTN-NEW-SPEC_SS" class="button is-rounded is-warning"
-        title="Session này là riêng biệt, sẽ xóa khi đóng cửa sổ"
-        onclick="menu.new('specSS',this)">
-        + NEW SPEC SS
-      </button>
     </div>
   </div>
 
@@ -84,10 +79,14 @@
   <div id="APP_BODY" class="UserSelectNONE">
     <!-- SECTION: TOGGLE  -->
     <section class="box top" id="section_toggle">
-      <p class="boxtitle mb-0">QUẢN LÝ SESSION</p>
-      <div class="FlexContainer mb-1">
+      <p class="boxtitle mb-2">QUẢN LÝ SESSION</p>
+      <div class="FlexContainer mb-2">
         <button class="button is-light" style="font-size: 0.6rem;"
-          onclick="location.reload()">RELOAD PAGE</button>
+          onclick="location.reload()">
+          RELOAD PAGE</button>
+        <!-- <button class="button is-light" style="font-size: 0.6rem;"
+          onclick="menu.restorePosition()" title="Khôi phục vị trí trước đó của cửa sổ">
+          Restore Position </button> -->
         <label class="checkbox is-size-7 pr-1">
           <input type="checkbox" name="" id="" class="" checked disabled> Tự động load game khi mở cửa sổ mới
         </label>
@@ -102,7 +101,7 @@
             <th>UserName</th>
             <th>Chips</th>
             <th title="hũ lớn hay hũ nhỏ">Pool</th>
-            <th title="số đậu cược">Last BET</th>
+            <th title="số đậu cược">BET</th>
           </thead>
           <tbody class="">
           </tbody>
@@ -246,11 +245,6 @@
             <td><b>Cmd/Ctrl R</b></td>
             <td>Reload</td>
             <td>Tải lại nội dung cửa sổ</td>
-          </tr>
-          <tr>
-            <td><b>Cmd/Ctrl Shift N</b></td>
-            <td>NEW SPEC SESSION</td>
-            <td>Cửa sổ session riêng biệt</td>
           </tr>
           <tr>
             <td><b>Cmd/Ctrl N</b></td>

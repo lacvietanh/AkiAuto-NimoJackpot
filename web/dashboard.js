@@ -55,7 +55,7 @@ const winMan = class {
   static addRow(x) {
     // console.log('from addRow: x=', x) // DEBUG
     let styleString = `background-color:${x.color}`
-    $qs('#WindowTable tbody').innerHTML += /*template*/`
+    $qs('#WindowTable tbody').innerHTML += /**/`
     <tr class="${x.ssid}">
       <td class='winToggle noSort borderNONE'>
         <label class="switch">
@@ -83,8 +83,8 @@ const winMan = class {
       </td>
       <td class='uname'>${x.Uname || 'Not Login'}</td>
       <td class='bean'>${x.chips || ''}</td>
-      <td class='pool'>${x.pool || ''}</td>
-      <td class='bet'>${x.bet || ''}</td>
+      <td class='pool ${x.pool}'>${x.pool || ''}</td>
+      <td class='bettd ${x.pool}'><span class='bet'>${x.bet || ''}</span></td>
     </tr>
   `;
   }
@@ -159,6 +159,9 @@ menu = class {
   static toggleExpand(id, btnCaller) {
     $id(id).classList.toggle('expand')
     btnCaller ? btnCaller.classList.toggle('is-active') : null
+  }
+  static restorePosition() {
+    ipc.send('action', 'restorePosition')
   }
 
 }

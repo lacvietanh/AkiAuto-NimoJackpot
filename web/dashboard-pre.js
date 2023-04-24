@@ -47,8 +47,6 @@ ipcRenderer.on('action', (ev, mess) => {
       break;
     case 'click-btn-BTN-NEW-SS': $id('BTN-NEW-SS').click();
       break;
-    case 'click-btn-BTN-NEW-SPEC_SS': $id('BTN-NEW-SPEC_SS').click();
-      break;
     case 'reloadSSID': LoadSSID();
       break;
     default: console.log('ipc received "action" but', mess, 'not defined yet!');

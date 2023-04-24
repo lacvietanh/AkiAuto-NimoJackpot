@@ -208,7 +208,7 @@ afterInject = function () {
   menu.getUserName()
   menu.updateBET()
   setInterval(menu.UpdatePrize, 3000)
-  $qsa('.control-area__times-control-btn > div').forEach(b => {
-    b.addEventListener('click', () => { setTimeout(menu.updateBET, 99) })
-  })
+  // $qsa('.control-area__times-control-btn > div').forEach(b => {
+  //   b.addEventListener('click', () => { setTimeout(menu.updateBET, 99) })
+  // })
 }

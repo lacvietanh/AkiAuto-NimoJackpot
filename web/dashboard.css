@@ -48,3 +48,12 @@ tr.accSelector.selected {
   height: 1.5em;
   border-radius: 50%;
 }
+td.bettd, td.pool{
+  max-width: 1em;
+}
+.pool.BIG, .bettd.BIG{
+  color: #d65a08;
+}
+.pool.SMALL, .bettd.SMALL{
+  color: #0b41be;
+}
