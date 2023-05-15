@@ -157,11 +157,8 @@ const ss = class {
   static load = () => { ss.list = appData.get('ss') || {} }
   static save = () => appData.set('ss', ss.list)
   static count = () => { let c = appData.get('ssid_INCREMENT') || 0; return c }
-  static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName }
-  static getColor = (ssid) => {
-    let c = ss.list[ssid]['color']
-    return c
-  }
+  static updateUserName = (ssid, uName) => { ss.list[ssid]['uname'] = uName; ss.save() }
+  static getColor = (ssid) => { ss.list[ssid]['color'] }
   static clear = (ssid) => {
     delete ss.list[ssid]; ss.save()
     log(`Đã xóa session id: ${ssid}`)
@@ -408,7 +405,7 @@ ipcMain.on('updateInfo', (ev, mess) => {
     case 'bet':
       ss.list[mess.ssid].bet = mess.bet
       ss.list[mess.ssid].pool = mess.pool
-      log(`Update BET value: ${mess.bet} [${ss.list[mess.ssid].Uname}]`)
+      log(`set BET value: ${mess.bet} [${ss.list[mess.ssid].Uname}]`)
       ss.save(); HomeWd.webContents.send('action', 'reloadSSID')
       break
     default: console.log('ipc received "updateInfo" but', mess.obj, 'not defined yet!')

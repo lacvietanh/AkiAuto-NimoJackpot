@@ -39,7 +39,7 @@ button.mini {
   min-width: 0.4em;
   height: auto;
   box-shadow: #0008 0px 1px 3px 0px;
-
+  width: 2em;
 }
 .borderNONE {
   border: none !important;

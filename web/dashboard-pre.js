@@ -55,7 +55,7 @@ ipcRenderer.on('action', (ev, mess) => {
 })
 addEventListener('contextmenu', (ev) => {
   if (ev.shiftKey && ev.altKey) {
-    ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y })
+                         ipc.send('InspectMeAtPos', { x: ev.x, y: ev.y })
   }
 })
 

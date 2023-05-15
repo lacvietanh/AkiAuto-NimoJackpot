@@ -86,15 +86,17 @@ menu = class {
   static getBean = () => getNimoNum(0)
   static getPrize = () => getNimoNum(1)
   static getBet = () => getNimoNum(2)
-  static getUserName() {
+  static getAndSyncUserName() {
     if (document.cookie.includes('userName')) {
       window.userName = parseCookie()['userName'] || "Not Login"
-      $id('APP_TITLE').innerHTML = window.userName
-      $id('AkiAccAvt').src = parseCookie()['avatarUrl'] || null
-      ipc.send('updateInfo', {
-        obj: 'ss', ssid: getSsid(), uname: window.userName
-      })
+    } else {
+      window.userName = "Not Login"
     }
+    $id('APP_TITLE').innerHTML = window.userName
+    $id('AkiAccAvt').src = parseCookie()['avatarUrl'] || null
+    ipc.send('updateInfo', {
+      obj: 'ss', ssid: getSsid(), uname: window.userName
+    })
   }
   static UpdatePrize() {
     $id('gameInfo-prize').innerHTML = menu.getPrize();
@@ -189,7 +191,7 @@ aki = class {
     // (localStorage['maxP']) ? menu.updateMaxP() : localStorage['maxP'] = 0;
     // (localStorage['maxWin']) ? menu.updateMaxWin() : localStorage['maxWin'] = 0;
     menu.setTargetPercent();
-    menu.getUserName();
+    menu.getAndSyncUserName();
     menu.UpdatePrize();
     menu.UpdateBean();
     setInterval(() => {
@@ -205,7 +207,7 @@ addEventListener('DOMContentLoaded', () => {
 
 afterInject = function () {
   console.log('afterInject')
-  menu.getUserName()
+  menu.getAndSyncUserName()
   menu.updateBET()
   setInterval(menu.UpdatePrize, 3000)
   // $qsa('.control-area__times-control-btn > div').forEach(b => {
