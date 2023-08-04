@@ -119,7 +119,6 @@ menu = class {
     if (window.location.host.includes('nimo.tv')) {
       w ? $qs('div.control-area__plus-btn').click()
         : $qs('div.control-area__minus-btn').click()
-      menu.updateBET()
     }
   }
   static updateBET() {
@@ -210,7 +209,7 @@ afterInject = function () {
   menu.getAndSyncUserName()
   menu.updateBET()
   setInterval(menu.UpdatePrize, 3000)
-  // $qsa('.control-area__times-control-btn > div').forEach(b => {
-  //   b.addEventListener('click', () => { setTimeout(menu.updateBET, 99) })
-  // })
+  $qsa('.control-area__times-control-btn > div').forEach(b => {
+    b.addEventListener('click', () => { setTimeout(menu.updateBET, 99) })
+  })
 }

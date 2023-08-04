@@ -87,12 +87,11 @@
     <div id="APP_BODY" class="UserSelectNONE">
       <section id="GamePanel" class="box bottom show is-size-7">
         <div class="gamePanelFixed">
-          <button id="auto-panel-toggle" class="button is-small is-warning is-rounded"
-            onclick="UI.gamePanelToggle()" style="margin-top: 73px;">&#8594</button>
+          <button id="auto-panel-toggle" class="button is-small is-black" onclick="UI.gamePanelToggle()" style="margin-top: 37px;"
+            title="Thu gọn Game panel">&#8594</button>
           <br>
-          <button id="gameSize-toggle" class="button is-small is-danger is-rounded"
-            onclick="UI.gameSizeToggle()"
-            style="margin-top: 3px;">&#8607</button>
+          <button id="gameSize-toggle" class="button is-small is-black p-2" onclick="UI.gameSizeToggle()" style="margin-top: 3px;"
+            title="Thu gọn cửa sổ game lên trên">&#8607</button>
         </div>
         <div class="is-flex is-justify-content-space-between is-align-items-stretch">
           <div class="box m-1 p-3 has-text-centered" style="width: 115px;">
@@ -104,8 +103,7 @@
               0000000
             </div>
           </div>
-          <div id="panel-autoConfig" class="box m-1 p-2"
-            style="width: 170px;">
+          <div id="panel-autoConfig" class="box m-1 p-2" style="width: 170px;">
             <div class="FlexContainer">
               <div class="has-text-weight-bold">Target:</div>
               <div id="autoConfig-prize" class="num">500000</div>
@@ -136,10 +134,8 @@
               <div class="has-text-weight-bold">BET:</div>
               <div id="gameInfo-BET" class="num">000</div>
               <div>
-                <button class="button is-small is-success mini"
-                  onclick="menu.clickBET(1)">+</button>
-                <button class="button is-small is-danger mini"
-                  onclick="menu.clickBET(0)">-</button>
+                <button id="BET_Sub" class="button is-small is-danger mini" onclick="menu.clickBET(0)">-</button>
+                <button id="BET_Add" class="button is-small is-success mini" onclick="menu.clickBET(1)">+</button>
               </div>
             </div>
             <div class="FlexContainer">
@@ -147,8 +143,7 @@
               <div id="autoConfig-Interval" class="num">3000</div> ms
             </div>
           </div>
-          <div id="panel-userInfo" class="box m-1 p-2 is-flex is-justify-content-space-between"
-            style="width: 150px;">
+          <div id="panel-userInfo" class="box m-1 p-2 is-flex is-justify-content-space-between" style="width: 150px;">
             <div>
               <div>Chips:</div>
               <div>Diamond:</div>
@@ -172,8 +167,7 @@
   </section>
   <section class="is-flex is-justify-content-center is-align-items-center"
     style="position:absolute;top:160px;bottom:60;left:0;right:0;">
-    <button id="btn-LOADGAME" class="button is-large is-size-1 is-info is-rounded"
-      onclick="ipc.send('loadURL',gameURL)">
+    <button id="btn-LOADGAME" class="button is-large is-size-1 is-info is-rounded" onclick="ipc.send('loadURL',gameURL)">
       LOAD GAME
     </button>
   </section>
